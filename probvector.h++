@@ -1,5 +1,8 @@
 #ifndef PROBVECTOR_HPP
 #define PROBVECTOR_HPP
+
+static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
+
 #include <utility>
 #include <random>
 #include "enumvector.h++"

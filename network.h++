@@ -1,5 +1,8 @@
 #ifndef NETWORK_HPP
 #define NETWORK_HPP
+
+static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
+
 #include <random>
 #include "probvector.h++"
 template<typename Agent,typename generator=std::mt19937>

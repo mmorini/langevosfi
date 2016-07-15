@@ -1,6 +1,9 @@
 #ifndef COUNTS_HPP
 #define COUNTS_HPP
 
+static const char COUNTS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)counts.h++: $Id$";
+
+#include <iostream>
 #include "enumvector.h++"
 
 struct Counts {

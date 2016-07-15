@@ -1,7 +1,12 @@
 #ifndef ENUMVECTOR_HPP
 #define ENUMVECTOR_HPP
+
+static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
+
 #include <vector>
 #include <utility>
+#include <ostream>
+
 template<typename E,typename T> class Enumvector: std::vector<T> {
 public:
   using typename std::vector<T>::value_type;

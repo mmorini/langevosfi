@@ -1,6 +1,8 @@
 #include <cmath>
 #include <iostream>
 
+static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
+
 // language = nummemes*numlexes, population = numagents
 constexpr auto nummemes=10, numlexes=15, numagents=40;
 // The following two parameters are effectively in the exponent, so careful
