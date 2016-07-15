@@ -1,5 +1,8 @@
 #ifndef LANGUAGE_HPP
 #define LANGUAGE_HPP
+
+static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
+
 #include <utility>
 #include <random>
 #include <iostream>

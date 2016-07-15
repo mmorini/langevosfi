@@ -1,4 +1,4 @@
 [attr]binary	-text -diff -merge
 TAGS	binary
-*.[ch]++ text
-Makefile text
+*.[ch]++ text ident
+Makefile text ident

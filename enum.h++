@@ -1,6 +1,8 @@
 #ifndef ENUM_HPP
 #define ENUM_HPP
 
+static const char ENUM_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enum.h++: $Id$";
+
 #include <iostream>
 #include <string>
 
