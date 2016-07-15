@@ -8,6 +8,7 @@ static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h
 #include <iostream>
 #include "enumvector.h++"
 #include "probvector.h++"
+#include "counts.h++"
 template<typename Meme, typename Lexeme, typename generator=std::mt19937>
 class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
  public:
@@ -90,6 +91,10 @@ class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
   virtual Meme memegen(generator &r) const {
     return marginal.generate(r);
   }
+  virtual Meme randommeme(generator &r,
+			  const Enumvector<Meme,Counts> &counts = Enumvector<Meme,Counts>()) const {
+    return memegen(r);
+  }
   virtual Lexeme lexgen(const Meme m, generator &r) const {
     return (*this)[m].generate(r);
   }
@@ -100,9 +105,11 @@ class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
     marginal.mutate(sigma,r);
     newmarginal();
   }
-  virtual void lexmutate(const double sigma, generator &r) {
-    for (auto& m: *this)
-      m.mutate(sigma,r);
+  virtual void lexmutate(const double sigma, generator &r,
+			 const Enumvector<Meme,Counts> &counts = Enumvector<Meme,Counts>()) {
+    // for (auto& m: *this)
+    //     m.mutate(sigma,r);
+    (*this)[randommeme(r)].mutate(sigma,r);
     deleteCache();
   }
   friend inline auto& operator<< (std::ostream& o, const Language& e) {
