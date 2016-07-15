@@ -99,10 +99,14 @@ Agents agents(r);
 //                     --- given a lex, generate a meme
 //       virtual void mememutate(const double sigma, generator &r)
 //                     --- Mutate the probability of memes
-//       virtual void lexmutate(const double sigma, generator &r)
+//       virtual void lexmutate(const double sigma, generator &r,
+//                              const Enumvector<Meme,Counts> &counts)
 //                     --- Mutate the language holding the marginals
 //                     --- (i.e., the probability of the memes)
 //                     --- constant
+//                     --- If the last parameter is supplied, can
+//                     --- use it to choose meme whose lex distribution
+//                     --- to mutate. Currently ignored.
 //       virtual Language& decache(void)
 //                     --- Declare that the cache can be stolen if the
 //                     --- language is copied. (Returns the Language itself).
