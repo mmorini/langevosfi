@@ -4,8 +4,12 @@ main
 # Files meant as trial output, etc.
 try.*
 
-# Emacs backup
+# vi/Emacs backup
 *~
+*.swp
+
+# Emacs TAGS
+TAGS
 
 # gcc debug
 *.dSYM
