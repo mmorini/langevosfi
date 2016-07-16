@@ -5,10 +5,29 @@ static const char ENUM_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enum.h++: $Id$
 
 #include <iostream>
 #include <string>
+#include <exception>
 
-template<const char *id,int n>
+template<const char *id>
 class Enum {
+  static int n;
 public:
+  class badsize: public std::exception {
+    const std::string msg;
+  public:
+    virtual const char *what() const noexcept {return msg.c_str();}
+    badsize(const std::string &s): msg(s) {}
+    badsize(std::string &&s): msg(std::move(s)) {}
+    badsize() = delete;
+  };
+    
+  static void setn(const int newn) {
+    if (n)
+      throw badsize(std::string("Size of Enum<")+std::string(id)
+		    + std::string("> already set"));
+    else
+      n = newn;
+  }
+  static auto getn() { return n; }
   friend inline auto& operator<< (std::ostream& o, const Enum& e) {
     return o << std::string(id) << static_cast<int>(e);
   }
@@ -18,11 +37,19 @@ public:
   }
 protected:
   Enum(const Enum &m):val(static_cast<int>(m)){}
-  Enum(const int val):val(val){}
+  Enum(const int val):val(val){
+    if (!n) 
+      throw badsize(std::string("Size of Enum<")+std::string(id)
+		    + std::string("> not set"));
+  }
   ~Enum(void){}
 private:
   int val;
-  Enum(void):val(-1){}
+  Enum(void):val(-1){
+    if (!n) 
+      throw badsize(std::string("Size of Enum<")+std::string(id)
+		    + std::string("> not set"));
+  }
   static int number(void) {return n;}
   explicit operator int (void) const{return val;}
   explicit operator int& (void) {return val;}
@@ -83,4 +110,5 @@ public:
   template<typename,bool> friend class Range;
   template<typename T> friend auto range(const T);
 };
+
 #endif
