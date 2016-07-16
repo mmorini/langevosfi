@@ -188,8 +188,8 @@ int main(void) {
 	if (delta < 0 &&
 	    std::generate_canonical<double, 20>(r) >
 	    exp(penalty*delta)) {
-	  // std::move promises the oldpop and olcount won't be used
-	  // any ore, so steal whatever data structure you can.
+	  // std::move promises the oldpop and oldcounts array element
+	  // won't be used any more, so steal whatever data structure you can.
 	  population[a] = std::move(oldpop[a]);
 	  counts[a] = std::move(oldcounts[a]);
 	}
