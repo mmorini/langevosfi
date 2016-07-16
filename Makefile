@@ -11,13 +11,13 @@ main.o: main.c++ selfiterator.h++.gch enum.h++.gch enumvector.h++.gch \
 	myutil.h++.gch meme.h++ lex.h++ language.h++.gch agent.h++ \
 	network.h++.gch probvector.h++.gch counts.h++.gch
 %.o: %.c++
-	$(COMPILE.cc) -c '$<'
+	$(COMPILE.cc) '$<'
 %: %.o
 	$(LINK.cc) -o '$@' $^
 
 .SUFFIXES: .h++.gch
 %.h++.gch: %.h++
-	$(COMPILE.cc) -c '$<'
+	$(COMPILE.cc) '$<'
 probvector.h++.gch: enumvector.h++.gch myutil.h++.gch
 network.h++.gch: probvector.h++.gch
 language.h++.gch: enumvector.h++.gch probvector.h++.gch counts.h++.gch
