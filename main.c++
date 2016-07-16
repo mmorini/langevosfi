@@ -19,11 +19,10 @@ constexpr const char memeid [] = "M";
 constexpr const char lexid[] = "L";
 constexpr const char agentid[] = "A";
 
-
+// Define the variables holding the sizes.
 template<> int Enum<memeid>::n = 0;
 template<> int Enum<lexid>::n = 0;
 template<> int Enum<agentid>::n = 0;
-
 
 // meme.h++ extends Memebase to define Meme.  So, define this class
 // anyhow.  The rest of the program assumes that it publicly derives
@@ -157,19 +156,38 @@ int main(void) {
   Meme::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
   Lexeme::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
   Agent::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+  std::cout <<   "nummemes  = " << Meme::getn()
+            << ", numlexes  = " << Lexeme::getn()
+            << ", numagents = " << Agent::getn() << std::endl;
   
   // The following two parameters are effectively in the exponent, so careful
-  std::cerr << "Provide mutrate and penalty (suggested 1 100)" << std::endl;
-  const auto mutrate = *std::istream_iterator<int>(std::cin); /* 1 */
-  const auto penalty = *std::istream_iterator<int>(std::cin); /* 100 */
+  std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
+  const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
+  const auto penalty = *std::istream_iterator<double>(std::cin); /* 100 */
+  std::cout <<   "mutrate = " << mutrate
+            << ", penalty = " << penalty << std::endl;
 
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
-  std::cerr << "Provide inner and outer iteration count (suggested " <<
-	    8*Agent::getn()*Lexeme::getn()*Meme::getn() << " " <<
-            3*Agent::getn()*Lexeme::getn()*Meme::getn() << ")" << std::endl;
+  std::cerr << "Provide inner and outer iteration count (e.g., " <<
+	    8*Agent::getn()*Lexeme::getn() << " " <<
+            3*Agent::getn()*Lexeme::getn()*Meme::getn()*Meme::getn() << ")" << std::endl;
   const auto inner=*std::istream_iterator<int>(std::cin),
              outer=*std::istream_iterator<int>(std::cin);
+  std::cout <<   "inner = " << inner
+            << ", outer = " << outer << std::endl;
+
+  // Seed the random number generator. Needs a sequence of unsigned intergers
+  // to generate a seed.
+  std::cerr << "Provide unsigned integers and end file to seed random number generator" << std::endl;
+  const std::vector<unsigned int> seed_vector(std::istream_iterator<unsigned int>(std::cin),
+					      std::istream_iterator<unsigned int>());
+  std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
+  r.seed(seeds);
+  std::cout << "Random number generator seeded with ";
+  for (const auto s: seed_vector) std::cout << s << " ";
+  std::cout << std::endl;
+    
 
   // OK, this generates a random probabilities for the network of memes.
   Memes memes(r);
