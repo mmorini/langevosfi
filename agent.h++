@@ -3,10 +3,11 @@
 
 static const char AGENT_HPP_SCCS_ID[] __attribute__((used)) = "@(#)agent.h++: $Id$";
 
+template<class Agentbase>
 class Agent: public Agentbase {
 public:
   explicit Agent(const int&  n):Agentbase(n){}
   Agent(const Agentbase& a):Agentbase(a){}
-  Agent(const Enum& a): Agentbase(a){}
+  Agent(const typename Agentbase::Enum& a): Agentbase(a){}
 };
 #endif
