@@ -13,76 +13,9 @@ std::mt19937 r;
 
 #include "enum.h++"
 #include "network.h++"
-
-// This is used by Enum template in prints
-constexpr const char memeid [] = "M";
-constexpr const char lexid[] = "L";
-constexpr const char agentid[] = "A";
-
-// Define the variables holding the sizes.
-template<> int Enum<memeid>::n = 0;
-template<> int Enum<lexid>::n = 0;
-template<> int Enum<agentid>::n = 0;
-
-// meme.h++ extends Memebase to define Meme.  So, define this class
-// anyhow.  The rest of the program assumes that it publicly derives
-// from an instantiation of the Enum template, and the functions in
-// the Enum template have not been overriden.  Meme currently is an
-// empty extension.
-class Memebase: public Enum<memeid> {
-protected:
-  explicit Memebase(const int &n): Enum(n) {}
-  Memebase(const Enum &n): Enum(n) {}
-};
 #include "meme.h++"
-// Memes must inherit publicly from Network<Meme> but can provide
-// implementation for two virtual functions:
-//
-//        virtual Meme neighbor(const Meme&, generator &r) const;
-//
-// that uses the random number generator r to return a neighboring
-// Meme and
-//
-//        virtual double match(const Meme &a, const Meme &b) const;
-//
-// that returns a number between 0 and 1 indicating how substitutable
-// the two memes a and b are.  Both have default implementations.
-class Memes: public Network<Meme> {
-public:
-  Memes(std::mt19937&r): Network<Meme>(r){}
-};
-
-// This is essentially a repeat of what we did above for Meme.
-class Lexbase: public Enum<lexid> {
-protected:
-  explicit Lexbase(const int &n): Enum(n) {}
-  Lexbase(const Enum &n): Enum(n) {}
-};
 #include "lex.h++"
-class Lexemes: public Network<Lexeme> {
-public:
-  Lexemes(std::mt19937&r): Network<Lexeme>(r){}
-  Lexeme neighbor(const Lexeme& l, std::mt19937&) const {return l;}
-  double match(const Lexeme &l1, const Lexeme &l2) const {return l1==l2;}
-};
-
-// This is essentially a repeat of what we did above for Meme.
-class Agentbase: public Enum<agentid> {
-protected:
-  explicit Agentbase(const int &n): Enum(n) {}
-  Agentbase(const Enum &n): Enum(n) {}
-};
 #include "agent.h++"
-class Agents: public Network<Agent> {
-public:
-  Agents(std::mt19937&r): Network<Agent>(r){}
-};
-
-#include "language.h++"
-#include "enumvector.h++"
-
-// Enumvector<A,B> is like Vector<B>, but indexed by A.
-//
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
 //
@@ -107,13 +40,10 @@ public:
 //                     --- language is copied. (Returns the Language itself).
 //                     --- Can be applied to const or nonconst
 //
-
-class AgentLanguage: public Language<Meme,Lexeme> {
-public:
-  AgentLanguage(){}
-  AgentLanguage(Memes m,std::mt19937& r):Language(m,r){}
-};
-
+#include "language.h++"
+// Enumvector<A,B> is like Vector<B>, but indexed by A.
+//
+#include "enumvector.h++"
 // Counts is a misnomer: it actually keeps track of the average
 // overlap between the meme communicated and the meme interpreted.  It
 // is a count only when the overlap is a 0/1 variable.
@@ -122,6 +52,82 @@ public:
 // selfiterator uses C++14 magic to be able to iterate over indices
 // of a vector, ranges of integers, etc.
 #include "selfiterator.h++"
+
+// This is used by Enum template in prints
+constexpr const char memeid [] = "M";
+constexpr const char lexid[] = "L";
+constexpr const char agentid[] = "A";
+
+// Define the variables holding the sizes.
+template<> int Enum<memeid>::n = 0;
+template<> int Enum<lexid>::n = 0;
+template<> int Enum<agentid>::n = 0;
+
+// meme.h++ extends Memebase to define Meme.  So, define this class
+// anyhow.  The rest of the program assumes that it publicly derives
+// from an instantiation of the Enum template, and the functions in
+// the Enum template have not been overriden.  Meme currently is an
+// empty extension.
+class Memebase: public Enum<memeid> {
+protected:
+  explicit Memebase(const int &n): Enum(n) {}
+  Memebase(const Enum &n): Enum(n) {}
+};
+// Memes must inherit publicly from Network<Meme> but can provide
+// implementation for two virtual functions:
+//
+//        virtual Meme neighbor(const Meme&, generator &r) const;
+//
+// that uses the random number generator r to return a neighboring
+// Meme and
+//
+//        virtual double match(const Meme &a, const Meme &b) const;
+//
+// that returns a number between 0 and 1 indicating how substitutable
+// the two memes a and b are.  Both have default implementations.
+class Memes: public Network<Meme<Memebase>> {
+public:
+  Memes(std::mt19937&r): Network(r){}
+};
+
+// This is essentially a repeat of what we did above for Meme.
+class Lexbase: public Enum<lexid> {
+protected:
+  explicit Lexbase(const int &n): Enum(n) {}
+  Lexbase(const Enum &n): Enum(n) {}
+};
+class Lexemes: public Network<Lexeme<Lexbase>> {
+public:
+  Lexemes(std::mt19937&r): Network(r){}
+  Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
+  double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
+};
+
+// This is essentially a repeat of what we did above for Meme.
+class Agentbase: public Enum<agentid> {
+protected:
+  explicit Agentbase(const int &n): Enum(n) {}
+  Agentbase(const Enum &n): Enum(n) {}
+};
+class Agents: public Network<Agent<Agentbase>> {
+public:
+  Agents(std::mt19937&r): Network(r){}
+};
+
+class AgentLanguage: public Language<Meme<Memebase>,Lexeme<Lexbase>> {
+public:
+  AgentLanguage(){}
+  AgentLanguage(Memes m,std::mt19937& r):Language(m,r){}
+  AgentLanguage(const Language& l):Language(l) {}
+  AgentLanguage(Language && l): Language(std::move(l)) {}
+};
+
+class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
+public:
+  Population(){}
+  Population(const Enumvector& e): Enumvector(e) {}
+  Population(Enumvector && e): Enumvector(std::move(e)) {}
+};
 
 // communicate makes n communication attempts, and returns the
 // communication success of each agent.  Currently it iterates the
@@ -132,17 +138,17 @@ public:
 auto communicate(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
-		 const Enumvector<Agent,AgentLanguage> &population,
+		 const Population &population,
 		 const int n) {
-  Enumvector<Agent,Counts> retval;
+  Enumvector<Agent<Agentbase>,Counts> retval;
   for (auto rounds: range(n)) {
     (void)rounds;
-    const Agent &a1(agents.generate(r));
-    const Meme &m1(population[a1].memegen(r));
-    const Lexeme &l1(population[a1].lexgen(m1,r));
-    const Agent &a2(agents.neighbor(a1,r));
-    const Lexeme &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
-    const Meme &m2(population[a2].memegen(l2,r));
+    const Agent<Agentbase> &a1(agents.generate(r));
+    const Meme<Memebase> &m1(population[a1].memegen(r));
+    const Lexeme<Lexbase> &l1(population[a1].lexgen(m1,r));
+    const Agent<Agentbase> &a2(agents.neighbor(a1,r));
+    const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
+    const Meme<Memebase> &m2(population[a2].memegen(l2,r));
     retval[a1]+=population[a1].match(memes,m1,m2,population[a2]);
   }
   return retval;
@@ -153,12 +159,12 @@ int main(void) {
 
   // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  Meme::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
-  Lexeme::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
-  Agent::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
-  std::cout <<   "nummemes  = " << Meme::getn()
-            << ", numlexes  = " << Lexeme::getn()
-            << ", numagents = " << Agent::getn() << std::endl;
+  Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
+  Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
+  Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+  std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
+            << ", numlexes  = " << Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   
   // The following two parameters are effectively in the exponent, so careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
@@ -170,8 +176,9 @@ int main(void) {
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
   std::cerr << "Provide inner and outer iteration count (e.g., " <<
-	    8*Agent::getn()*Lexeme::getn() << " " <<
-            3*Agent::getn()*Lexeme::getn()*Meme::getn()*Meme::getn() << ")" << std::endl;
+    8*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn() << " " <<
+    3*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn()*
+    Meme<Memebase>::getn()*Meme<Memebase>::getn() << ")" << std::endl;
   const auto inner=*std::istream_iterator<int>(std::cin),
              outer=*std::istream_iterator<int>(std::cin);
   std::cout <<   "inner = " << inner
@@ -193,7 +200,7 @@ int main(void) {
   Memes memes(r);
   Lexemes lexemes(r);
   Agents agents(r);
-  Enumvector<Agent,AgentLanguage> population;
+  Population population;
 
   // Generate an entire population as a set of random languages:
   // everyone has the same marginals; write it out.

@@ -8,7 +8,7 @@ CFILES = main.c++
 MFILES = Makefile
 main: main.o
 main.o: main.c++ selfiterator.h++.gch enum.h++.gch enumvector.h++.gch \
-	myutil.h++.gch meme.h++ lex.h++ language.h++.gch agent.h++ \
+	myutil.h++.gch meme.h++.gch lex.h++.gch language.h++.gch agent.h++.gch \
 	network.h++.gch probvector.h++.gch counts.h++.gch
 %.o: %.c++
 	$(COMPILE.cc) '$<'
@@ -22,8 +22,6 @@ probvector.h++.gch: enumvector.h++.gch myutil.h++.gch
 network.h++.gch: probvector.h++.gch
 language.h++.gch: enumvector.h++.gch probvector.h++.gch counts.h++.gch
 counts.h++.gch: enumvector.h++.gch
-lex.h++.gch meme.h++.gch agent.h++.gch:
-	$(error lex, meme, or agent header files can't be precompiled)
 
 TAGS: $(MFILES) $(CFILES) $(HFILES)
 	'$(ETAGS)' $^ 
