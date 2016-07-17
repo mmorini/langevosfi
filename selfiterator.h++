@@ -1,10 +1,10 @@
 #ifndef SELFITERATOR_HPP
 #define SELFITERATOR_HPP
 
-static const char SELFITERATOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfiterator.h++: $Id$";
-
 #include <iterator>
 #include <algorithm>
+
+static const char SELFITERATOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfiterator.h++: $Id$";
 
 // Stupid C++ does not allow one to iterate over integers
 // Here is a set of classes to allow that

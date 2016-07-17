@@ -1,14 +1,15 @@
 #ifndef LANGUAGE_HPP
 #define LANGUAGE_HPP
 
-static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
-
-#include <utility>
-#include <random>
-#include <iostream>
 #include "enumvector.h++"
 #include "probvector.h++"
 #include "counts.h++"
+#include <utility>
+#include <random>
+#include <iostream>
+
+static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
+
 template<typename Meme, typename Lexeme, typename generator=std::mt19937>
 class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
  public:
