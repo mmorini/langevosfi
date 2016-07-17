@@ -15,6 +15,6 @@
 #include <iterator>
 #include <random>
 
-static const char MAIN_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfiterator.h++: $Id$";
+static const char MAIN_HPP_SCCS_ID[] __attribute__((used)) = "@(#)main.h++: $Id$";
 
 #endif
