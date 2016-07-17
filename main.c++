@@ -55,6 +55,8 @@ template<> int Enum<agentid>::n = 0;
 // the Enum template have not been overriden.  Meme currently is an
 // empty extension.
 class Memebase: public Enum<memeid> {
+public:
+  virtual ~Memebase(){}
 protected:
   explicit Memebase(const int &n): Enum(n) {}
   Memebase(const Enum &n): Enum(n) {}
@@ -78,6 +80,8 @@ public:
 
 // This is essentially a repeat of what we did above for Meme.
 class Lexbase: public Enum<lexid> {
+public:
+  virtual ~Lexbase(){}
 protected:
   explicit Lexbase(const int &n): Enum(n) {}
   Lexbase(const Enum &n): Enum(n) {}
@@ -91,6 +95,8 @@ public:
 
 // This is essentially a repeat of what we did above for Meme.
 class Agentbase: public Enum<agentid> {
+public:
+  virtual ~Agentbase(){}
 protected:
   explicit Agentbase(const int &n): Enum(n) {}
   Agentbase(const Enum &n): Enum(n) {}

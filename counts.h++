@@ -18,7 +18,7 @@ struct Counts {
 };
 
 template<typename T>
-void summarize(Enumvector<T,Counts> &counts) {
+void summarize(const Enumvector<T,Counts> &counts) {
   Counts totcounts;
   for (auto c: counts) totcounts += c;
   std::cout << "Comprehension " << totcounts.mean() << std::endl;

@@ -32,7 +32,7 @@ public:
     return o << std::string(id) << static_cast<int>(e);
   }
   int uniqid() const {return val;}
-  double match(const Enum& m) const {
+  virtual double match(const Enum& m) const {
     return m==*this?1.0-1.0*(n-1)/(n*n):1.0/(n*n);
   }
 protected:
@@ -42,7 +42,7 @@ protected:
       throw badsize(std::string("Size of Enum<")+std::string(id)
 		    + std::string("> not set"));
   }
-  ~Enum(void){}
+  virtual ~Enum(void){}
 private:
   int val;
   Enum(void):val(-1){
