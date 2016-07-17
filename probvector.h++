@@ -11,6 +11,7 @@ static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvect
 template<typename E,typename generator=std::mt19937> class Probvector:
   Enumvector<E,double> {
 public:
+  virtual ~Probvector(void) {}
   Probvector(void) {}
   Probvector(const Enumvector<E,double>& e):
     Enumvector<E,double>(e){normalize();}
@@ -56,7 +57,7 @@ public:
       if(ran <= s[e]) return e;
     return indices(s).back();
   }
-  void mutate(const double sigma, generator &r) {
+  virtual void mutate(const double sigma, generator &r) {
     std::normal_distribution<double> normal(0,sigma);
     for (auto &d: *this)
       d = invprobit(probit(d)+normal(r));
