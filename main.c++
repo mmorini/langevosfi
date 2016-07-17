@@ -1,21 +1,4 @@
-#include <cmath>
-#include <iostream>
-#include <iterator>
-
-static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
-
-#include <random>
-// Everything below uses r as the random number generator.  If we
-// change the type of the generator, then Language and Network (and
-// Probvector if you use it directly) need to be provided that type as
-// an additional parameter.
-std::mt19937 r;
-
-#include "enum.h++"
-#include "network.h++"
-#include "meme.h++"
-#include "lex.h++"
-#include "agent.h++"
+#include "main.h++"
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
 //
@@ -40,18 +23,21 @@ std::mt19937 r;
 //                     --- language is copied. (Returns the Language itself).
 //                     --- Can be applied to const or nonconst
 //
-#include "language.h++"
 // Enumvector<A,B> is like Vector<B>, but indexed by A.
 //
-#include "enumvector.h++"
 // Counts is a misnomer: it actually keeps track of the average
 // overlap between the meme communicated and the meme interpreted.  It
 // is a count only when the overlap is a 0/1 variable.
-#include "counts.h++"
-
 // selfiterator uses C++14 magic to be able to iterate over indices
 // of a vector, ranges of integers, etc.
-#include "selfiterator.h++"
+
+static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
+
+// Everything below uses r as the random number generator.  If we
+// change the type of the generator, then Language and Network (and
+// Probvector if you use it directly) need to be provided that type as
+// an additional parameter.
+std::mt19937 r;
 
 // This is used by Enum template in prints
 constexpr const char memeid [] = "M";
