@@ -1,12 +1,13 @@
 #ifndef PROBVECTOR_HPP
 #define PROBVECTOR_HPP
 
-static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
-
-#include <utility>
-#include <random>
 #include "enumvector.h++"
 #include "myutil.h++"
+#include <utility>
+#include <random>
+
+static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
+
 template<typename E,typename generator=std::mt19937> class Probvector:
   Enumvector<E,double> {
 public:

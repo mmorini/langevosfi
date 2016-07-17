@@ -1,9 +1,9 @@
 #ifndef MYUTIL_HPP
 #define MYUTIL_HPP
 
-static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
-
 #include <cmath>
+
+static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
 const double infinity=1.e100;
 inline auto probit(const double p) {

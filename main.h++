@@ -1,3 +1,6 @@
+#ifndef MAIN_HPP
+#define MAIN_HPP
+
 #include "network.h++"
 #include "enum.h++"
 #include "meme.h++"
@@ -11,3 +14,7 @@
 #include <iostream>
 #include <iterator>
 #include <random>
+
+static const char MAIN_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfiterator.h++: $Id$";
+
+#endif
