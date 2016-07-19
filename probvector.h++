@@ -11,6 +11,8 @@ static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvect
 template<typename E,typename generator=std::mt19937> class Probvector:
   Enumvector<E,double> {
 public:
+  using Generator = generator;
+  using Index = E;
   virtual ~Probvector(void) {}
   Probvector(void) {}
   Probvector(const Enumvector<E,double>& e):

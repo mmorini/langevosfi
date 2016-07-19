@@ -16,7 +16,7 @@ public:
   public:
     virtual const char *what() const noexcept {return msg.c_str();}
     badsize(const std::string &s): msg(s) {}
-    badsize(std::string &&s): msg(std::move(s)) {}
+    badsize(std::string &&s): msg(std::forward<std::string>(s)) {}
     badsize() = delete;
   };
     

@@ -6,18 +6,17 @@
 
 static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
-template<typename Agent,typename generator=std::mt19937>
-class Network: public Probvector<Agent,generator> {
+template<typename Agent,typename probvector=Probvector<Agent,std::mt19937>>
+class Network: public probvector {
 public:
-  Network(const Enumvector<Agent,double>& e):
-    Probvector<Agent>(e){}
-  Network(Enumvector<Agent,double>&& e):
-    Probvector<Agent>(std::forward<decltype(e)>(e)) {}
-  Network(generator &r,const int m=-1): Probvector<Agent>(r,m) {}
+  Network() {}
+  Network(const Enumvector<Agent,double>& e): probvector(e){}
+  Network(Enumvector<Agent,double>&& e): probvector(std::forward<decltype(e)>(e)) {}
+  Network(typename probvector::Generator &r,const int m=-1): probvector(r,m) {}
   virtual ~Network(void) {}
 
-  virtual Agent neighbor(const Agent&,generator &r) const {
-    return Probvector<Agent,generator>::generate(r);
+  virtual Agent neighbor(const Agent&,typename probvector::Generator &r) const {
+    return probvector::generate(r);
   }
   virtual double match(const Agent &a, const Agent &b) const {
     return a.match(b);

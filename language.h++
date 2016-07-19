@@ -10,103 +10,101 @@
 
 static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
 
-template<typename Meme, typename Lexeme, typename generator=std::mt19937>
-class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
+template<typename mprobvector, typename lprobvector>
+class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
  public:
+  using Lexeme = typename lprobvector::Index;
+  using Meme = typename mprobvector::Index;
+  using lgenerator = typename lprobvector::Generator;
+  using mgenerator = typename mprobvector::Generator;
   Language(void) {}
-  Language(const Enumvector<Meme,Probvector<Lexeme,generator>>& e):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(e)
+  Language(const Enumvector<Meme,lprobvector>& e):
+    Enumvector<Meme,lprobvector>(e)
       {extractmarginal();}
-  Language(Enumvector<Meme,Probvector<Lexeme,generator>>&& e):
-    Enumvector<Meme,Probvector<Lexeme,generator>>
+  Language(Enumvector<Meme,lprobvector>&& e):
+    Enumvector<Meme,lprobvector>
     (std::forward<decltype(e)>(e))
       {extractmarginal();}
-  template<typename g>
-    Language(const Probvector<Meme,g> &marg, generator &r, const int mask=-1):
+  Language(const mprobvector &marg, mgenerator &r, const int mask=-1):
     marginal(marg)
       {
 	for(auto &m: *this)
-	  m = Probvector<Lexeme,generator>(r,mask);
+	  m = lprobvector(r,mask);
 	newmarginal();
       }
-  template<typename g>
-    Language(const Probvector<Meme,g> &&marg, generator &r, const int mask=-1):
-    marginal(std::forward<decltype(marg)>(marg))
+  Language(mprobvector &&marg, mgenerator &r, const int mask=-1):
+    marginal(std::forward<mprobvector>(marg))
       {
 	for(auto &m: *this)
-	  m = Probvector<Lexeme,generator>(r,mask);
+	  m = lprobvector(r,mask);
 	newmarginal();
       }
-  template<typename g>
-    Language(const Probvector<Meme,g> &marg, const Language &lang):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(lang),
+  Language(const mprobvector &marg, const Language &lang):
+    Enumvector<Meme,lprobvector>(lang),
     marginal(marg)
       {newmarginal();}
-  template<typename g>
-    Language(const Probvector<Meme,g> &marg, const Language &&lang):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(std::forward<decltype(lang)>(lang)),
+  Language(const mprobvector &marg, Language &&lang):
+    Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
     marginal(marg)
       {newmarginal();}
-  template<typename g>
-    Language(const Probvector<Meme,g> &&marg, const Language &lang):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(lang),
-    marginal(std::forward<decltype(marg)>(marg))
+  Language(mprobvector &&marg, const Language &lang):
+    Enumvector<Meme,lprobvector>(lang),
+    marginal(std::forward<mprobvector>(marg))
       {newmarginal();}
-  template<typename g>
-    Language(const Probvector<Meme,g> &&marg, const Language &&lang):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(std::forward<decltype(lang)>(lang)),
-    marginal(std::forward<decltype(marg)>(marg))
+  Language(mprobvector &&marg, Language &&lang):
+    Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
+    marginal(std::forward<mprobvector>(marg))
       {newmarginal();}
   Language(const Language &lang):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(lang),
+    Enumvector<Meme,lprobvector>(lang),
     marginal(lang.marginal)
       {
-	for (auto a: indices(lang.Cache))
-	  Cache[a]=lang.Cache[a]?new Probvector<Meme,generator>(*lang.Cache[a]):0;
+	for (auto a: indices(lang.cache))
+	  cache[a]=lang.cache[a]?new mprobvector(*lang.cache[a]):0;
       }
   Language(Language &&lang):
-    Enumvector<Meme,Probvector<Lexeme,generator>>(std::forward<decltype(lang)>(lang)),
+    Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
     marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
-    Cache(std::forward<decltype(lang.Cache)>(lang.Cache))
+    cache(std::forward<decltype(lang.cache)>(lang.cache))
       {
 	lang.initCache();
       }
   Language& operator=(const Language & l) {
-    Enumvector<Meme,Probvector<Lexeme,generator>>::operator=(l);
+    Enumvector<Meme,lprobvector>::operator=(l);
     marginal = l.marginal;
     if (cachedead) {
-      Cache = std::move(l.Cache);
+      cache = std::move(l.cache);
       l.initCache();
     } else
       initCache();
     return *this;
   }
   Language& operator=(Language &&l) {
-    Enumvector<Meme,Probvector<Lexeme,generator>>::operator=(std::move(l));
+    Enumvector<Meme,lprobvector>::operator=(std::move(l));
     marginal = std::move(l.marginal);
-    Cache = std::move(l.Cache);
+    cache = std::move(l.cache);
     l.initCache();
     return *this;
   }
   virtual ~Language(void) {deleteCache();}
-  virtual Meme memegen(generator &r) const {
+  virtual Meme memegen(mgenerator &r) const {
     return marginal.generate(r);
   }
-  virtual Meme randommeme(generator &r,
+  virtual Meme randommeme(mgenerator &r,
 			  const Enumvector<Meme,Counts> &counts = Enumvector<Meme,Counts>()) const {
     return memegen(r);
   }
-  virtual Lexeme lexgen(const Meme m, generator &r) const {
+  virtual Lexeme lexgen(const Meme m, lgenerator &r) const {
     return (*this)[m].generate(r);
   }
-  virtual Meme memegen(const Lexeme l, generator &r) const {
+  virtual Meme memegen(const Lexeme l, mgenerator &r) const {
     return Cachelookup(l).generate(r);
   }
-  virtual void mememutate(const double sigma, generator &r) {
+  virtual void mememutate(const double sigma, mgenerator &r) {
     marginal.mutate(sigma,r);
     newmarginal();
   }
-  virtual void lexmutate(const double sigma, generator &r,
+  virtual void lexmutate(const double sigma, lgenerator &r,
 			 const Enumvector<Meme,Counts> &counts = Enumvector<Meme,Counts>()) {
     // for (auto& m: *this)
     //     m.mutate(sigma,r);
@@ -116,7 +114,7 @@ class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
   friend inline auto& operator<< (std::ostream& o, const Language& e) {
     auto oldprec = o.precision(2);
     o<<"\t";
-    for (auto a: indices(e.Cache)) o<<a<<"\t"; o<<std::endl;
+    for (auto a: indices(e.cache)) o<<a<<"\t"; o<<std::endl;
     for (auto a: indices(e)) o << a << "\t" << e[a];
     o.precision(oldprec);
     return o;
@@ -136,34 +134,34 @@ class Language: public Enumvector<Meme,Probvector<Lexeme,generator>> {
   }
   template<typename Network>
   auto transmit(const Network &lexemes,
-	        const Lexeme &l1, generator &r, const Language &) const {
+	        const Lexeme &l1, lgenerator &r, const Language &) const {
     return lexemes.neighbor(l1,r);
   }
 
  private:
-  Probvector<Meme,generator> marginal;
-  const Probvector<Meme,generator>& getmarginal(void) const {
+  mprobvector marginal;
+  const mprobvector& getmarginal(void) const {
     return marginal;
   }
   mutable bool cachedead = false;
-  mutable Enumvector<Lexeme,Probvector<Meme,generator>*> Cache =
-    Enumvector<Lexeme,Probvector<Meme,generator>*>(0);
-  void initCache(void) {
-    for (auto& p: Cache)
+  mutable Enumvector<Lexeme,mprobvector*> cache = static_cast<decltype(cache)>(0);
+  
+  void initCache(void) const {
+    for (auto& p: cache)
       p = 0;
   }
   auto& Cachelookup(const Lexeme l) const {
     cachedead = false;
-    if (!Cache[l]) {
+    if (!cache[l]) {
       Enumvector<Meme,double> p;
       for (auto m: indices(p))
 	p[m] = marginal[m]*(*this)[m][l];
-      Cache[l] = new Probvector<Meme,generator>(std::move(p));
+      cache[l] = new mprobvector(std::move(p));
     }
-    return *Cache[l];
+    return *cache[l];
   }
   void deleteCache(void) const {
-    for (auto& c:Cache) {
+    for (auto& c:cache) {
       if(c!=0) {
 	delete c;
 	c = 0;
