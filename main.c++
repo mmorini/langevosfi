@@ -2,19 +2,18 @@
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
 //
-//       virtual Meme memegen(generator &r) const
+//       virtual Meme memegen(mgenerator &r) const
 //                     --- return a random meme
-//       virtual Lexeme lexgen(const Meme m, generator &r) const
+//       virtual Lexeme lexgen(const Meme m, lgenerator &r) const
 //                     --- given a meme, generate a lex
-//       virtual Meme memegen(const Lexeme l, generator &r) const
+//       virtual Meme memegen(const Lexeme l, mgenerator &r) const
 //                     --- given a lex, generate a meme
-//       virtual void mememutate(const double sigma, generator &r)
+//       virtual void mememutate(const double sigma, mgenerator &r)
 //                     --- Mutate the probability of memes
-//       virtual void lexmutate(const double sigma, generator &r,
+//       virtual void lexmutate(const double sigma, lgenerator &r,
 //                              const Enumvector<Meme,Counts> &counts)
-//                     --- Mutate the language holding the marginals
+//                     --- Mutate the language holding the marginals constant
 //                     --- (i.e., the probability of the memes)
-//                     --- constant
 //                     --- If the last parameter is supplied, can
 //                     --- use it to choose meme whose lex distribution
 //                     --- to mutate. Currently ignored.
@@ -75,7 +74,10 @@ protected:
 // the two memes a and b are.  Both have default implementations.
 class Memes: public Network<Meme<Memebase>> {
 public:
-  Memes(std::mt19937&r): Network(r){}
+  Memes() {}
+  Memes(const Enumvector<Meme<Memebase>,double>& e): Network(e) {}
+  Memes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e)) {}
+  Memes(std::mt19937&r, const int m=-1): Network(r,m){}
 };
 
 // This is essentially a repeat of what we did above for Meme.
@@ -88,7 +90,8 @@ protected:
 };
 class Lexemes: public Network<Lexeme<Lexbase>> {
 public:
-  Lexemes(std::mt19937&r): Network(r){}
+  Lexemes() {}
+  Lexemes(std::mt19937&r, const int m=-1): Network(r,m){}
   Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
   double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
 };
@@ -103,22 +106,23 @@ protected:
 };
 class Agents: public Network<Agent<Agentbase>> {
 public:
-  Agents(std::mt19937&r): Network(r){}
+  Agents(std::mt19937&r, const int m=-1): Network(r,m){}
 };
 
-class AgentLanguage: public Language<Meme<Memebase>,Lexeme<Lexbase>> {
+class AgentLanguage: public Language<Memes,Lexemes> {
 public:
   AgentLanguage(){}
-  AgentLanguage(Memes m,std::mt19937& r):Language(m,r){}
+  AgentLanguage(const Memes m,std::mt19937& r):Language(m,r){}
   AgentLanguage(const Language& l):Language(l) {}
-  AgentLanguage(Language && l): Language(std::move(l)) {}
+  AgentLanguage(Language && l): Language(std::forward<Language>(l)) {}
+  ~AgentLanguage(){}
 };
 
 class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
 public:
   Population(){}
   Population(const Enumvector& e): Enumvector(e) {}
-  Population(Enumvector && e): Enumvector(std::move(e)) {}
+  Population(Enumvector && e): Enumvector(std::forward<Enumvector>(e)) {}
 };
 
 // communicate makes n communication attempts, and returns the

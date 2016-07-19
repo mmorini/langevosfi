@@ -9,6 +9,7 @@ public:
   virtual ~Meme(){}
   explicit Meme(const int&  n):Memebase(n){}
   Meme(const Memebase& m):Memebase(m){}
-  Meme(const typename Memebase::Enum& m): Memebase(m){} 
+  Meme(const typename Memebase::Enum& m): Memebase(m){}
+  Meme() {}
 };
 #endif

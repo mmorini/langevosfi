@@ -49,9 +49,9 @@ public:
   Enumvector(const Enumvector& x, const allocator_type& alloc):
     std::vector<T>(x,alloc) {}
   Enumvector(Enumvector&& x):
-    std::vector<T>(std::forward<decltype(x)>(x)) {}
+    std::vector<T>(std::forward<Enumvector>(x)) {}
   Enumvector(Enumvector&& x, const allocator_type& alloc):
-    std::vector<T>(std::forward<decltype(x)>(x),alloc) {}
+    std::vector<T>(std::forward<Enumvector(x)>(x),alloc) {}
   reference operator[](const E& m){return std::vector<T>::operator[](static_cast<int>(m));}
   const_reference operator[](const E& m) const{
     return std::vector<T>::operator[](static_cast<int>(m));
