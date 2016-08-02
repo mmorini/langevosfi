@@ -108,7 +108,7 @@ public:
   template<typename,typename> friend class Enumvector;
   template<typename,bool> friend class SelfIterator;
   template<typename,bool> friend class Range;
-  template<typename T> friend auto range(const T);
+  // template<typename T> friend auto range(T);
 };
 
 #endif

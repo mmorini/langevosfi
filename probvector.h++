@@ -51,7 +51,7 @@ public:
   auto& norm(void) {
     return weight;
   }
-  template<typename T> friend auto indices(const T &);
+  //template<typename T> friend auto indices(const T &);
   auto generate(generator &r) const {
     setup();
     auto ran = std::generate_canonical<double, 20>(r);

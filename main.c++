@@ -183,7 +183,7 @@ int main(void) {
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
   std::cerr << "Provide unsigned integers and end file to seed random number generator" << std::endl;
-  const std::vector<unsigned int> seed_vector(std::istream_iterator<unsigned int>(std::cin),
+  const std::vector<unsigned int> seed_vector((std::istream_iterator<unsigned int>(std::cin)),
 					      std::istream_iterator<unsigned int>());
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
