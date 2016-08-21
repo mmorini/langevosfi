@@ -60,9 +60,8 @@ public:
     return indices(s).back();
   }
   virtual void mutate(const double sigma, generator &r) {
-    std::normal_distribution<double> normal(0,sigma);
     for (auto &d: *this)
-      d = invprobit(probit(d)+normal(r));
+      d = invprobit(probit(d)+BoxMueller(0,sigma,r));
     normalize(false);
     setupdone = false;
   }
