@@ -54,7 +54,7 @@ public:
   //template<typename T> friend auto indices(const T &);
   auto generate(generator &r) const {
     setup();
-    auto ran = std::generate_canonical<double, 20>(r);
+    const auto ran = std::generate_canonical<double, 20>(r);
     for(auto e: indices(s))
       if(ran <= s[e]) return e;
     return indices(s).back();
