@@ -1,4 +1,4 @@
-main:
+main
 	main.c++: $Id: 4a4f075c31e2919cfeb8397c643e1ad4415786ae $
 	main.h++: $Id: 1d9439e7ebccf824a71ae333abf29c308ebbe766 $
 	selfiterator.h++: $Id: afa1b371ef4b897bca83eeaa4325f0545bf706fe $

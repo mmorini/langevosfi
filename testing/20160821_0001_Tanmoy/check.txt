@@ -9,8 +9,8 @@ main
 	meme.h++: $Id: 2784b0de8b589f76554adc1bbfd1fb3322f6c300 $
 	enum.h++: $Id: 0e2d7da0ffba72dbc04251d09447baabdd9b47c9 $
 	network.h++: $Id: eac51fb06e968170316f54b584aa2b2a1e168f11 $
-	probvector.h++: $Id: 0b31ae18a876a45afafa804b1bc1111508539087 $
-	myutil.h++: $Id: 6ed7590004c43817dab47ae52f8057cb19b0836f $
+	probvector.h++: $Id: 2d35c213256996921aed45e810891f3615620bd3 $
+	myutil.h++: $Id: 2edf6d8246de5783d36f7f09a80bf41f9f9b83e1 $
 	enumvector.h++: $Id: db63042aff05dc2564392912b3cdcc66c251e032 $
 Provide nummemes, numlexes, and numagents (e.g., 10 15 40)
 nummemes  = 10, numlexes  = 15, numagents = 40
