@@ -42,9 +42,6 @@ Random number generator seeded with 123
 
 > (what main; echo 10 15 40 1 100 100 1000 123 | ./main) > check.txt 2>&1
 
-##Note: 
-
-> in order to have git update the what Id checksums, we need to
-commit AND check out to give it a chance to update th checksum.
+##check.txt md5sum: *d991185a60b725f6cf4eac59a5c88f68*
 
 **Match: 20160821_0001_Tanmoy**
