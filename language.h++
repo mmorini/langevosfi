@@ -17,7 +17,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   using Meme = typename mprobvector::Index;
   using lgenerator = typename lprobvector::Generator;
   using mgenerator = typename mprobvector::Generator;
-  Language(void) {}
+  Language(void) {extractmarginal();}
   Language(const Enumvector<Meme,lprobvector>& e):
     Enumvector<Meme,lprobvector>(e)
       {extractmarginal();}
@@ -39,6 +39,22 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
 	  m = lprobvector(r,mask);
 	newmarginal();
       }
+  Language(const mprobvector &marg, const int mask=-1):
+    marginal(marg)
+     {
+       if(mask>0)
+	 for(auto &m: *this)
+	   m = lprobvector(mask);
+       newmarginal();
+     }
+  Language(mprobvector &&marg, const int mask=-1):
+    marginal(std::forward<mprobvector>(marg))
+     {
+       if(mask>0)
+	 for(auto &m: *this)
+	   m = lprobvector(mask);
+       newmarginal();
+     }
   Language(const mprobvector &marg, const Language &lang):
     Enumvector<Meme,lprobvector>(lang),
     marginal(marg)
@@ -170,7 +186,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   }
   void newmarginal() {
     for(auto m: indices(*this))
-      (*this)[m].norm() = marginal[m];
+      (*this)[m].norm() = static_cast<const decltype(marginal)>(marginal)[m];
     deleteCache();
   }
   void extractmarginal() {
