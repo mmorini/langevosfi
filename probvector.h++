@@ -3,18 +3,25 @@
 
 #include "enumvector.h++"
 #include "myutil.h++"
+#include "selfiterator.h++"
 #include <utility>
 #include <random>
 
 static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
 
 template<typename E,typename generator=std::mt19937> class Probvector:
-  Enumvector<E,double> {
+  public Enumvector<E,double> {
 public:
   using Generator = generator;
   using Index = E;
   virtual ~Probvector(void) {}
-  Probvector(void) {}
+  Probvector(const int mask=-1, double norm=1.0):
+    Enumvector<E,double>(mask>0?1:0), weight(norm) {
+    if(mask>0)
+      for(const auto &num: indices(mask,*this))
+	(*this)[num] = 0; 
+    normalize(false);
+  }
   Probvector(const Enumvector<E,double>& e):
     Enumvector<E,double>(e){normalize();}
   Probvector(Enumvector<E,double>&& e):
@@ -28,6 +35,18 @@ public:
       else d = 0;
     }
     normalize(false);
+  }
+  Probvector& cshift(int n=1) {
+    Enumvector<E,double>::cshift(n);
+    return *this;
+  }
+  Probvector& shuffle(generator &g) {
+    Enumvector<E,double>::shuffle(g);
+    return *this;
+  }
+  Probvector& permute(const Enumvector<E,E> &p) {
+    Enumvector<E,double>::permute(p);
+    return *this;
   }
   Probvector& operator=(const Enumvector<E,double>& e) {
     Enumvector<E,double>::operator=(e);
@@ -96,6 +115,15 @@ private:
       s[e]=cumsum += (*this)[e];
     setupdone = true;
   }
+  typename Enumvector<E,double>::reference
+  operator[] (const E& e) {
+    return Enumvector<E,double>::operator[](e);
+  }
 };
+
+template<typename E, typename generator=std::mt19937>
+inline const Probvector<E,generator> unitprob() {
+  return Probvector<E,generator>(unitvec<E,double>());
+}
 
 #endif

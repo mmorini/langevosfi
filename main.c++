@@ -90,8 +90,9 @@ protected:
 };
 class Lexemes: public Network<Lexeme<Lexbase>> {
 public:
-  Lexemes() {}
+  Lexemes(const int m=-1): Network(m) {}
   Lexemes(std::mt19937&r, const int m=-1): Network(r,m){}
+  Lexemes(const Probvector<Lexeme<Lexbase>>& p): Network(p){}
   Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
   double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
 };
@@ -106,23 +107,34 @@ protected:
 };
 class Agents: public Network<Agent<Agentbase>> {
 public:
+  Agents() {}
   Agents(std::mt19937&r, const int m=-1): Network(r,m){}
 };
 
 class AgentLanguage: public Language<Memes,Lexemes> {
 public:
   AgentLanguage(){}
-  AgentLanguage(const Memes m,std::mt19937& r):Language(m,r){}
-  AgentLanguage(const Language& l):Language(l) {}
-  AgentLanguage(Language && l): Language(std::forward<Language>(l)) {}
+  AgentLanguage(const Enumvector<Memes::Index,Lexemes>& e): Language(e) {}
+  AgentLanguage(Enumvector<Memes::Index,Lexemes>&& e): Language(std::forward<decltype(e)>(e)) {}
+  AgentLanguage(const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask){}
+  AgentLanguage(Memes &&m,std::mt19937& r, const int mask=-1):Language(std::forward<decltype(m)>(m),r,mask){}
+  AgentLanguage(const Memes &m, const int mask=-1):Language(m,mask){}
+  AgentLanguage(Memes &&m, const int mask=-1):Language(std::forward<decltype(m)>(m),mask){}
+  AgentLanguage(const Memes &m, const Language &l):Language(m,l){}
+  AgentLanguage(const Memes &m, Language &&l):Language(m,std::forward<decltype(l)>(l)){}
+  AgentLanguage(Memes &&m, const Language &l):Language(std::forward<decltype(m)>(m),l){}
+  AgentLanguage(Memes &&m, Language &&l):Language(std::forward<decltype(m)>(m),std::forward<decltype(l)>(l)){}
+  AgentLanguage(const Language& l, const int cshift=0):Language(l, cshift) {}
+  AgentLanguage(Language && l, const int cshift=0): Language(std::forward<decltype(l)>(l),cshift) {}
+  AgentLanguage(const Language& l, std::mt19937& r): Language(l,r) {}
+  AgentLanguage(Language&& l, std::mt19937& r): Language(std::forward<decltype(l)>(l),r) {}
   ~AgentLanguage(){}
 };
 
 class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
 public:
   Population(){}
-  Population(const Enumvector& e): Enumvector(e) {}
-  Population(Enumvector && e): Enumvector(std::forward<Enumvector>(e)) {}
+  Population(const AgentLanguage &l): Enumvector(l) {}
 };
 
 // communicate makes n communication attempts, and returns the
@@ -161,6 +173,21 @@ int main(void) {
   std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
             << ", numlexes  = " << Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+
+
+  // uniform = 1: completely ambiguous language
+  //          -1: no synonymy
+  //           0: random
+  // uniform != 0 also sets meaning marginals = uniform, and
+  //    equal-weight complete network of agents. (should this be
+  //    a separate parameter?)
+  // syncstart = 1: everyone has same language
+  //            -1: languages rotated
+  //             0: random
+  std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+  const auto uniform = *std::istream_iterator<int>(std::cin);
+  const auto syncstart = *std::istream_iterator<int>(std::cin);
+  std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
   
   // The following two parameters are effectively in the exponent, so careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
@@ -171,12 +198,14 @@ int main(void) {
 
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
-  std::cerr << "Provide inner and outer iteration count (e.g., " <<
+  std::cerr << "Provide inner and outer iteration count, printinterval (e.g., " <<
     8*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn() << " " <<
     3*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn()*
-    Meme<Memebase>::getn()*Meme<Memebase>::getn() << ")" << std::endl;
+    Meme<Memebase>::getn()*Meme<Memebase>::getn() << " " <<
+    1 << ")" << std::endl;
   const auto inner=*std::istream_iterator<int>(std::cin),
-             outer=*std::istream_iterator<int>(std::cin);
+             outer=*std::istream_iterator<int>(std::cin),
+             printinterval = *std::istream_iterator<int>(std::cin);
   std::cout <<   "inner = " << inner
             << ", outer = " << outer << std::endl;
 
@@ -193,15 +222,22 @@ int main(void) {
     
 
   // OK, this generates a random probabilities for the network of memes.
-  Memes memes(r);
-  Lexemes lexemes(r);
-  Agents agents(r);
-  Population population;
+  Memes memes(uniform != 0?Memes():Memes(r));
+  Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
+  Agents agents(uniform != 0?Agents():Agents(r));
+  // Generate an entire population; write it out.
 
-  // Generate an entire population as a set of random languages:
-  // everyone has the same marginals; write it out.
-  for (auto &a: population)
-    a = AgentLanguage(memes,r);
+  // The memes currently can be defaulted in the first two cases below, but trying
+  // to keep it general.  Speed at initialization is unlikely to be an issue
+  Population population(uniform > 0?AgentLanguage(memes):
+			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
+			AgentLanguage(memes,r));
+  if (syncstart < 0)
+    for (const auto a: indices(1,population))
+      population[a].cshift();
+  else if (syncstart == 0)
+    for (auto &a: population)
+      a.permute(r);
   std::cout << "\t" << population;
 
   // Initialize everybodies counts and write out summary.
@@ -213,7 +249,9 @@ int main(void) {
   // communicate, and choose the new or the old language by throwing a
   // random number.
   for (auto rounds: range(outer)) {
-    (void)rounds;
+    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+      std::cout << "Round number " << rounds << std::endl
+		<< "\t" << population;
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
     auto oldpop = population;
@@ -240,7 +278,7 @@ int main(void) {
 	  counts[a] = std::move(oldcounts[a]);
 	}
       }
-    } 
+    }
   }
   std::cout << "\t" << population;
   return 0;
