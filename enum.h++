@@ -35,8 +35,12 @@ public:
   virtual double match(const Enum& m) const {
     return m==*this?1.0-1.0*(n-1)/(n*n):1.0/(n*n);
   }
-protected:
+  auto& operator=(const Enum&m){
+    static_cast<int&>(*this)=static_cast<int>(m);
+    return *this;
+  }
   Enum(const Enum &m):val(static_cast<int>(m)){}
+protected:
   Enum(const int val):val(val){
     if (!n) 
       throw badsize(std::string("Size of Enum<")+std::string(id)
@@ -53,10 +57,6 @@ private:
   static int number(void) {return n;}
   explicit operator int (void) const{return val;}
   explicit operator int& (void) {return val;}
-  auto& operator=(const Enum&m){
-    static_cast<int&>(*this)=static_cast<int>(m);
-    return *this;
-  }
   auto operator+(const Enum &i) const {
     return Enum(static_cast<int>(*this)+static_cast<int>(i));
   }
