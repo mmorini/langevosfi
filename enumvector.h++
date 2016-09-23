@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <ostream>
+#include <algorithm>
 
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 
@@ -52,6 +53,27 @@ public:
     std::vector<T>(std::forward<Enumvector>(x)) {}
   Enumvector(Enumvector&& x, const allocator_type& alloc):
     std::vector<T>(std::forward<Enumvector(x)>(x),alloc) {}
+  Enumvector& cshift(int n=1) {
+    size_t s = E::number();
+    if (s>0) {
+      const Enumvector tmp(std::move(*this));
+      n %= s;
+      for (size_t i=0; i<s; i++)
+	(*this)[static_cast<E>(i)] = std::move(tmp[static_cast<E>((i+n)%s)]);
+    }
+    return *this;
+  }
+  template<typename generator>
+  Enumvector& shuffle(generator &r) {
+    std::shuffle(begin(), end(), r);
+    return *this;
+  }
+  Enumvector& permute(const Enumvector<E,E> &reorder) {
+    const Enumvector tmp(std::move(*this));
+    for (const auto i: indices(reorder))
+      (*this)[i] = std::move(tmp[reorder[i]]);
+    return *this;
+  }
   reference operator[](const E& m){return std::vector<T>::operator[](static_cast<int>(m));}
   const_reference operator[](const E& m) const{
     return std::vector<T>::operator[](static_cast<int>(m));
@@ -66,4 +88,11 @@ public:
   const_reference at(const E& m) const{return std::vector<T>::at(m);}
   void assign(const value_type& val){std::vector<T>::assign(E::number(),val);}
 };
+
+template<typename E, typename T>
+inline const Enumvector<E,T> unitvec() {
+  Enumvector<E,T> res;
+  res[static_cast<E>(0)] = 1;
+  return res;
+}
 #endif
