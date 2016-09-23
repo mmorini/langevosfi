@@ -36,6 +36,18 @@ public:
     }
     normalize(false);
   }
+  Probvector& cshift(int n=1) {
+    Enumvector<E,double>::cshift(n);
+    return *this;
+  }
+  Probvector& shuffle(generator &g) {
+    Enumvector<E,double>::shuffle(g);
+    return *this;
+  }
+  Probvector& permute(const Enumvector<E,E> &p) {
+    Enumvector<E,double>::permute(p);
+    return *this;
+  }
   Probvector& operator=(const Enumvector<E,double>& e) {
     Enumvector<E,double>::operator=(e);
     normalize();
@@ -108,5 +120,10 @@ private:
     return Enumvector<E,double>::operator[](e);
   }
 };
+
+template<typename E, typename generator=std::mt19937>
+inline const Probvector<E,generator> unitprob() {
+  return Probvector<E,generator>(unitvec<E,double>());
+}
 
 #endif

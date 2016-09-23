@@ -71,19 +71,52 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
     marginal(std::forward<mprobvector>(marg))
       {newmarginal();}
-  Language(const Language &lang):
+  Language(const Language &lang, const int shift=0):
     Enumvector<Meme,lprobvector>(lang),
     marginal(lang.marginal)
       {
 	for (auto a: indices(lang.cache))
 	  cache[a]=lang.cache[a]?new mprobvector(*lang.cache[a]):0;
+	cshift(shift);
       }
-  Language(Language &&lang):
+  Language(const Language &lang, lgenerator &g):
+    Enumvector<Meme,lprobvector>(lang),
+    marginal(lang.marginal)
+      {
+	permute(g);
+      }
+  Language(Language &&lang, const int shift=0):
     Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
     marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
     cache(std::forward<decltype(lang.cache)>(lang.cache))
       {
+	cshift(shift);
 	lang.initCache();
+      }
+  Language(Language &&lang, lgenerator &g):
+    Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
+    marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
+    cache(std::forward<decltype(lang.cache)>(lang.cache))
+      {
+	permute(g);
+	lang.initCache();
+      }
+  Language& cshift(const int shift=1) {
+	if (shift != 0) {
+	  for (auto &a: *this)
+	    a.cshift(shift);
+	  cache.cshift(shift);
+	}
+	return *this;
+      }
+  Language& permute(lgenerator &g) {
+    Enumvector<Lexeme,Lexeme> p(static_cast<Lexeme>(0));
+	for (auto a: indices(p)) p[a] = a;
+	p.shuffle(g);
+	for (auto &a: *this)
+	    a.permute(p);
+	cache.permute(p);
+	return *this;
       }
   Language& operator=(const Language & l) {
     Enumvector<Meme,lprobvector>::operator=(l);
@@ -198,5 +231,17 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     newmarginal();
   }
 };
+
+template<typename mprobvector, typename lprobvector>
+inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lprobvector>*r=0) {
+  Language<mprobvector,lprobvector> retval;
+  lprobvector lprob(unitprob<typename lprobvector::Index, typename lprobvector::Generator>());
+  for (auto i: indices(retval)) {
+    retval[i] = lprob;
+    lprob.cshift();
+  }
+  retval.decache();
+  return r?*r = std::move(retval):retval;
+}
 
 #endif
