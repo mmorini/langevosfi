@@ -59,7 +59,7 @@ public:
       const Enumvector tmp(*this);
       n %= s;
       for (size_t i=0; i<s; i++)
-	(*this)[static_cast<E>(i)] = std::move(tmp[static_cast<E>((i+n)%s)]);
+	(*this)[static_cast<E>(static_cast<int>(i))] = std::move(tmp[static_cast<E>(static_cast<int>((i+n)%s))]);
     }
     return *this;
   }
