@@ -121,7 +121,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   Language& operator=(const Language & l) {
     Enumvector<Meme,lprobvector>::operator=(l);
     marginal = l.marginal;
-    if (cachedead) {
+    if (l.cachedead) {
       cache = std::move(l.cache);
       l.initCache();
     } else
