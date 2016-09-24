@@ -58,7 +58,7 @@ public:
     start = o.start; beyond = o.beyond;
     o.start = s; o.beyond = b;
   }
-  void swap(Range& o) {swap(std::move(o));}
+  void swap(Range& o) {swap(static_cast<Range&&>(o));}
 };
 
 template<typename T> auto range(const T begin, const T end) {
