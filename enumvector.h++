@@ -82,7 +82,7 @@ public:
     std::vector<T>::operator=(x); return *this;
   }
   Enumvector& operator= (Enumvector&& x) {
-    std::vector<T>::operator=(std::move(x)); return *this;
+    std::vector<T>::operator=(std::forward<decltype(x)>(x)); return *this;
   }
   reference at(const E& m){return std::vector<T>::at(m);}
   const_reference at(const E& m) const{return std::vector<T>::at(m);}

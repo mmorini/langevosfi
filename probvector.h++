@@ -55,7 +55,7 @@ public:
     return *this;
   }
   Probvector& operator=(Enumvector<E,double>&& e) {
-    Enumvector<E,double>::operator=(std::move(e));
+    Enumvector<E,double>::operator=(std::forward<decltype(e)>(e));
     normalize();
     setupdone=false;
     return *this;
