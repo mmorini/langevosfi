@@ -129,7 +129,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     return *this;
   }
   Language& operator=(Language &&l) {
-    Enumvector<Meme,lprobvector>::operator=(std::move(l));
+    Enumvector<Meme,lprobvector>::operator=(std::forward<decltype(l)>(l));
     marginal = std::move(l.marginal);
     cache = std::move(l.cache);
     l.initCache();
