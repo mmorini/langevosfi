@@ -56,7 +56,7 @@ public:
   Enumvector& cshift(int n=1) {
     size_t s = E::number();
     if (s>0) {
-      const Enumvector tmp(std::move(*this));
+      const Enumvector tmp(*this);
       n %= s;
       for (size_t i=0; i<s; i++)
 	(*this)[static_cast<E>(i)] = std::move(tmp[static_cast<E>((i+n)%s)]);
@@ -69,7 +69,7 @@ public:
     return *this;
   }
   Enumvector& permute(const Enumvector<E,E> &reorder) {
-    const Enumvector tmp(std::move(*this));
+    const Enumvector tmp(*this);
     for (const auto i: indices(reorder))
       (*this)[i] = std::move(tmp[reorder[i]]);
     return *this;
