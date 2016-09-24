@@ -78,6 +78,6 @@ template<typename T> auto indices(const T &o) {
 }
 
 template<typename T> auto indices(size_t s, const T &o) {
-  return range(decltype(o.size())(s),o.size());
+  return range(decltype(o.size())(static_cast<int>(s)),o.size());
 }
 #endif
