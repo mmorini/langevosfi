@@ -237,6 +237,7 @@ template<typename mprobvector, typename lprobvector>
 inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lprobvector>*r=0) {
   Language<mprobvector,lprobvector> retval;
   lprobvector lprob(unitprob<typename lprobvector::Index, typename lprobvector::Generator>());
+  lprob += lprobvector()*(1.0/retval.numsize()/retval.numsize());
   for (auto i: indices(retval)) {
     retval[i] = lprob;
     lprob.cshift();
