@@ -63,6 +63,25 @@ public:
     setupdone=false;
     return *this;
   }
+  Probvector operator*(const double c) const {
+    Probvector r(*this);
+    return r *= c;
+  }
+  Probvector& operator*=(const double c) {
+    weight *= c;
+    return *this;
+  }
+  Probvector& operator+=(const Probvector& e) {
+    for (const auto i: indices(e))
+      (*this)[i] += e.weight/weight * e[i];
+    return *this;
+  }
+  Probvector operator+ (const Probvector& e) const {
+    Probvector r(*this);
+    return r+=e;
+  }
+
+
   typename Enumvector<E,double>::const_reference
   operator[] (const E& e) const {
     return Enumvector<E,double>::operator[](e);
