@@ -163,7 +163,8 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   friend inline auto& operator<< (std::ostream& o, const Language& e) {
     auto oldprec = o.precision(2);
     o<<"\t";
-    for (auto a: indices(e.cache)) o<<a<<"\t"; o<<std::endl;
+    for (auto a: indices(e.cache)) o<<a<<"\t";
+    o<<std::endl;
     for (auto a: indices(e)) o << a << "\t" << e[a];
     o.precision(oldprec);
     return o;
