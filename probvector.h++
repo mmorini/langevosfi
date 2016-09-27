@@ -38,14 +38,17 @@ public:
   }
   Probvector& cshift(int n=1) {
     Enumvector<E,double>::cshift(n);
+    setupdone=false;
     return *this;
   }
   Probvector& shuffle(generator &g) {
     Enumvector<E,double>::shuffle(g);
+    setupdone=false;
     return *this;
   }
   Probvector& permute(const Enumvector<E,E> &p) {
     Enumvector<E,double>::permute(p);
+    setupdone=false;
     return *this;
   }
   Probvector& operator=(const Enumvector<E,double>& e) {
