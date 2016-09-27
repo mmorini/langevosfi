@@ -6,6 +6,14 @@
 
 static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
+/*
+
+This file uses some code from the http://en.cppreference.com/  That code was copylefted under the following terms.
+
+The content is licensed under Creative Commons Attribution-Sharealike 3.0 Unported License (CC-BY-SA) and by the GNU Free Documentation License (GFDL) (unversioned, with no invariant sections, front-cover texts, or back-cover texts). That means that you can use this site in almost any way you like, including mirroring, copying, translating, etc. All we would ask is to provide link back to cppreference.com so that people know where to get the most up-to-date content. In addition to that, any modified content should be released under a equivalent license so that everyone could benefit from the modified versions.
+
+*/
+
 constexpr const double infinity=1.e100;
 inline auto probit(const double p) {
   return p<=0.0?-infinity:p>=1.0?infinity:log(p/(1-p));
