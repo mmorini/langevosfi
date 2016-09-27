@@ -1,0 +1,1888 @@
+nummemes  = 10, numlexes  = 15, numagents = 40
+uniform = -1 syncstart = -1
+mutrate = 1, penalty = 100
+inner = 100, outer = 1000
+Random number generator seeded with 
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+	
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.901
+Comprehension 0.829
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.838
+Comprehension 0.901
+Comprehension 0.901
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.901
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.901
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.811
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.892
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.802
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.811
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.811
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.91
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.901
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.838
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.829
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.901
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.901
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.901
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.829
+Comprehension 0.865
+Comprehension 0.91
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.892
+Comprehension 0.892
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.829
+Comprehension 0.856
+Comprehension 0.829
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.829
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.793
+Comprehension 0.838
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.91
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.82
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.901
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.802
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.838
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.82
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.82
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.901
+Comprehension 0.838
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.829
+Comprehension 0.82
+Comprehension 0.883
+Comprehension 0.901
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.82
+Comprehension 0.829
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.829
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.811
+Comprehension 0.892
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.901
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.82
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.829
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.829
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.892
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.91
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.901
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.82
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.811
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.811
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.829
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.829
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.91
+Comprehension 0.901
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.838
+Comprehension 0.847
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.829
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.802
+Comprehension 0.874
+Comprehension 0.82
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.847
+Comprehension 0.829
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.91
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.82
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.829
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.901
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.829
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.901
+Comprehension 0.883
+Comprehension 0.829
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.901
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.829
+Comprehension 0.892
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.82
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.829
+Comprehension 0.892
+Comprehension 0.901
+Comprehension 0.874
+Comprehension 0.838
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.838
+Comprehension 0.892
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.883
+Comprehension 0.856
+Comprehension 0.829
+Comprehension 0.838
+Comprehension 0.91
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.856
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.82
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.82
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.883
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.874
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.838
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.874
+Comprehension 0.847
+Comprehension 0.856
+Comprehension 0.82
+Comprehension 0.874
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.856
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.865
+Comprehension 0.838
+Comprehension 0.883
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.901
+Comprehension 0.892
+Comprehension 0.865
+Comprehension 0.874
+Comprehension 0.874
+Comprehension 0.865
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+		L0	L1	L2	L3	L4	L5	L6	L7	L8	L9	L10	L11	L12	L13	L14	
+M0	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	
+M1	0.1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	
+M2	0.1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	
+M3	0.1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	
+M4	0.1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	
+M5	0.1	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
+M6	0.1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
+M7	0.1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
+M8	0.1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	
+M9	0.1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	
+	
