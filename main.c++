@@ -207,7 +207,9 @@ int main(void) {
              outer=*std::istream_iterator<int>(std::cin),
              printinterval = *std::istream_iterator<int>(std::cin);
   std::cout <<   "inner = " << inner
-            << ", outer = " << outer << std::endl;
+            << ", outer = " << outer
+	    << ", printinterval = " << printinterval
+	    << std::endl;
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
