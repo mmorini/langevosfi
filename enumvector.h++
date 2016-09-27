@@ -5,6 +5,7 @@
 #include <utility>
 #include <ostream>
 #include <algorithm>
+#include "myutil.h++"
 
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 
@@ -65,7 +66,7 @@ public:
   }
   template<typename generator>
   Enumvector& shuffle(generator &r) {
-    std::shuffle(begin(), end(), r);
+    myshuffle(begin(), end(), r);
     return *this;
   }
   Enumvector& permute(const Enumvector<E,E> &reorder) {
