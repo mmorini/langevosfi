@@ -234,10 +234,11 @@ int main(void) {
   Population population(uniform > 0?AgentLanguage(memes):
 			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
 			AgentLanguage(memes,r));
-  if (syncstart < 0)
-    for (const auto a: indices(1,population))
-      population[a].cshift();
-  else if (syncstart == 0)
+  if (syncstart < 0) {
+    int c=0;
+    for (auto &a: population)
+      a.cshift(c++);
+  } else if (syncstart == 0)
     for (auto &a: population)
       a.permute(r);
   std::cout << "\t" << population;
