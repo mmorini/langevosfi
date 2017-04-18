@@ -143,7 +143,7 @@ public:
 // marginal of its language, choose a lex according to its own
 // language, send it to a random neighbor, who interprets it according
 // to her own (presumably different) language.
-auto communicate(const Agents &agents,
+Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
 		 const Population &population,
@@ -234,12 +234,12 @@ int main(void) {
   Population population(uniform > 0?AgentLanguage(memes):
 			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
 			AgentLanguage(memes,r));
-  if (syncstart < 0) {
-    int c=0;
-    for (auto &a: population)
-      a.cshift(c++);
-  } else if (syncstart == 0)
-    for (auto &a: population)
+   if (syncstart < 0) {
+     int c=0;
+     for (auto &a: population)
+       a.cshift(c++);
+   } else if (syncstart == 0)
+     for (auto &a: population)
       a.permute(r);
   std::cout << "\t" << population;
 

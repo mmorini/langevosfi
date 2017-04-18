@@ -1,5 +1,7 @@
 #"@(#)Makefile $Id$"
-CXXFLAGS += -std=c++14 -O4 -pedantic -Wall
+# CXXFLAGS += -std=c++14
+CXXFLAGS += -std=c++11
+CXXFLAGS += -O4 -pedantic -Wall
 ETAGS = etags
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \

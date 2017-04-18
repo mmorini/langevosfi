@@ -17,18 +17,18 @@ public:
   T operator*(void) const {return Increasing?value+0:value-1;}
   SelfIterator operator+(const T &i) const {return Increasing?value+i:value-i;}
   SelfIterator operator-(const T &i) const {return Increasing?value-i:value+i;}
-  auto& operator++(void) {Increasing?value++:value--; return *this;}
-  auto operator++(int) {auto ret(*this); Increasing?value++:value--; return ret;}
-  auto& operator--(void) {Increasing?value--:value++; return *this;}
-  auto operator--(int) {auto ret(*this); Increasing?value--:value++; return ret;}
-  auto& operator+=(const T &i) {Increasing?value+=i:value-=i; return *this;}
-  auto& operator-=(const T &i) {Increasing?value-=i:value+=i; return *this;}
-  auto operator<(const SelfIterator other) const {return Increasing?value < other.value:other.value<value;}
-  auto operator>(const SelfIterator other) const {return Increasing?value > other.value:other.value>value;}
-  auto operator<=(const SelfIterator other) const {return !(Increasing?value > other.value:other.value > value);}
-  auto operator>=(const SelfIterator other) const {return !(Increasing?value < other.value:other.value < value);}
-  auto operator==(const SelfIterator other) const {return value == other.value;}
-  auto operator!=(const SelfIterator other) const {return value != other.value;}
+  std::iterator<std::random_access_iterator_tag,T>& operator++(void) {Increasing?value++:value--; return *this;}
+  std::iterator<std::random_access_iterator_tag,T> operator++(int) {auto ret(*this); Increasing?value++:value--; return ret;}
+  std::iterator<std::random_access_iterator_tag,T>& operator--(void) {Increasing?value--:value++; return *this;}
+  std::iterator<std::random_access_iterator_tag,T> operator--(int) {auto ret(*this); Increasing?value--:value++; return ret;}
+  std::iterator<std::random_access_iterator_tag,T>& operator+=(const T &i) {Increasing?value+=i:value-=i; return *this;}
+  std::iterator<std::random_access_iterator_tag,T>& operator-=(const T &i) {Increasing?value-=i:value+=i; return *this;}
+  bool operator<(const SelfIterator other) const {return Increasing?value < other.value:other.value<value;}
+  bool operator>(const SelfIterator other) const {return Increasing?value > other.value:other.value>value;}
+  bool operator<=(const SelfIterator other) const {return !(Increasing?value > other.value:other.value > value);}
+  bool operator>=(const SelfIterator other) const {return !(Increasing?value < other.value:other.value < value);}
+  bool operator==(const SelfIterator other) const {return value == other.value;}
+  bool operator!=(const SelfIterator other) const {return value != other.value;}
 };
 
 template<typename T, bool Increasing> class Range {
@@ -48,7 +48,7 @@ public:
   const_iterator cend(void) const {return beyond;}
   const_reverse_iterator crbegin(void) const {return cend();}
   const_reverse_iterator crend(void) const {return cbegin();}
-  auto empty() const {return Increasing?start >= beyond:start<=beyond;}
+  bool empty() const {return Increasing?start >= beyond:start<=beyond;}
   const_reference operator[] (const T &i) const {return start+i;}
   const_reference at (const T &i) const {return start+i;} 
   const_reference front (void) const {return start;}
@@ -61,23 +61,25 @@ public:
   void swap(Range& o) {swap(static_cast<Range&&>(o));}
 };
 
-template<typename T> auto range(const T begin, const T end) {
+template<typename T> Range<T,true> range(const T begin, const T end) {
   return Range<T,true>(begin,end);
 }
 
-template<typename T> auto range(const T end) {
+template<typename T> Range<T,true> range(const T end) {
   return range(static_cast<T>(0), end);
 }
 
-template<typename T> auto rrange(const T begin, const T end=0) {
+template<typename T> Range<T,false> rrange(const T begin, const T end=0) {
   return Range<T,false>(begin,end);
 }
 
-template<typename T> auto indices(const T &o) {
+template<typename T> auto indices(const T &o)
+  -> decltype(range(o.size())) {
   return range(o.size());
 }
 
-template<typename T> auto indices(size_t s, const T &o) {
+template<typename T> auto indices(size_t s, const T &o)
+  -> decltype(range(o.size())) {  
   return range(decltype(o.size())(static_cast<int>(s)),o.size());
 }
 #endif
