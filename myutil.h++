@@ -6,11 +6,11 @@
 
 static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
-constexpr const double infinity=1.e100;
-inline auto probit(const double p) {
+const double infinity=1.e100;
+inline double probit(const double p) {
   return p<=0.0?-infinity:p>=1.0?infinity:log(p/(1-p));
 }
-inline auto invprobit(const double probit) {
+inline double invprobit(const double probit) {
   return probit<=-infinity?0:probit>=infinity?1:
     1/(1+exp(-probit));
 }
@@ -36,7 +36,7 @@ double BoxMueller(const double mu, const double sigma, generator &r)
     }
   while ( s <= epsilon || s >= 1 );
 
-  const auto m = sqrt(-2*log(s)/s);
+  const double m = sqrt(-2*log(s)/s);
 
   z0 = u1 * m;
   z1 = u2 * m;
@@ -45,7 +45,7 @@ double BoxMueller(const double mu, const double sigma, generator &r)
 
 template<class RandomIt, class UniformRandomBitGenerator>
 void myshuffle(RandomIt first, RandomIt last,
-	       UniformRandomBitGenerator&& g)
+	       UniformRandomBitGenerator& g)
 {
   const auto n = last - first;
   for (auto i = n-1; i > 0; --i) {

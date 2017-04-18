@@ -86,14 +86,15 @@ public:
   operator[] (const E& e) const {
     return Enumvector<E,double>::operator[](e);
   }
-  auto& norm(void) const {
+  double& norm(void) const {
     return weight;
   }
-  auto& norm(void) {
+  double& norm(void) {
     return weight;
   }
   //template<typename T> friend auto indices(const T &);
-  auto generate(generator &r) const {
+  E generate(generator &r) const
+  {
     setup();
     const auto ran = std::generate_canonical<double, 20>(r);
     for(auto e: indices(s))
@@ -106,14 +107,14 @@ public:
     normalize(false);
     setupdone = false;
   }
-  auto entropy(bool weighted=false) {
-    auto retval = 0.0;
+  double entropy(bool weighted=false) {
+    double retval = 0.0;
     for (auto p: *this)
       if (p>0.0) retval += p*log(p);
     if(weighted) retval *= weight;
     return retval;
   }
-  friend inline auto& operator<< (std::ostream& o, const Probvector& e) {
+  friend inline std::ostream& operator<< (std::ostream& o, const Probvector& e) {
     o << e.weight << "\t";
     return o << Enumvector<E,double>(e);
   }

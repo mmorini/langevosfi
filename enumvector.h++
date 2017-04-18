@@ -36,7 +36,7 @@ public:
   using std::vector<T>::data;
   using std::vector<T>::swap;
   using std::vector<T>::get_allocator;
-  friend inline auto& operator<< (std::ostream& o, const Enumvector& e) {
+  friend inline std::ostream& operator<< (std::ostream& o, const Enumvector& e) {
     for (auto a: e) o << a << "\t";
     return o << std::endl;
   }
