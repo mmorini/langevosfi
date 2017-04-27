@@ -143,12 +143,12 @@ public:
 // marginal of its language, choose a lex according to its own
 // language, send it to a random neighbor, who interprets it according
 // to her own (presumably different) language.
-Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &agents,
+Enumvector<Agent<Agentbase>,Experience<Meme,Lexeme>> communicate(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
 		 const Population &population,
 		 const int n) {
-  Enumvector<Agent<Agentbase>,Counts> retval;
+  Enumvector<Agent<Agentbase>,Experience<Meme,Lexeme>> retval;
   for (auto rounds: range(n)) {
     (void)rounds;
     const Agent<Agentbase> &a1(agents.generate(r));
@@ -157,7 +157,7 @@ Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &agents,
     const Agent<Agentbase> &a2(agents.neighbor(a1,r));
     const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
     const Meme<Memebase> &m2(population[a2].memegen(l2,r));
-    retval[a1]+=population[a1].match(memes,m1,m2,population[a2]);
+    retval[a1].increase_association( population[a1].match(memes,m1,m2,population[a2]) );
   }
   return retval;
 }
