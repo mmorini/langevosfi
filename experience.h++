@@ -1,8 +1,8 @@
 #ifndef EXPERIENCE_HPP
 #define EXPERIENCE_HPP
 
-#include <pair>
-#include <unordered_map>
+#include <utility>
+#include <map>
 
 #include "enumvector.h++"
 #include <iostream>
@@ -23,45 +23,67 @@
 template <typename Meme, typename Lexeme> // It has to be a template cos we don't know what Meme and Lexeme are yet
 class Experience {
 
-  // Use a hashmap so we don't need to keep massive arrays hanging around unneccesarily 
-  using keytype = std::pair<Meme,Lexeme>;
-  std::unordered_map<keytype, double> association;
+	using keytype = std::pair<Meme,Lexeme>;
+	std::map<keytype, double> association;
   
 public:
 
-  /* To maintain compatibility with Counts, we include these public fields... */
-  double success = 0;
-  int tries = 0;
+	/* To maintain compatibility with Counts, we include these public fields... */
+	double success = 0;
+	int tries = 0;
 
-  /* ...and this public function */
-  double mean(void) const {return success/tries;}
+	/* ...and this public function */
+	double mean(void) const {return success/tries;}
 
-  /* Increase the meme-lexeme association by a certain amount; no doubt Tanmoy would overload
-     lots of operators to allow for a terser syntax */
-  void increase_association(Meme& m, Lexeme& l, double by) {
-  	auto key = make_pair(m,l);
-  	if(association.count(key) > 0) {
-  		association[pair] += by;
-  	} else {
-  		association[pair] = by;
-  	}
-  	++tries;
-  	success+=by;
-  }
+	/* Increase the meme-lexeme association by a certain amount; no doubt Tanmoy would overload
+	 lots of operators to allow for a terser syntax */
+	void increase_association(Meme& m, Lexeme& l, double by) {
+		auto key = std::make_pair(m,l);
+		if(association.count(key) > 0) {
+			association[key] += by;
+		} else {
+			association[key] = by;
+		}
+		++tries;
+		success+=by;
+	}
   
+	/* Accessing the underlying experience. We can do this in two ways; either query
+	 * a specific Meme,Lexeme pair... (We do this the Java way with a getter rather than the [] operator which can only take one arg)
+	 */
+	double get_association(Meme& m, Lexeme& l) {
+		auto key = std::make_pair(m,l);
+		return association.count(key) > 0 ? association[key] : 0.0;
+	}   		
+  
+  	/* ... or with an iterator 
+  	 * for now I do the laziest thing which is to expose the underlying map iterator. We could
+  	 * write our own custom iterator to provide a tuple <Meme,Lexeme,double> but time is short.
+  	 *
+  	 * We access the Meme, Lexeme and association as iterator.first.first, iterator.first.second and iterator.second
+  	 * respectively 
+  	 **/
+  	typename decltype(association)::const_iterator begin() const {
+  		return association.begin();
+  	}
+  	
+  	typename decltype(association)::const_iterator end() const  {
+  		return association.end();
+  	}
+  	  
 };
 
 // This gives the overall mean success rate for a bunch of experiences
 // Not sure how useful this will be
-template<typename T>
+template<typename T, typename Experience>
 void summarize(const Enumvector<T,Experience> &experiences) {
-  double success;
-  int tries;
-  for (Experience e: experiences) {
-  	success += e.success;
-  	tries += e.tries;
-  }
-  std::cout << "Comprehension " << (success/tries) << std::endl;
+	double success;
+	int tries;
+	for (Experience e: experiences) {
+		success += e.success;
+		tries += e.tries;
+	}
+	std::cout << "Comprehension " << (success/tries) << std::endl;
 }
 
 #endif
