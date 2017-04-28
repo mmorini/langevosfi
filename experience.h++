@@ -23,13 +23,13 @@
 template <typename Meme, typename Lexeme> // It has to be a template cos we don't know what Meme and Lexeme are yet
 class Experience {
 
-	using keytype = std::pair<Meme,Lexeme>;
+	using keytype = std::pair<const Meme,const Lexeme>;
 	std::map<keytype, double> association;
   
 public:
 
 	/* To maintain compatibility with Counts, we include these public fields... */
-	double success = 0;
+	double success = 0.0;
 	int tries = 0;
 
 	/* ...and this public function */
@@ -37,7 +37,7 @@ public:
 
 	/* Increase the meme-lexeme association by a certain amount; no doubt Tanmoy would overload
 	 lots of operators to allow for a terser syntax */
-	void increase_association(Meme& m, Lexeme& l, double by) {
+	void increase_association(const Meme& m, const Lexeme& l, double by) {
 		auto key = std::make_pair(m,l);
 		if(association.count(key) > 0) {
 			association[key] += by;
@@ -51,7 +51,7 @@ public:
 	/* Accessing the underlying experience. We can do this in two ways; either query
 	 * a specific Meme,Lexeme pair... (We do this the Java way with a getter rather than the [] operator which can only take one arg)
 	 */
-	double get_association(Meme& m, Lexeme& l) {
+	double get_association(const Meme& m, const Lexeme& l) {
 		auto key = std::make_pair(m,l);
 		return association.count(key) > 0 ? association[key] : 0.0;
 	}   		
@@ -77,8 +77,8 @@ public:
 // Not sure how useful this will be
 template<typename T, typename Experience>
 void summarize(const Enumvector<T,Experience> &experiences) {
-	double success;
-	int tries;
+	double success = 0.0;
+	int tries = 0;
 	for (Experience e: experiences) {
 		success += e.success;
 		tries += e.tries;
