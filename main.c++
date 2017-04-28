@@ -80,6 +80,27 @@ public:
   Memes(std::mt19937&r, const int m=-1): Network(r,m){}
 };
 
+class BitstringMemes: public Network<Meme<Memebase>> {
+	unsigned bits = count_bits(Meme<Memebase>::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
+public:
+	BitstringMemes() {}
+    BitstringMemes(const Enumvector<Meme<Memebase>,double>& e): Network(e) {}
+	BitstringMemes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e)) {}
+	BitstringMemes(std::mt19937&r, const int m=-1): Network(r,m){}
+    
+	// Neighbor: we randomly tweak a bit
+	Meme<Memebase> neighbor(const Meme<Memebase>& m, std::mt19937& r) const {
+		// TODO: randomly tweak a bit
+		return m;
+	}
+	
+	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
+	double match(const Meme<Memebase>& a, const Meme<Memebase>& b) const {
+		return static_cast<double>(common_bits(static_cast<int>(a), static_cast<int>(b))) / static_cast<double>(bits);
+	}
+};
+
+
 // This is essentially a repeat of what we did above for Meme.
 class Lexbase: public Enum<lexid> {
 public:
@@ -143,12 +164,15 @@ public:
 // marginal of its language, choose a lex according to its own
 // language, send it to a random neighbor, who interprets it according
 // to her own (presumably different) language.
-Enumvector<Agent<Agentbase>,Experience<Meme,Lexeme>> communicate(const Agents &agents,
+
+// In model A we keep track of the overall success of our interactions.
+// The 'match' function tells us how successful this is, and we just keep adding the success.
+Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communicate_modelA(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
 		 const Population &population,
 		 const int n) {
-  Enumvector<Agent<Agentbase>,Experience<Meme,Lexeme>> retval;
+  Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> retval;
   for (auto rounds: range(n)) {
     (void)rounds;
     const Agent<Agentbase> &a1(agents.generate(r));
@@ -157,10 +181,39 @@ Enumvector<Agent<Agentbase>,Experience<Meme,Lexeme>> communicate(const Agents &a
     const Agent<Agentbase> &a2(agents.neighbor(a1,r));
     const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
     const Meme<Memebase> &m2(population[a2].memegen(l2,r));
-    retval[a1].increase_association( population[a1].match(memes,m1,m2,population[a2]) );
+    retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
   }
   return retval;
 }
+
+// In model B we instead randomly increase / decrease the association. We interpret match
+// as a number m between 0 and 1 (perfect mismatch -> perfect match).
+// The signalling agent records a success w.p m^2; a failure w.p. (1-m)^2 and does nothing otherwise
+// (Other rules are available, but I like this one)
+Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communicate_modelB(const Agents &agents,
+		 const Lexemes &lexemes,
+		 const Memes &memes,
+		 const Population &population,
+		 const int n) {
+  Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> retval;
+  for (auto rounds: range(n)) {
+    (void)rounds;
+    const Agent<Agentbase> &a1(agents.generate(r));
+    const Meme<Memebase> &m1(population[a1].memegen(r));
+    const Lexeme<Lexbase> &l1(population[a1].lexgen(m1,r));
+    const Agent<Agentbase> &a2(agents.neighbor(a1,r));
+    const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
+    const Meme<Memebase> &m2(population[a2].memegen(l2,r));
+    const auto ran = std::generate_canonical<double, 20>(r);
+    const double match = population[a1].match(memes,m1,m2,population[a2]);
+    if(ran < match*match)
+	    retval[a1].increase_association( m1, l1, 1.0 );
+	else if( ran < 1.0 - 2.0 * match * (1.0 - match) ) 
+	    retval[a1].increase_association( m1, l1, -1.0 );	
+  }
+  return retval;
+}
+
 
 // OK now the main loop
 int main(void) {
@@ -211,6 +264,13 @@ int main(void) {
 	    << ", printinterval = " << printinterval
 	    << std::endl;
 
+  // Choose an inner loop communication update rule
+  std::function<decltype(communicate_modelA)> communicate = nullptr;
+
+  // TODO: allow modelB to be activated!  
+  if(true) communicate = communicate_modelA;
+  else communicate = communicate_modelB;
+
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
   std::cerr << "Provide unsigned integers and end file to seed random number generator" << std::endl;
@@ -221,7 +281,14 @@ int main(void) {
   std::cout << "Random number generator seeded with ";
   for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
+  
     
+  // TODO: What we would like to be able to do is to construct the memes object so
+  // that is either of type Memes or BitstringMemes. I'm not sure how to do this in
+  // C++ without using a pointer to the common base class... Another problem is
+  // that AgentLanguage expects the Meme space to be Memes and not something else.
+  // We will probably need Tanmoy to work out the optimum way to tweak the code
+  // to allow for this possibility.
 
   // OK, this generates a random probabilities for the network of memes.
   Memes memes(uniform != 0?Memes():Memes(r));
@@ -243,6 +310,9 @@ int main(void) {
       a.permute(r);
   std::cout << "\t" << population;
 
+  // TODO: generalise the outer loop to allow the update rule to be replaced with
+  // reinforcement learning
+
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
@@ -255,6 +325,7 @@ int main(void) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
+
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
     auto oldpop = population;

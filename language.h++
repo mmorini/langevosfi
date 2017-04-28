@@ -3,7 +3,7 @@
 
 #include "enumvector.h++"
 #include "probvector.h++"
-#include "counts.h++"
+#include "experience.h++"
 #include <utility>
 #include <random>
 #include <iostream>
@@ -140,7 +140,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     return marginal.generate(r);
   }
   virtual Meme randommeme(mgenerator &r,
-			  const Enumvector<Meme,Counts> &counts = Enumvector<Meme,Counts>()) const {
+			  const Enumvector<Meme,Experience<Meme,Lexeme>> &experiences = Enumvector<Meme,Experience<Meme,Lexeme>>()) const {
     return memegen(r);
   }
   virtual Lexeme lexgen(const Meme m, lgenerator &r) const {
@@ -154,7 +154,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     newmarginal();
   }
   virtual void lexmutate(const double sigma, lgenerator &r,
-			 const Enumvector<Meme,Counts> &counts = Enumvector<Meme,Counts>()) {
+			 const Enumvector<Meme,Experience<Meme,Lexeme>> &experiences = Enumvector<Meme,Experience<Meme,Lexeme>>()) {
     // for (auto& m: *this)
     //     m.mutate(sigma,r);
     (*this)[randommeme(r)].mutate(sigma,r);
