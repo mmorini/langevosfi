@@ -140,7 +140,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     return marginal.generate(r);
   }
   virtual Meme randommeme(mgenerator &r,
-			  const Enumvector<Meme,Experience<Meme,Lexeme>> &experiences = Enumvector<Meme,Experience<Meme,Lexeme>>()) const {
+			  const Experience<Meme,Lexeme> &experiences = Experience<Meme,Lexeme>()) const {
     return memegen(r);
   }
   virtual Lexeme lexgen(const Meme m, lgenerator &r) const {
@@ -154,7 +154,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     newmarginal();
   }
   virtual void lexmutate(const double sigma, lgenerator &r,
-			 const Enumvector<Meme,Experience<Meme,Lexeme>> &experiences = Enumvector<Meme,Experience<Meme,Lexeme>>()) {
+			 const Experience<Meme,Lexeme> &experience = Experience<Meme,Lexeme>()) {
     // for (auto& m: *this)
     //     m.mutate(sigma,r);
     (*this)[randommeme(r)].mutate(sigma,r);
@@ -211,6 +211,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     }
     return *cache[l];
   }
+protected: // Expose this to subclasses to use in lexmutate
   void deleteCache(void) const {
     for (auto& c:cache) {
       if(c!=0) {
@@ -219,6 +220,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
       }
     }
   }
+private:
   void newmarginal() {
     for(auto m: indices(*this))
       (*this)[m].norm() = static_cast<const decltype(marginal)>(marginal)[m];

@@ -90,8 +90,13 @@ public:
     
 	// Neighbor: we randomly tweak a bit
 	Meme<Memebase> neighbor(const Meme<Memebase>& m, std::mt19937& r) const {
-		// TODO: randomly tweak a bit
-		return m;
+		std::uniform_int_distribution<> bit_twiddler(0, bits-1);
+		int was = static_cast<int>(m);
+		int is;
+		do {
+			is = was ^ (1 << bit_twiddler(r));
+		} while(is >= Meme<Memebase>::getn());
+		return Meme<Memebase>(is);
 	}
 	
 	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
@@ -150,6 +155,30 @@ public:
   AgentLanguage(const Language& l, std::mt19937& r): Language(l,r) {}
   AgentLanguage(Language&& l, std::mt19937& r): Language(std::forward<decltype(l)>(l),r) {}
   ~AgentLanguage(){}
+};
+
+/**
+  * This overrides the lexmutate method to do the reinforcement learning based on some experience.
+  * We need another parameter lambda which is the scale of the reinforcement learning
+  */
+class ReinforcementLearnerLanguage: public Language<BitstringMemes,Lexemes> {
+   double lambda;
+public:
+	ReinforcementLearnerLanguage(double lambda) : lambda(lambda) { }
+	ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const int mask=-1):  Language(m,mask), lambda(lambda) {}
+	ReinforcementLearnerLanguage(double lambda, const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask), lambda(lambda) {}
+    ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const Language &l):Language(m,l), lambda(lambda) {}
+
+	
+	void lexmutate(const double sigma, Lexemes::Generator &r,
+			 const Experience<Language::Meme,Language::Lexeme> &experience = Experience<Language::Meme,Language::Lexeme>()) {
+		// Go through each association and boost/suppress by the relevant amount
+		for(auto& assn : experience) {
+			// assn.first.first = meme, assn.first.second = lexeme, assn.second = boost amount
+			(*this)[assn.first.first].reinforce(assn.first.second, lambda * assn.second);
+		}
+		deleteCache();
+  }
 };
 
 class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
@@ -216,7 +245,13 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
 
 
 // OK now the main loop
-int main(void) {
+
+// This is Tanmoy's original Model A
+// I have to create a separate function for Model B as I don't yet understand how
+// to hot swap types (e.g. between Memes and BitstringMemes) in heavily templated code
+// like this.
+
+int runModelA(void) {
 
   // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
@@ -267,7 +302,6 @@ int main(void) {
   // Choose an inner loop communication update rule
   std::function<decltype(communicate_modelA)> communicate = nullptr;
 
-  // TODO: allow modelB to be activated!  
   if(true) communicate = communicate_modelA;
   else communicate = communicate_modelB;
 
@@ -282,14 +316,6 @@ int main(void) {
   for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
   
-    
-  // TODO: What we would like to be able to do is to construct the memes object so
-  // that is either of type Memes or BitstringMemes. I'm not sure how to do this in
-  // C++ without using a pointer to the common base class... Another problem is
-  // that AgentLanguage expects the Meme space to be Memes and not something else.
-  // We will probably need Tanmoy to work out the optimum way to tweak the code
-  // to allow for this possibility.
-
   // OK, this generates a random probabilities for the network of memes.
   Memes memes(uniform != 0?Memes():Memes(r));
   Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
@@ -309,9 +335,6 @@ int main(void) {
      for (auto &a: population)
       a.permute(r);
   std::cout << "\t" << population;
-
-  // TODO: generalise the outer loop to allow the update rule to be replaced with
-  // reinforcement learning
 
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
@@ -357,3 +380,130 @@ int main(void) {
   std::cout << "\t" << population;
   return 0;
 }
+
+// I'm not exactly sure how to unify the two models when heavily templated types are 
+// different from one implementation to the next. If we were using runtime polymorphism
+// I would know what to do (use pointers to common base classes) but with compile-time
+// polymorphism (templates) I'm not sure what to do. So I've just C&Ped the model A loop
+// and marked where it is different.
+
+// TODO: Check that references have been used consistently and there isn't any object
+// slicing going on that stops the virtual functions from being called.
+
+// Then, assuming this checks out ok, hand over to Tanmoy to find a way that allows
+// us to hot-swap the various different components (e.g., one could do modelB communicate rule
+// with modelA accept/reject; or put bitstrings into modelA etc)
+
+int runModelB(void) {
+  // language = nummemes*numlexes, population = numagents
+  std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
+  Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
+  Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
+  Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+  std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
+            << ", numlexes  = " << Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+
+
+  // uniform = 1: completely ambiguous language
+  //          -1: no synonymy
+  //           0: random
+  // uniform != 0 also sets meaning marginals = uniform, and
+  //    equal-weight complete network of agents. (should this be
+  //    a separate parameter?)
+  // syncstart = 1: everyone has same language
+  //            -1: languages rotated
+  //             0: random
+  std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+  const auto uniform = *std::istream_iterator<int>(std::cin);
+  const auto syncstart = *std::istream_iterator<int>(std::cin);
+  std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
+  
+  // The following two parameters are effectively in the exponent, so careful
+  std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
+  const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
+  const auto penalty = *std::istream_iterator<double>(std::cin); /* 100 */
+  std::cout <<   "mutrate = " << mutrate
+            << ", penalty = " << penalty << std::endl;
+
+  // Inner iterations measures the fitness of the language
+  // Outer iterations converges
+  std::cerr << "Provide inner and outer iteration count, printinterval (e.g., " <<
+    8*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn() << " " <<
+    3*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn()*
+    Meme<Memebase>::getn()*Meme<Memebase>::getn() << " " <<
+    1 << ")" << std::endl;
+  const auto inner=*std::istream_iterator<int>(std::cin),
+             outer=*std::istream_iterator<int>(std::cin),
+             printinterval = *std::istream_iterator<int>(std::cin);
+  std::cout <<   "inner = " << inner
+            << ", outer = " << outer
+	    << ", printinterval = " << printinterval
+	    << std::endl;
+
+  // Choose an inner loop communication update rule
+  std::function<decltype(communicate_modelA)> communicate = nullptr;
+
+  if(false) communicate = communicate_modelA;
+  else communicate = communicate_modelB; // DIFFERENT
+
+  // Seed the random number generator. Needs a sequence of unsigned intergers
+  // to generate a seed.
+  std::cerr << "Provide unsigned integers and end file to seed random number generator" << std::endl;
+  const std::vector<unsigned int> seed_vector((std::istream_iterator<unsigned int>(std::cin)),
+					      std::istream_iterator<unsigned int>());
+  std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
+  r.seed(seeds);
+  std::cout << "Random number generator seeded with ";
+  for (const auto s: seed_vector) std::cout << s << " ";
+  std::cout << std::endl;
+  
+  // OK, this generates a random probabilities for the network of memes.
+  BitstringMemes memes(uniform != 0?BitstringMemes():BitstringMemes(r)); // DIFFERENT: The type of memes is different in ModelA
+  Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
+  Agents agents(uniform != 0?Agents():Agents(r));
+  // Generate an entire population; write it out.
+
+  // The memes currently can be defaulted in the first two cases below, but trying
+  // to keep it general.  Speed at initialization is unlikely to be an issue
+  
+  double lambda = 0.01; // DIFFERENT
+  
+  Population population(uniform > 0?ReinforcementLearnerLanguage(lambda, memes):
+			uniform < 0?ReinforcementLearnerLanguage(lambda, memes,unitlang((ReinforcementLearnerLanguage*)0)):
+			ReinforcementLearnerLanguage(lambda, memes,r)); // DIFFERENT: The type of all the languages differs wrt model A
+   if (syncstart < 0) {
+     int c=0;
+     for (auto &a: population)
+       a.cshift(c++);
+   } else if (syncstart == 0)
+     for (auto &a: population)
+      a.permute(r);
+  std::cout << "\t" << population;
+
+  // For the number of outer loops, use the language for a round, and then
+  // apply reinforcement learning to the resulting experience
+  
+  for (auto rounds: range(outer)) {
+    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+      std::cout << "Round number " << rounds << std::endl
+		<< "\t" << population;
+		
+	// DIFFERENT: In model B we don't need to keep track of the old language
+
+    // Generate new counts and write out summary.
+    auto counts=communicate(agents,lexemes,memes,population,inner); summarize(counts);
+
+    // DIFFERENT: In model B we always mutate the lexicon
+    for (auto a: indices(counts)) population[a].lexmutate(mutrate,r,counts[a]);
+
+  }
+  std::cout << "\t" << population;
+  return 0;
+}
+
+
+int main(void) {
+	return runModelA();
+}
+	
