@@ -107,6 +107,14 @@ public:
     normalize(false);
     setupdone = false;
   }
+  void reinforce(const E&e, double by) {
+  	(*this)[e] += by * ((*this)[e])*(1.0-(*this)[e]);
+  	// If by < 1 we stay in the allowed range; but we'll apply a [0,1] cap
+  	if((*this)[e] < 0.0) (*this)[e] = 0.0;
+  	else if((*this)[e] > 1.0) (*this)[e] = 1.0;
+  	normalize(false);
+  	setupdone = false;
+  }
   double entropy(bool weighted=false) {
     double retval = 0.0;
     for (auto p: *this)
