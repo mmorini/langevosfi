@@ -423,12 +423,11 @@ int runModelB(void) {
   const auto syncstart = *std::istream_iterator<int>(std::cin);
   std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
   
-  // The following two parameters are effectively in the exponent, so careful
-  std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
-  const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
-  const auto penalty = *std::istream_iterator<double>(std::cin); /* 100 */
-  std::cout <<   "mutrate = " << mutrate
-            << ", penalty = " << penalty << std::endl;
+  // Reinforcement learning parameter -- DIFFERENT
+  
+  std::cerr << "Provide reinforcement learning rate (e.g., 0.01)" << std::endl;
+  const auto lambda = *std::istream_iterator<double>(std::cin); /* 0.01 */
+  std::cout <<   "lambda = " << lambda << std::endl;
 
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
@@ -466,7 +465,6 @@ int runModelB(void) {
   // The memes currently can be defaulted in the first two cases below, but trying
   // to keep it general.  Speed at initialization is unlikely to be an issue
   
-  double lambda = 0.01; // DIFFERENT
   
   Population<ReinforcementLearnerLanguage> population(uniform > 0?ReinforcementLearnerLanguage(lambda, memes):
 			uniform < 0?ReinforcementLearnerLanguage(lambda, memes,unitlang((ReinforcementLearnerLanguage*)0)):
@@ -495,7 +493,7 @@ int runModelB(void) {
     auto counts=communicate_modelB(agents,lexemes,memes,population,inner); summarize(counts);
 
     // DIFFERENT: In model B we always mutate the lexicon
-    for (auto a: indices(counts)) population[a].lexmutate(mutrate,r,counts[a]);
+    for (auto a: indices(counts)) population[a].lexmutate(0.0,r,counts[a]); // SIGMA unused here, but we could make it more random...
 
   }
   std::cout << "\t" << population;
@@ -503,7 +501,11 @@ int runModelB(void) {
 }
 
 
-int main(void) {
-	return runModelB();
+int main(int argc, char* argv[]) {
+	if(argc>1 && (argv[1][0] == 'b' || argv[1][0] == 'B')) {
+		std::cout << "Running model B (untested)" << std::endl;
+		return runModelB();
+	}
+	else return runModelA();
 }
 	
