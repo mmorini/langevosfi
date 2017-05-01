@@ -101,7 +101,7 @@ public:
 	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
 	double match(const Meme<Memebase>& a, const Meme<Memebase>& b) const override {
 // 		std::cout << "BitstringMemes::match" << std::endl;
-		return static_cast<double>(common_bits(static_cast<int>(a), static_cast<int>(b))) / static_cast<double>(bits);
+		return static_cast<double>(common_bits(static_cast<int>(a), static_cast<int>(b),bits)) / static_cast<double>(bits);
 	}
 };
 

@@ -54,12 +54,12 @@ void myshuffle(RandomIt first, RandomIt last,
   }
 }
 
-// Determine how many bits two integers have in common
+// Determine how many of the first n bits differ between two integers
 // (If they don't come unsigned, they will me made unsigned)
-unsigned common_bits(int b1, int b2) { 
+unsigned common_bits(int b1, int b2, int n) { 
 	unsigned x = static_cast<unsigned>(b1) ^ static_cast<unsigned>(b2); // Find the xor of b1, b2; now count the number of bits that are clear
 	unsigned m = 0;
-	while(x) {
+	for(int i=0; i<n; i++) {
 		if((x & 1) == 0) m++;
 		x>>=1; // Shift one bit to the right
 	} // There is probably a more efficient way to do this...
