@@ -465,7 +465,6 @@ int runModelB(void) {
   // The memes currently can be defaulted in the first two cases below, but trying
   // to keep it general.  Speed at initialization is unlikely to be an issue
   
-  
   Population<ReinforcementLearnerLanguage> population(uniform > 0?ReinforcementLearnerLanguage(lambda, memes):
 			uniform < 0?ReinforcementLearnerLanguage(lambda, memes,unitlang((ReinforcementLearnerLanguage*)0)):
 			ReinforcementLearnerLanguage(lambda, memes,r)); // DIFFERENT: The type of all the languages differs wrt model A, and so does population
@@ -480,7 +479,6 @@ int runModelB(void) {
 
   // For the number of outer loops, use the language for a round, and then
   // apply reinforcement learning to the resulting experience
-  
   
   for (auto rounds: range(outer)) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
@@ -503,7 +501,7 @@ int runModelB(void) {
 
 int main(int argc, char* argv[]) {
 	if(argc>1 && (argv[1][0] == 'b' || argv[1][0] == 'B')) {
-		std::cout << "Running model B (untested)" << std::endl;
+		std::cout << "model = B" << std::endl;
 		return runModelB();
 	}
 	else return runModelA();
