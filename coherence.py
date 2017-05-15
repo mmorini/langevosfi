@@ -6,6 +6,7 @@ import numpy as np, re, matplotlib.pyplot as plt, argparse
 
 parser = argparse.ArgumentParser(description='Plot coherence measures')
 parser.add_argument('infile', help='Input filename')
+parser.add_argument('--figure', '-F', help='Plot to figure file')
 args = parser.parse_args()
 
 
@@ -91,4 +92,8 @@ plt.plot(times, ocohere, label='other')
 plt.xlabel('Time (sweeps)')
 plt.ylabel('Coherence')
 plt.legend()
-plt.show()
+
+if args.figure is not None:
+    plt.savefig(args.figure)
+else:
+    plt.show()
