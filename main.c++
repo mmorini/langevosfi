@@ -1,4 +1,5 @@
 #include "main.h++"
+#include <fstream>
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
 //
@@ -165,6 +166,20 @@ Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &agents,
 // OK now the main loop
 int main(void) {
 
+  //sets import or export wish
+  std::cerr << "Do you wish to import [i] or export [e] the language or neither [n]?" << std::endl; 
+  std::string mode;
+  std::cin >> mode;
+  std::cout << "mode: " << mode << std::endl;
+  
+  std::string filename;
+
+  if(mode=="e" || mode=="i"){
+	std::cerr<< "Provide file name";
+	std::cin >> filename;
+	std::cout << "Provided file is: " << filename << std::endl;
+  }
+
   // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
   Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
@@ -173,7 +188,7 @@ int main(void) {
   std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
             << ", numlexes  = " << Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
-
+  
 
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
@@ -189,6 +204,7 @@ int main(void) {
   const auto syncstart = *std::istream_iterator<int>(std::cin);
   std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
   
+
   // The following two parameters are effectively in the exponent, so careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
   const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
@@ -213,16 +229,17 @@ int main(void) {
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
-  std::cerr << "Provide unsigned integers and end file to seed random number generator" << std::endl;
+  std::cerr << "Provide unsigned integers seed random number generator (e.g. 1 19)" << std::endl;
   const std::vector<unsigned int> seed_vector((std::istream_iterator<unsigned int>(std::cin)),
-					      std::istream_iterator<unsigned int>());
+					      std::istream_iterator<unsigned int>(std::cin));
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
   for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
-    
+  
 
+  //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
   Memes memes(uniform != 0?Memes():Memes(r));
   Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
@@ -243,9 +260,18 @@ int main(void) {
       a.permute(r);
   std::cout << "\t" << population;
 
+
+
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
+
+  if(mode=="e"){
+  //write initial lang to file
+  std::ofstream file;
+  file.open(filename);
+  file << "\t" << population;
+  }
 
   // For the number of outer loops, store the oldlanguage in a
   // temporary, mutate the language holding marginals fixed,
