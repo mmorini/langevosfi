@@ -266,11 +266,12 @@ int main(void) {
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
-  if(mode=="e"){
-  //write initial lang to file
   std::ofstream file;
   file.open(filename);
-  file << "\t" << population;
+
+  if(mode=="e"){
+  //write initial lang to file
+  file << "0\t" << population;
   }
 
   // For the number of outer loops, store the oldlanguage in a
@@ -278,9 +279,12 @@ int main(void) {
   // communicate, and choose the new or the old language by throwing a
   // random number.
   for (auto rounds: range(outer)) {
-    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0){
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
+      if(mode=="e")
+        file << rounds+"\t" << population;
+    }
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
     auto oldpop = population;
