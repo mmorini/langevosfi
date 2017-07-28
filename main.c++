@@ -175,11 +175,12 @@ int main(void) {
   std::string filename;
 
   if(mode=="e" || mode=="i"){
-	std::cerr<< "Provide file name";
+	std::cerr << "Provide file name " << std::endl;
 	std::cin >> filename;
 	std::cout << "Provided file is: " << filename << std::endl;
   }
 
+  // for import: leave maybe? Or maybe have it in the first line of the file?
   // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
   Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
@@ -190,6 +191,7 @@ int main(void) {
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   
 
+  // not neccessary when language is imported?
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
   //           0: random
@@ -271,6 +273,9 @@ int main(void) {
 
   if(mode=="e"){
   //write initial lang to file
+  file << "nummemes  = " << Meme<Memebase>::getn()
+            << ", numlexes  = " << Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   file << "0\t" << population;
   }
 
@@ -283,7 +288,7 @@ int main(void) {
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
       if(mode=="e")
-        file << rounds+"\t" << population;
+        file << rounds << "\t" << population;
     }
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
@@ -314,5 +319,7 @@ int main(void) {
     }
   }
   std::cout << "\t" << population;
+  if(mode=="e")
+    file << "final\t" << population;
   return 0;
 }
