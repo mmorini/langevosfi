@@ -10,6 +10,7 @@
 #include "enumvector.h++"
 #include "counts.h++"
 #include "selfiterator.h++"
+#include "main_decls.h++"
 #include <cmath>
 #include <iostream>
 #include <iterator>
