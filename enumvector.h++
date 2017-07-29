@@ -5,11 +5,16 @@
 #include <utility>
 #include <ostream>
 #include <algorithm>
+#include <iterator>
 #include "myutil.h++"
 
-static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
+#include <iostream>
 
+static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 template<typename E,typename T> class Enumvector: std::vector<T> {
+private:
+  template<typename D, typename P, typename R>
+  static bool checktype(const std::iterator<std::input_iterator_tag,T,D,P,R> &i) {}
 public:
   using typename std::vector<T>::value_type;
   using typename std::vector<T>::allocator_type;
@@ -37,7 +42,7 @@ public:
   using std::vector<T>::swap;
   using std::vector<T>::get_allocator;
   friend inline auto& operator<< (std::ostream& o, const Enumvector& e) {
-    for (auto a: e) o << a << "\t";
+    std::copy(e.cbegin(), e.cend(), std::ostream_iterator<T>(o,"\t"));
     return o << std::endl;
   }
   E size(void) const {return static_cast<E>(E::number());}
@@ -54,6 +59,15 @@ public:
     std::vector<T>(std::forward<Enumvector>(x)) {}
   Enumvector(Enumvector&& x, const allocator_type& alloc):
     std::vector<T>(std::forward<Enumvector(x)>(x),alloc) {}
+  template<typename input_iterator>
+  Enumvector(input_iterator i, decltype(checktype(i)) check=true):
+    std::vector<T>(E::number()) {
+    bool first = true;
+    for(auto &e: static_cast<std::vector<T>&>(*this)) {
+      e = *(first?((first=false),i):++i); // Can't do *i++ which may set failbit at end
+    }
+  }
+#define ENUMVEC_HAS_ITER_CONSTR
   Enumvector& cshift(int n=1) {
     size_t s = E::number();
     if (s>0) {

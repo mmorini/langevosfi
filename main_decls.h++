@@ -1,7 +1,7 @@
 #ifndef MAIN_DECLS_HPP
 #define MAIN_DECLS_HPP
 
-#include main.h++
+#include "main.h++"
 
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
@@ -139,6 +139,8 @@ class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
 public:
   Population(){}
   Population(const AgentLanguage &l): Enumvector(l) {}
+  Population(const Enumvector& e): Enumvector(e) {}
+  Population(Enumvector&& e): Enumvector(std::forward<decltype(e)>(e)) {}
 };
 
 auto communicate(const Agents &, const Lexemes &, const Memes &,
