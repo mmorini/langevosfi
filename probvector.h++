@@ -113,10 +113,6 @@ public:
     if(weighted) retval *= weight;
     return retval;
   }
-  friend inline auto& operator<< (std::ostream& o, const Probvector& e) {
-    o << e.weight << "\t";
-    return o << Enumvector<E,double>(e);
-  }
 private:
   double weight = 1.0;
   mutable bool setupdone = false;
