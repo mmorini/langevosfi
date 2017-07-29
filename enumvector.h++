@@ -3,12 +3,10 @@
 
 #include <vector>
 #include <utility>
-#include <ostream>
 #include <algorithm>
 #include <iterator>
+#include <functional>
 #include "myutil.h++"
-
-#include <iostream>
 
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 template<typename E,typename T> class Enumvector: std::vector<T> {
@@ -98,6 +96,12 @@ public:
   reference at(const E& m){return std::vector<T>::at(m);}
   const_reference at(const E& m) const{return std::vector<T>::at(m);}
   void assign(const value_type& val){std::vector<T>::assign(E::number(),val);}
+  template<typename T2>
+  auto map(const std::function<T2(const T&)> &f) {
+    Enumvector<E,T2> r;
+    for (const auto &i: indices(r)) r[i] = f((*this)[i]);
+    return r;
+  }
 };
 
 template<typename E, typename T>
