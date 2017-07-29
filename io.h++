@@ -54,7 +54,7 @@ template<typename m, typename l>
 auto& operator>>(std::istream& i, Language<m,l>& lang) {
   std::string tmp;
   Enumvector<typename m::Index,l> e;
-  getline(i, tmp); // should check tmp is names of lexes
+  for (auto j: range(l::Index::getn())) i>>tmp; // should check tmp is names of lexes
   for (auto &v: e) {
     i>>tmp>>v; // should check tmp is name of the memes in order
     getline(i, tmp);
@@ -86,8 +86,6 @@ int main(void) {
   Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
   Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
   Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
-  std::string str; getline(std::cin, str); // important that langugae read starts
-					   // at the begining of a line
   std::cout << Population((std::istream_iterator<AgentLanguage>(std::cin))); 
   // Note double parantheses above required by C++ grammar when a constructor
   // with one parameter constructs something.
