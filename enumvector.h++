@@ -41,10 +41,6 @@ public:
   using std::vector<T>::data;
   using std::vector<T>::swap;
   using std::vector<T>::get_allocator;
-  friend inline auto& operator<< (std::ostream& o, const Enumvector& e) {
-    std::copy(e.cbegin(), e.cend(), std::ostream_iterator<T>(o,"\t"));
-    return o << std::endl;
-  }
   E size(void) const {return static_cast<E>(E::number());}
   int numsize(void) const {return E::number();}
   explicit Enumvector(const allocator_type& alloc=allocator_type()):
