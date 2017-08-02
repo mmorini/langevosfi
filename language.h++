@@ -118,7 +118,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
 	cache.permute(p);
 	return *this;
       }
-  Language& operator=(const Language & l) {
+  virtual Language& operator=(const Language & l) {
     Enumvector<Meme,lprobvector>::operator=(l);
     marginal = l.marginal;
     if (l.cachedead) {
@@ -128,11 +128,21 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
       initCache();
     return *this;
   }
-  Language& operator=(Language &&l) {
+  virtual Language& operator=(Language &&l) {
     Enumvector<Meme,lprobvector>::operator=(std::forward<decltype(l)>(l));
     marginal = std::move(l.marginal);
     cache = std::move(l.cache);
     l.initCache();
+    return *this;
+  }
+  virtual Language& operator=(Enumvector<Meme,lprobvector>&& e) {
+    Enumvector<Meme,lprobvector>::operator=(std::forward<decltype(e)>(e));
+    extractmarginal();
+    return *this;
+  }
+  virtual Language& operator=(const Enumvector<Meme,lprobvector>& e) {
+    Enumvector<Meme,lprobvector>::operator=(e);
+    extractmarginal();
     return *this;
   }
   virtual ~Language(void) {deleteCache();}
@@ -159,15 +169,6 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     //     m.mutate(sigma,r);
     (*this)[randommeme(r)].mutate(sigma,r);
     deleteCache();
-  }
-  friend inline auto& operator<< (std::ostream& o, const Language& e) {
-    auto oldprec = o.precision(2);
-    o<<"\t\t";
-    for (auto a: indices(e.cache)) o<<a<<"\t";
-    o<<std::endl;
-    for (auto a: indices(e)) o << a << "\t" << e[a];
-    o.precision(oldprec);
-    return o;
   }
   virtual const Language& decache(void) const {
     cachedead = true;

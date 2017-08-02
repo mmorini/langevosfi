@@ -22,11 +22,11 @@ public:
 	(*this)[num] = 0; 
     normalize(false);
   }
-  Probvector(const Enumvector<E,double>& e):
-    Enumvector<E,double>(e){normalize();}
-  Probvector(Enumvector<E,double>&& e):
+  Probvector(const Enumvector<E,double>& e, bool unnorm=true):
+    Enumvector<E,double>(e){normalize(unnorm);}
+  Probvector(Enumvector<E,double>&& e, bool unnorm=true):
     Enumvector<E,double>(std::forward<decltype(e)>(e))
-  {normalize();}
+  {normalize(unnorm);}
   Probvector(generator &r,const int mask= -1,double norm=1.0):weight(norm) {
     int num = 0;
     for(auto &d: *this) {
@@ -36,6 +36,10 @@ public:
     }
     normalize(false);
   }
+  Probvector(const Probvector&) = default;
+  Probvector(Probvector&&p): Enumvector<E,double>(static_cast<Enumvector<E,double>&&>(p)),
+			     weight(p.weight), setupdone(p.setupdone), s(std::move(p.s)) {}
+
   Probvector& cshift(int n=1) {
     Enumvector<E,double>::cshift(n);
     setupdone=false;
@@ -51,27 +55,29 @@ public:
     setupdone=false;
     return *this;
   }
-  Probvector& operator=(const Enumvector<E,double>& e) {
+  virtual Probvector& operator=(const Enumvector<E,double>& e) {
     Enumvector<E,double>::operator=(e);
     normalize();
     setupdone=false;
     return *this;
   }
-  Probvector& operator=(Enumvector<E,double>&& e) {
+  virtual Probvector& operator=(Enumvector<E,double>&& e) {
     Enumvector<E,double>::operator=(std::forward<decltype(e)>(e));
     normalize();
     setupdone=false;
     return *this;
   }
+  virtual Probvector& operator=(const Probvector&) = default;
+  virtual Probvector& operator=(Probvector&&) = default;
   Probvector operator*(const double c) const {
     Probvector r(*this);
     return r *= c;
   }
-  Probvector& operator*=(const double c) {
+  virtual Probvector& operator*=(const double c) {
     weight *= c;
     return *this;
   }
-  Probvector& operator+=(const Probvector& e) {
+  virtual Probvector& operator+=(const Probvector& e) {
     for (const auto i: indices(e))
       (*this)[i] += e.weight/weight * e[i];
     return *this;
@@ -86,7 +92,7 @@ public:
   operator[] (const E& e) const {
     return Enumvector<E,double>::operator[](e);
   }
-  auto& norm(void) const {
+  double norm(void) const {
     return weight;
   }
   auto& norm(void) {
