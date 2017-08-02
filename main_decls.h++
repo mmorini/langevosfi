@@ -43,14 +43,9 @@ static const char MAIN_DECLS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)main_dec
 std::mt19937 r;
 
 // This is used by Enum template in prints
-constexpr const char memeid [] = "M";
-constexpr const char lexid[] = "L";
-constexpr const char agentid[] = "A";
-
-// Define the variables holding the sizes.
-template<> int Enum<memeid>::n = 0;
-template<> int Enum<lexid>::n = 0;
-template<> int Enum<agentid>::n = 0;
+extern const char memeid [];
+extern const char lexid[];
+extern const char agentid[];
 
 // meme.h++ extends Memebase to define Meme.  So, define this class
 // anyhow.  The rest of the program assumes that it publicly derives

@@ -2,6 +2,15 @@
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
+// This is used by Enum template in prints
+extern constexpr const char memeid [] = "M";
+extern constexpr const char lexid[] = "L";
+extern constexpr const char agentid[] = "A";
+// Define the variables holding the sizes.
+template<> int Enum<memeid>::n = 0;
+template<> int Enum<lexid>::n = 0;
+template<> int Enum<agentid>::n = 0;
+
 // All the classes used are defined in main_decls.h++ (which is included via main.h++)
 
 // communicate makes n communication attempts, and returns the

@@ -130,6 +130,15 @@ auto& operator>> (std::istream& i, Network<A,P>& n) {
 
 #include "main.h++"
 
+// This is used by Enum template in prints
+extern constexpr const char memeid [] = "M";
+extern constexpr const char lexid[] = "L";
+extern constexpr const char agentid[] = "A";
+// Define the variables holding the sizes.
+template<> int Enum<memeid>::n = 0;
+template<> int Enum<lexid>::n = 0;
+template<> int Enum<agentid>::n = 0;
+
 int main(void) {
 
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
