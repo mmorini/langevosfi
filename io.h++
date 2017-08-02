@@ -4,64 +4,114 @@
 #include "enumvector.h++"
 #include "probvector.h++"
 #include "language.h++"
+#include "network.h++"
 #include <iterator>
+#include <type_traits>
 
 static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
 
-template<typename E, typename T>
+template<typename E=void>
+static std::false_type has_Probvector_base(const volatile void*);
+
+template<typename E, typename G>
+static std::true_type has_Probvector_base(const volatile Probvector<E,G>*);
+
+template<typename E, typename G>
+static Probvector<E,G> get_Probvector_base(Probvector<E,G>&);
+
+template<typename E, typename G>
+static Probvector<E,G> get_Probvector_base(Probvector<E,G>&&);
+
+template<typename E, typename G>
+static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
+
+template<typename E, typename T, std::enable_if_t<!decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
 auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
   std::copy(e.cbegin(), e.cend(), std::ostream_iterator<T>(o,"\t"));
   return o << std::endl;
 }
 
-template<typename E, typename T>
+template<typename E, typename T, std::enable_if_t<!decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
 auto& operator>>(std::istream& i, Enumvector<E,T>& e) {
-  e = Enumvector<E,T>(std::istream_iterator<T>(i));
-  // we could make it ignore everything till end of line: that will
-  // make it consistent with the print out.  Usually it is a bad idea
-  // to force newlines. In any case if it is needed:
-  // std::string s; getline(i,s); // check s is blank
+  e = Enumvector<E,T>(std::istream_iterator<T>(i)); // virtual assignment
   return i;
 }
 
 template<typename E, typename G>
 auto& operator<< (std::ostream& o, const Probvector<E,G>& e) {
   o << e.norm() << "\t";
-  return o << Enumvector<E,double>(e);
+  return o << static_cast<const Enumvector<E,double>>(e);
 }
 
 template<typename E, typename G>
 auto& operator>>(std::istream& i, Probvector<E,G>& p) {
   const auto w(*std::istream_iterator<double>(i));
-  p = *std::istream_iterator<Enumvector<E,double>>(i);
+  p = *std::istream_iterator<Enumvector<E,double>>(i); // virtual assignment
   p *= w;
   return i;
 }
 
-template<typename m, typename l>
-auto& operator<< (std::ostream& o, const Language<m,l>& e) {
+template<typename E, typename T, std::enable_if_t<decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
+auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
   o<<"\t\t";
-  for (auto a: indices(e.cache)) o<<a<<"\t";
+  for (const auto &a: indices(e.front())) o<<a<<"\t";
   o<<std::endl;
-  for (auto a: indices(e)) o << a << "\t" << e[a];
+  // The casts is to make sure that we are talking about the probvector base of T and not for example the whole T
+  // which may be a network or some such thing!
+  for (const auto& a: indices(e)) o << a << "\t" << static_cast<typename std::add_lvalue_reference<decltype(get_Probvector_base(e[a]))>::type>(e[a]);
   o.precision(oldprec);
   return o;
 }
 
-template<typename m, typename l>
-auto& operator>>(std::istream& i, Language<m,l>& lang) {
+template<typename E, typename T, std::enable_if_t<decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
+auto& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial specialization
+  // Don't construct directly in ee! Need virtual assignment to avoid slicing.
+  Enumvector<E,T> e; 
   std::string tmp;
-  Enumvector<typename m::Index,l> e;
-  for (auto j: range(l::Index::getn())) i>>tmp; // should check tmp is names of lexes
-  for (auto &v: e) {
-    i>>tmp>>v; // should check tmp is name of the memes in order
-    getline(i, tmp);
+  for (auto a: indices(e.front())) {
+    i>>tmp; // should check tmp is E of B
   }
-  lang = std::move(e);
+  for (auto &vv: e) {
+    // Note that T could be things like Lexemes when we are reading in a Language.
+    // and Lexemes are a whole network.  But, this is supposed to read only the
+    // probabilities, not the network.  So, we need this subterfuge.
+    decltype(get_Probvector_base(std::declval<T>())) v;
+    i>>tmp>>v; // should check tmp is E
+    vv = v;
+  }
+  ee = std::move(e); // virtual assignment
   return i;
 }
+
+template<typename E, typename G>
+Probvector<E,G> probbase(const Probvector<E,G>&);
+
+template<typename M, typename L>
+auto& operator<< (std::ostream& o, const Language<M,L>& e) { // partial specialization
+  return o << static_cast<const Enumvector<typename M::Index,L>&>(e);
+}
+
+template<typename M, typename L>
+auto& operator>> (std::istream& i, Language<M,L>& e) { // partial specialization
+  return i >> static_cast<Enumvector<typename M::Index,L>&>(e);
+       // relies on virtual =
+}
+
+template<typename A, typename P>
+auto& operator<< (std::ostream& o, const Network<A,P>& n) {
+  return o << n.getmatrix();
+}
+
+template<typename A, typename P>
+auto& operator>> (std::istream& i, Network<A,P>& n) {
+  typename Network<A,P>::AdjacencyMatrix a;
+  i >> a;
+  n = Network<A,P>(std::move(a)); // virtual =
+  return i;
+}
+
 #ifdef TEST_IO
 
 // Compile test_io as 

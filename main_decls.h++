@@ -82,6 +82,7 @@ public:
   Memes(const Enumvector<Meme<Memebase>,double>& e): Network(e) {}
   Memes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e)) {}
   Memes(std::mt19937&r, const int m=-1): Network(r,m){}
+  // If slicing is an issue, define the virtual = operators
 };
 
 // This is essentially a repeat of what we did above for Meme.
@@ -99,6 +100,7 @@ public:
   Lexemes(const Probvector<Lexeme<Lexbase>>& p): Network(p){}
   Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
   double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
+  // If slicing is an issue, define the virtual = operators
 };
 
 // This is essentially a repeat of what we did above for Meme.
@@ -113,6 +115,7 @@ class Agents: public Network<Agent<Agentbase>> {
 public:
   Agents() {}
   Agents(std::mt19937&r, const int m=-1): Network(r,m){}
+  // If slicing is an issue, define the virtual = operators
 };
 
 class AgentLanguage: public Language<Memes,Lexemes> {

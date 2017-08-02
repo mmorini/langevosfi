@@ -87,19 +87,19 @@ public:
   const_reference operator[](const E& m) const{
     return std::vector<T>::operator[](static_cast<int>(m));
   }
-  Enumvector& operator= (const Enumvector& x) {
+  virtual Enumvector& operator= (const Enumvector& x) {
     std::vector<T>::operator=(x); return *this;
   }
-  Enumvector& operator= (Enumvector&& x) {
+  virtual Enumvector& operator= (Enumvector&& x) {
     std::vector<T>::operator=(std::forward<decltype(x)>(x)); return *this;
   }
   reference at(const E& m){return std::vector<T>::at(m);}
   const_reference at(const E& m) const{return std::vector<T>::at(m);}
   void assign(const value_type& val){std::vector<T>::assign(E::number(),val);}
   template<typename T2>
-  auto map(const std::function<T2(const T&)> &f) {
-    Enumvector<E,T2> r;
-    for (const auto &i: indices(r)) r[i] = f((*this)[i]);
+  auto map(const T2 &f) {
+    Enumvector<E,typename T2::result_type> r;
+    std::transform(begin(), end(), r.begin(), [f](auto &x){return f(&x);});
     return r;
   }
 };
