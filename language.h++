@@ -5,8 +5,6 @@
 #include "probvector.h++"
 #include "counts.h++"
 #include <utility>
-#include <random>
-#include <iostream>
 
 static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
 

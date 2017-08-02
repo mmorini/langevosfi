@@ -4,6 +4,7 @@
 #include "probvector.h++"
 #include <random>
 #include <functional>
+#include <utility>
 
 static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
