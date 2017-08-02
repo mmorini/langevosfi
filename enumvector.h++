@@ -96,9 +96,9 @@ public:
   const_reference at(const E& m) const{return std::vector<T>::at(m);}
   void assign(const value_type& val){std::vector<T>::assign(E::number(),val);}
   template<typename T2>
-  auto map(const T2 &f) {
+  auto map(const T2 &f) const {
     Enumvector<E,typename T2::result_type> r;
-    std::transform(begin(), end(), r.begin(), [f](auto &x){return f(&x);});
+    std::transform(cbegin(), cend(), r.begin(), [f](const auto &x){return f(&x);});
     return r;
   }
 };
