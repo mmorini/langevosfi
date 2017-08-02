@@ -1,12 +1,15 @@
 #ifndef IO_HPP
 #define IO_HPP
-#include <istream>
+#include <iostream>
 #include "enumvector.h++"
 #include "probvector.h++"
 #include "language.h++"
 #include "network.h++"
 #include <iterator>
 #include <type_traits>
+#include <utility>
+#include <algorithm>
+#include <string>
 
 static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
 
@@ -25,13 +28,13 @@ static Probvector<E,G> get_Probvector_base(Probvector<E,G>&&);
 template<typename E, typename G>
 static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
 
-template<typename E, typename T, std::enable_if_t<!decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
+template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
 auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
   std::copy(e.cbegin(), e.cend(), std::ostream_iterator<T>(o,"\t"));
   return o << std::endl;
 }
 
-template<typename E, typename T, std::enable_if_t<!decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
+template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
 auto& operator>>(std::istream& i, Enumvector<E,T>& e) {
   e = Enumvector<E,T>(std::istream_iterator<T>(i)); // virtual assignment
   return i;
@@ -51,7 +54,7 @@ auto& operator>>(std::istream& i, Probvector<E,G>& p) {
   return i;
 }
 
-template<typename E, typename T, std::enable_if_t<decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
+template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
 auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
@@ -65,7 +68,7 @@ auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specia
   return o;
 }
 
-template<typename E, typename T, std::enable_if_t<decltype(has_Probvector_base(std::declval<T*>()))::value,int> =0>
+template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
 auto& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial specialization
   // Don't construct directly in ee! Need virtual assignment to avoid slicing.
   Enumvector<E,T> e; 

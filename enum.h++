@@ -1,7 +1,7 @@
 #ifndef ENUM_HPP
 #define ENUM_HPP
 
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <exception>
 

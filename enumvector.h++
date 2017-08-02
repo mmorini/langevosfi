@@ -5,7 +5,6 @@
 #include <utility>
 #include <algorithm>
 #include <iterator>
-#include <functional>
 #include "myutil.h++"
 
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
