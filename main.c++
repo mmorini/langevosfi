@@ -41,6 +41,21 @@ auto communicate(const Agents &agents,
 // OK now the main loop
 int main(void) {
 
+  //sets import or export wish
+  std::cerr << "Do you wish to import [i] or export [e] the language or neither [n]?" << std::endl; 
+  std::string mode;
+  std::cin >> mode;
+  std::cout << "mode: " << mode << std::endl;
+  
+  std::string filename;
+
+  if(mode=="e" || mode=="i"){
+	std::cerr << "Provide file name " << std::endl;
+	std::cin >> filename;
+	std::cout << "Provided file is: " << filename << std::endl;
+  }
+
+
   // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
   Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
@@ -123,14 +138,26 @@ int main(void) {
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
+  if(mode=="e"){
+  //write initial lang to file
+  file << "nummemes  = " << Meme<Memebase>::getn()
+            << ", numlexes  = " << Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+  file << "0\t" << population;
+  }
+
   // For the number of outer loops, store the oldlanguage in a
   // temporary, mutate the language holding marginals fixed,
   // communicate, and choose the new or the old language by throwing a
   // random number.
   for (auto rounds: range(outer)) {
-    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0){
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
+      if(mode=="e")
+        file << rounds << "\t" << population;
+
+  }
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
     auto oldpop = population;
@@ -160,5 +187,7 @@ int main(void) {
     }
   }
   std::cout << "\t" << population;
+  if(mode=="e")
+    file << "final\t" << population;
   return 0;
 }
