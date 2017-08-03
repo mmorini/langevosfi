@@ -29,25 +29,25 @@ template<typename E, typename G>
 static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
 
 template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
-auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
+std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
   std::copy(e.cbegin(), e.cend(), std::ostream_iterator<T>(o,"\t"));
   return o << std::endl;
 }
 
 template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
-auto& operator>>(std::istream& i, Enumvector<E,T>& e) {
+std::istream& operator>>(std::istream& i, Enumvector<E,T>& e) {
   e = Enumvector<E,T>(std::istream_iterator<T>(i)); // virtual assignment
   return i;
 }
 
 template<typename E, typename G>
-auto& operator<< (std::ostream& o, const Probvector<E,G>& e) {
+std::ostream& operator<< (std::ostream& o, const Probvector<E,G>& e) {
   o << e.norm() << "\t";
   return o << static_cast<const Enumvector<E,double>>(e);
 }
 
 template<typename E, typename G>
-auto& operator>>(std::istream& i, Probvector<E,G>& p) {
+std::istream& operator>>(std::istream& i, Probvector<E,G>& p) {
   const auto w(*std::istream_iterator<double>(i));
   p = *std::istream_iterator<Enumvector<E,double>>(i); // virtual assignment
   p *= w;
@@ -55,7 +55,7 @@ auto& operator>>(std::istream& i, Probvector<E,G>& p) {
 }
 
 template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
-auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specialization
+std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
   o<<"\t\t";
@@ -69,7 +69,7 @@ auto& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specia
 }
 
 template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
-auto& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial specialization
+std::istream& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial specialization
   // Don't construct directly in ee! Need virtual assignment to avoid slicing.
   Enumvector<E,T> e; 
   std::string tmp;
@@ -92,23 +92,23 @@ template<typename E, typename G>
 Probvector<E,G> probbase(const Probvector<E,G>&);
 
 template<typename M, typename L>
-auto& operator<< (std::ostream& o, const Language<M,L>& e) { // partial specialization
+std::ostream& operator<< (std::ostream& o, const Language<M,L>& e) { // partial specialization
   return o << static_cast<const Enumvector<typename M::Index,L>&>(e);
 }
 
 template<typename M, typename L>
-auto& operator>> (std::istream& i, Language<M,L>& e) { // partial specialization
+std::istream& operator>> (std::istream& i, Language<M,L>& e) { // partial specialization
   return i >> static_cast<Enumvector<typename M::Index,L>&>(e);
        // relies on virtual =
 }
 
 template<typename A, typename P>
-auto& operator<< (std::ostream& o, const Network<A,P>& n) {
+std::ostream& operator<< (std::ostream& o, const Network<A,P>& n) {
   return o << n.getmatrix();
 }
 
 template<typename A, typename P>
-auto& operator>> (std::istream& i, Network<A,P>& n) {
+std::istream& operator>> (std::istream& i, Network<A,P>& n) {
   typename Network<A,P>::AdjacencyMatrix a;
   i >> a;
   n = Network<A,P>(std::move(a)); // virtual =
@@ -120,16 +120,16 @@ auto& operator>> (std::istream& i, Network<A,P>& n) {
 // Compile test_io as 
 // g++ -g -DTEST_IO -std=c++14 -x c++ io.h++ -o test_io
 //
-// It is meant to read in the following file
-// 2 3 2
-// 		L0	L1	L2
-// M0	0.1	0.5	0.3	0.2
-// M1	0.9	0.4	0.2	0.4
-// 		L0	L1	L2
-// M0	0.4	0.3	0.5	0.2
-// M1	0.6	0.7	0.2	0.1
-// Note the absence of extra new lines etc.  It also ignores the lexeme and meme labels.
-// It produces output where the agent languages are separated by an extra tab
+/* It is meant to read in the following file
+2 3 2
+		L0	L1	L2
+M0	0.1	0.5	0.3	0.2
+M1	0.9	0.4	0.2	0.4
+		L0	L1	L2
+M0	0.4	0.3	0.5	0.2
+M1	0.6	0.7	0.2	0.1
+Note the absence of extra new lines etc.  It also ignores the lexeme and meme labels.
+It produces output where the agent languages are separated by an extra tab*/
 
 #include "main.h++"
 

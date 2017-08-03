@@ -144,12 +144,12 @@ public:
   Population(const Enumvector& e): Enumvector(e) {}
   Population(Enumvector&& e): Enumvector(std::forward<decltype(e)>(e)) {}
 };
-inline auto& operator<< (std::ostream& o, const Population &e) {
+inline std::ostream& operator<< (std::ostream& o, const Population &e) {
   std::copy(e.cbegin(), e.cend(), std::ostream_iterator<AgentLanguage>(o));
   return o << std::endl;
 }
 
-auto communicate(const Agents &, const Lexemes &, const Memes &,
-		 const Population &, int);
+Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &, const Lexemes &, const Memes &,
+						const Population &, int);
 int main(void);
 #endif
