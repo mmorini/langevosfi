@@ -8,6 +8,8 @@
 #include <random>
 #include <cmath>
 
+// #include <iostream>
+
 static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
 
 template<typename E,typename generator=std::mt19937> class Probvector:
@@ -113,6 +115,15 @@ public:
       d = invprobit(probit(d)+BoxMueller(0,sigma,r));
     normalize(false);
     setupdone = false;
+  }
+  void reinforce(const E&e, double by) {
+//   	std::cout << "Probvector::reinforce" << std::endl;
+  	(*this)[e] += by * ((*this)[e])*(1.0-(*this)[e]);
+  	// If by < 1 we stay in the allowed range; but we'll apply a [0,1] cap
+  	if((*this)[e] < 0.0) (*this)[e] = 0.0;
+  	else if((*this)[e] > 1.0) (*this)[e] = 1.0;
+  	normalize(false);
+  	setupdone = false;
   }
   double entropy(bool weighted=false) {
     double retval = 0.0;

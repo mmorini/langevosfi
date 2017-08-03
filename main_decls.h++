@@ -84,6 +84,32 @@ public:
   // If slicing is an issue, define the virtual = operators
 };
 
+class BitstringMemes: public Memes {
+	unsigned bits = count_bits(Meme<Memebase>::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
+public:
+	using Memes::Memes; // We can inherit all the constructors here
+	
+	// ... and overload the virtual functions
+	
+	// Neighbor: we randomly tweak a bit
+	Meme<Memebase> neighbor(const Meme<Memebase>& m, std::mt19937& r) const override {
+		std::uniform_int_distribution<> bit_twiddler(0, bits-1);
+		int was = static_cast<int>(m);
+		int is;
+		do {
+			is = was ^ (1 << bit_twiddler(r));
+		} while(is >= Meme<Memebase>::getn());
+		return Meme<Memebase>(is);
+	}
+	
+	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
+	double match(const Meme<Memebase>& a, const Meme<Memebase>& b) const override {
+// 		std::cout << "BitstringMemes::match" << std::endl;
+		return static_cast<double>(common_bits(static_cast<int>(a), static_cast<int>(b),bits)) / static_cast<double>(bits);
+	}
+};
+
+
 // This is essentially a repeat of what we did above for Meme.
 class Lexbase: public Enum<lexid> {
 public:
@@ -137,19 +163,51 @@ public:
   ~AgentLanguage(){}
 };
 
+/**
+  * This overrides the lexmutate method to do the reinforcement learning based on some experience.
+  * We need another parameter lambda which is the scale of the reinforcement learning
+  */
+class ReinforcementLearnerLanguage: public Language<BitstringMemes,Lexemes> {
+   double lambda;
+public:
+	ReinforcementLearnerLanguage(double lambda) : lambda(lambda) { }
+	ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const int mask=-1):  Language(m,mask), lambda(lambda) {}
+	ReinforcementLearnerLanguage(double lambda, const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask), lambda(lambda) {}
+    ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const Language &l):Language(m,l), lambda(lambda) {}
+
+	
+	void lexmutate(const double sigma, Lexemes::Generator &r,
+			 const Experience<Language::Meme,Language::Lexeme> &experience = Experience<Language::Meme,Language::Lexeme>()) {
+		// Go through each association and boost/suppress by the relevant amount
+// 		std::cout << "ReinforcementLearnerLanguage::lexmutate" << std::endl;
+		for(auto& assn : experience) {
+			// assn.first.first = meme, assn.first.second = lexeme, assn.second = boost amount
+			(*this)[assn.first.first].reinforce(assn.first.second, lambda * assn.second);
+		}
+		deleteCache();
+  }
+};
+
+// I would like instead of this for any subclass of AgentLanguage to be stored in the EnumVector
+// without object slicing so that virtual functions are called properly, but I am not sure if
+// this can be done.
+template<typename AgentLanguage> 
 class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
 public:
   Population(){}
-  Population(const AgentLanguage &l): Enumvector(l) {}
-  Population(const Enumvector& e): Enumvector(e) {}
-  Population(Enumvector&& e): Enumvector(std::forward<decltype(e)>(e)) {}
+  Population(const AgentLanguage &l): Enumvector<Agent<Agentbase>,AgentLanguage>(l) {}
+  Population(const Enumvector<Agent<Agentbase>,AgentLanguage>& e): Enumvector<Agent<Agentbase>,AgentLanguage>(e) {}
+  Population(Enumvector<Agent<Agentbase>,AgentLanguage>&& e): Enumvector<Agent<Agentbase>,AgentLanguage>(std::forward<decltype(e)>(e)) {}
 };
-inline std::ostream& operator<< (std::ostream& o, const Population &e) {
+
+template<typename AgentLanguage>
+inline std::ostream& operator<< (std::ostream& o, const Population<AgentLanguage> &e) {
   std::copy(e.cbegin(), e.cend(), std::ostream_iterator<AgentLanguage>(o));
   return o << std::endl;
 }
 
+template<typename AgentLanguage>
 Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &, const Lexemes &, const Memes &,
-						const Population &, int);
-int main(void);
+						const Population<AgentLanguage> &, int);
+int main(int, char*[]);
 #endif
