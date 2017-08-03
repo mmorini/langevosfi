@@ -55,7 +55,6 @@ private:
 		    + std::string("> not set"));
   }
   static int number(void) {return n;}
-  explicit operator int (void) const{return val;}
   explicit operator int& (void) {return val;}
   Enum operator+(const Enum &i) const {
     return Enum(static_cast<int>(*this)+static_cast<int>(i));
@@ -86,6 +85,13 @@ private:
     static_cast<int&>(*this)+=static_cast<int>(i);
     return *this;
   }
+public:
+  // This conversion operatore was private in Tanmoy's original code, but needs to be 
+  // public if we want to be able to interpret the Enum as a sequence of bits
+  explicit operator int (void) const {return val;}  
+
+  // These comparison operators were private in Tanmoy's original code, but need to be
+  // public if we want to use Enums in a map key
   bool operator<(const Enum &other) const {
     return static_cast<int>(*this) < static_cast<int>(other);
   }
@@ -98,7 +104,7 @@ private:
   bool operator>=(const Enum &other) const {
     return static_cast<int>(*this) >= static_cast<int>(other);
   }
-public:
+
   bool operator==(const Enum &other) const {
     return static_cast<int>(*this) == static_cast<int>(other);
   }

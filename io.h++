@@ -142,13 +142,13 @@ template<> int Enum<memeid>::n = 0;
 template<> int Enum<lexid>::n = 0;
 template<> int Enum<agentid>::n = 0;
 
-int main(void) {
+int main(int, char*[]) {
 
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
   Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
   Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
   Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
-  std::cout << Population((std::istream_iterator<AgentLanguage>(std::cin))); 
+  std::cout << Population<AgentLanguage>((std::istream_iterator<AgentLanguage>(std::cin))); 
   // Note double parantheses above required by C++ grammar when a constructor
   // with one parameter constructs something.
 
