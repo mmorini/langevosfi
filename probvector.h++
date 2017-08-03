@@ -6,6 +6,7 @@
 #include "selfiterator.h++"
 #include <utility>
 #include <random>
+#include <cmath>
 
 static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
 
@@ -115,7 +116,7 @@ public:
   auto entropy(bool weighted=false) {
     auto retval = 0.0;
     for (auto p: *this)
-      if (p>0.0) retval += p*log(p);
+      if (p>0.0) retval += p*std::log(p);
     if(weighted) retval *= weight;
     return retval;
   }
