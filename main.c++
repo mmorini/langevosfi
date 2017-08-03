@@ -1,4 +1,5 @@
 #include "main.h++"
+#include <fstream>
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
@@ -137,6 +138,9 @@ int main(void) {
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
+
+  std::ofstream file;
+  file.open(filename);
 
   if(mode=="e"){
   //write initial lang to file
