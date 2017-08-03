@@ -2,7 +2,7 @@
 #define SELFITERATOR_HPP
 
 #include <iterator>
-#include <algorithm>
+#include <cstddef>
 
 static const char SELFITERATOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfiterator.h++: $Id$";
 

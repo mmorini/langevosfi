@@ -2,6 +2,10 @@
 #define MAIN_DECLS_HPP
 
 #include "main.h++"
+#include <random>
+#include <utility>
+#include <ostream>
+#include <iterator>
 
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:

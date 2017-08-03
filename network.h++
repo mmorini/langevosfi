@@ -1,9 +1,13 @@
 #ifndef NETWORK_HPP
 #define NETWORK_HPP
 
+// Example of how to do hypercubic stuff
+// Network<Meme<Memebase>> test(Network<Meme<Memebase>>::hypercubic_adjacency(2)); (four memes on a bypercube)
+
 #include "probvector.h++"
 #include <random>
 #include <functional>
+#include <utility>
 
 static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
@@ -24,6 +28,26 @@ public:
   Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)) {}
 
   const AdjacencyMatrix& getmatrix() const {return adjacency;}
+  static const AdjacencyMatrix hypercubic_adjacency(const int dim) {
+    AdjacencyMatrix r;
+    int i=0;
+    for (const auto a: indices(r)) {
+      if (i<dim) {
+	Enumvector<Agent,double> e;
+	int j=0;
+	for (const auto b: indices(e)) {
+	  const int k = i^j;
+	  e[b] = j < dim && !k && !(k&(k-1));
+	  j++;
+	}
+	r[a] = e;
+      } else {
+	r[a] *= 0;
+      }
+      i++;
+    }
+    return r;
+  }
 
   virtual Network& operator=(const Enumvector<Agent,double>& e) {
     probvector::operator=(e);
