@@ -23,7 +23,7 @@
 template <typename Meme, typename Lexeme> // It has to be a template cos we don't know what Meme and Lexeme are yet
 class Experience {
 
-	using keytype = std::pair<const Meme,const Lexeme>;
+	using keytype = std::pair<Meme,Lexeme>;
 	std::map<keytype, double> association;
   
 public:
@@ -51,7 +51,7 @@ public:
 	/* Accessing the underlying experience. We can do this in two ways; either query
 	 * a specific Meme,Lexeme pair... (We do this the Java way with a getter rather than the [] operator which can only take one arg)
 	 */
-	double get_association(const Meme& m, const Lexeme& l) {
+	double get_association(const Meme& m, const Lexeme& l) const {
 		auto key = std::make_pair(m,l);
 		return association.count(key) > 0 ? association[key] : 0.0;
 	}   		
