@@ -149,7 +149,7 @@ int runModelA(void) {
   // to generate a seed.
   std::cerr << "Provide unsigned integers seed random number generator (e.g. 1 19)" << std::endl;
   const std::vector<unsigned int> seed_vector((std::istream_iterator<unsigned int>(std::cin)),
-					      std::istream_iterator<unsigned int>(std::cin));
+					      std::istream_iterator<unsigned int>());
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
