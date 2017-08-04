@@ -8,7 +8,7 @@
 #include <iostream>
 
 // Not sure what this is; whoever does can replace it with the appropriate analog
-// static const char COUNTS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)counts.h++: $Id$";
+static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experience.h++: $Id$";
 
 /**
   * The purpose of this class is to keep a record of an agent's experience in a round.
