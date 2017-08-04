@@ -40,8 +40,8 @@ public:
   using std::vector<T>::get_allocator;
   E size(void) const {return static_cast<E>(E::number());}
   int numsize(void) const {return E::number();}
-  explicit Enumvector(const allocator_type& alloc=allocator_type()):
-    std::vector<T>(E::number(),alloc){}
+  explicit Enumvector(/*const allocator_type& alloc=allocator_type()*/):
+    std::vector<T>(E::number()/*,alloc*/){}
   explicit Enumvector(const value_type& val,
 		  const allocator_type& alloc=allocator_type()):
     std::vector<T>(E::number(),val,alloc){}
