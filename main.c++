@@ -56,12 +56,20 @@ int main(void) {
 	std::cout << "Provided file is: " << filename << std::endl;
   }
 
+  int nummemes;
+  int numlexes;
+  int numagents;
 
   // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
-  Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
-  Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+
+  nummemes = *std::istream_iterator<int>(std::cin);
+  numlexes = *std::istream_iterator<int>(std::cin);
+  numagents = *std::istream_iterator<int>(std::cin);
+  
+  Meme<Memebase>::setn(nummemes); /* 10 */
+  Lexeme<Lexbase>::setn(numlexes); /* 15 */
+  Agent<Agentbase>::setn(numagents); /* 40 */
   std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
             << ", numlexes  = " << Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
