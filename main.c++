@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+// NANCY: need the following if you use atoi (compilers may not give an error)
+// #include <cstdlib>  
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
@@ -79,17 +81,37 @@ int main(void) {
   //read from file DOES NOT CHECK IF FILE IS EMPTY!!!
   // first line contains nummemes, numlexes, and numagents white space separated
   getline(in, line);
-  std::vector <std::string> linesplit;
-  std::string buffer;
+  // std::vector <std::string> linesplit; // NANCY see later
+  // std::string buffer; // NANCY see later
   std::stringstream ss(line);
 
-  /*  while(ss >> buffer) {
-      linesplit.push_back(buffer);
-    }
+  // NANCY: see the commented section here to see how to make the
+  // stuff you were trying to do work, but there is a much easier way
+  // after the commented section.
 
-  nummemes = atoi(linesplit.pop_back); //HELP */
+  // while(ss >> buffer) {
+  //   linesplit.push_back(buffer);
+  // }
+
+  // NANCY: The following compiles. std:: is the safe thing to do before atoi
+  //        linesplit.pop_back() does not return the popped element, it just
+  //        deletes it. (You had also forgotten the (), so you were naming the
+  //        function, not calling it.)
+  //        linesplit.back() does give you the last element, but it does not
+  //        pop it.  It also gives you a std::string, but atoi, which is 
+  //        a C function does not know how to deal with that. the c_str()
+  //        converts it to const char *
+  // nummemes = std::atoi(linesplit.back().c_str()); linesplit.pop_back();
   //numlexes =
   //numagents = 
+
+  // NANCY: Here is the simple way to do it.
+  ss >> nummemes >> numlexes >> numagents;
+  // NANCY: or you can do this if you wanted the initializer syntax.
+  // nummemes = *std::istream_iterator<int>(ss);
+  // numlexes = *std::istream_iterator<int>(ss);
+  // numagents = *std::istream_iterator<int>(ss);
+
   }
   Meme<Memebase>::setn(nummemes); /* 10 */
   Lexeme<Lexbase>::setn(numlexes); /* 15 */
