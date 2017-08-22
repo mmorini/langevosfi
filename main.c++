@@ -55,17 +55,27 @@ int main(void) {
 	std::cin >> filename;
 	std::cout << "Provided file is: " << filename << std::endl;
   }
+  
+  std::ofstream outfile;
+  outfile.open(filename);
+
+  std::ifstream infile;
+  infile.open(filename);
 
 
   // language = nummemes*numlexes, population = numagents
-  std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
-  Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
-  Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
-  std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
-            << ", numlexes  = " << Lexeme<Lexbase>::getn()
-            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
-
+  if(mode != "i"){
+    std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
+    Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
+    Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
+    Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+    std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
+              << ", numlexes  = " << Lexeme<Lexbase>::getn()
+              << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+  }
+  else{
+    
+  }
 
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
@@ -76,10 +86,14 @@ int main(void) {
   // syncstart = 1: everyone has same language
   //            -1: languages rotated
   //             0: random
-  std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
-  const auto uniform = *std::istream_iterator<int>(std::cin);
-  const auto syncstart = *std::istream_iterator<int>(std::cin);
-  std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
+auto uniform = -1;
+auto syncstart = -1;
+  if(mode!="i"){
+    std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+    uniform = *std::istream_iterator<int>(std::cin);
+    syncstart = *std::istream_iterator<int>(std::cin);
+    std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
+  }
   
   // The following two parameters are effectively in the exponent, so careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
@@ -116,38 +130,43 @@ int main(void) {
     
 
   // OK, this generates a random probabilities for the network of memes.
-  Memes memes(uniform != 0?Memes():Memes(r));
-  Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
-  Agents agents(uniform != 0?Agents():Agents(r));
-  // Generate an entire population; write it out.
+  Memes memes();
+  Lexemes lexemes();
+  Agents agents();
+  if(mode != "i"){
+    memes(uniform != 0?Memes():Memes(r));
+    lexemes(uniform != 0?Lexemes():Lexemes(r));
+    agents(uniform != 0?Agents():Agents(r));
+  }
+    // Generate an entire population; write it out.
 
-  // The memes currently can be defaulted in the first two cases below, but trying
-  // to keep it general.  Speed at initialization is unlikely to be an issue
-  Population population(uniform > 0?AgentLanguage(memes):
+    // The memes currently can be defaulted in the first two cases below, but trying
+    // to keep it general.  Speed at initialization is unlikely to be an issue
+    Population population(uniform > 0?AgentLanguage(memes):
 			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
 			AgentLanguage(memes,r));
-  if (syncstart < 0) {
-    int c=0;
-    for (auto &a: population)
-      a.cshift(c++);
-  } else if (syncstart == 0)
-    for (auto &a: population)
-      a.permute(r);
-  std::cout << "\t" << population;
-
+    if (syncstart < 0) {
+      int c=0;
+      for (auto &a: population)
+        a.cshift(c++);
+    } else if (syncstart == 0)
+      for (auto &a: population)
+        a.permute(r);
+    std::cout << "\t" << population;
+  if(mode=="i"){
+    population((std::istream_iterator<AgentLanguage>(infile)));
+  }
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
-  std::ofstream file;
-  file.open(filename);
 
   if(mode=="e"){
   //write initial lang to file
-  file << "nummemes  = " << Meme<Memebase>::getn()
-            << ", numlexes  = " << Lexeme<Lexbase>::getn()
-            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
-  file << "0\t" << population;
+  outfile << Meme<Memebase>::getn()
+            << " " << Lexeme<Lexbase>::getn()
+            << " " << Agent<Agentbase>::getn() << std::endl;
+  outfile << "\t" << population;
   }
 
   // For the number of outer loops, store the oldlanguage in a
@@ -159,7 +178,7 @@ int main(void) {
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
       if(mode=="e")
-        file << rounds << "\t" << population;
+        outfile << rounds << "\t" << population;
 
   }
     // Mark cache as moving to 'oldpop' in the next statement.
@@ -192,6 +211,9 @@ int main(void) {
   }
   std::cout << "\t" << population;
   if(mode=="e")
-    file << "final\t" << population;
+    outfile << "final\t" << population;
+
+  outfile.close();
+  infile.close();
   return 0;
 }
