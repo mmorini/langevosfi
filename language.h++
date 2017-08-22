@@ -177,13 +177,14 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     return *this;
   }
   template<typename Network>
-  auto match(const Network &memes,
+  double match(const Network &memes,
 	     const Meme &m1, const Meme &m2, const Language &) const {
     return memes.match(m1,m2);
   }
   template<typename Network>
   auto transmit(const Network &lexemes,
-	        const Lexeme &l1, lgenerator &r, const Language &) const {
+	        const Lexeme &l1, lgenerator &r, const Language &) const
+    -> typename std::remove_reference<decltype(lexemes.neighbor(l1,r))>::type {
     return lexemes.neighbor(l1,r);
   }
 
@@ -199,7 +200,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     for (auto& p: cache)
       p = 0;
   }
-  auto& Cachelookup(const Lexeme l) const {
+  mprobvector& Cachelookup(const Lexeme l) const {
     cachedead = false;
     if (!cache[l]) {
       Enumvector<Meme,double> p;

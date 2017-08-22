@@ -16,6 +16,7 @@
 #include <iostream>
 #include <iterator>
 #include <random>
+#include <fstream>
 
 static const char MAIN_HPP_SCCS_ID[] __attribute__((used)) = "@(#)main.h++: $Id$";
 
