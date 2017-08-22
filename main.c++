@@ -1,5 +1,7 @@
 #include "main.h++"
 #include <fstream>
+#include <sstream>
+#include <vector>
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
@@ -48,7 +50,8 @@ int main(void) {
   std::cin >> mode;
   std::cout << "mode: " << mode << std::endl;
   
-  std::string filename;
+  std::string filename = "";
+  std::string line = "";
 
   if(mode=="e" || mode=="i"){
 	std::cerr << "Provide file name " << std::endl;
@@ -56,45 +59,47 @@ int main(void) {
 	std::cout << "Provided file is: " << filename << std::endl;
   }
   
-  std::ofstream outfile;
-  outfile.open(filename);
+  std::ifstream in (filename);
+  
+  int nummemes = 0;
+  int numlexes = 0;
+  int numagents = 0;
 
-  std::ifstream infile;
-  infile.open(filename);
-
-/*
-  // language = nummemes*numlexes, population = numagents
+  //if no input file, read from command line
   if(mode != "i"){
-    std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-    Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); //10
-    Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); // 15
-    Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); // 40
-    std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
-              << ", numlexes  = " << Lexeme<Lexbase>::getn()
-              << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
-  }
-  else{
-    
-  }*/
-
-
-int memes;
-int lexes;
-int agents;
-
+  // language = nummemes*numlexes, population = numagents
   std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  memes = *std::istream_iterator<int>(std::cin);
-  lexes = *std::istream_iterator<int>(std::cin);
-  agents = *std::istream_iterator<int>(std::cin);
+
+  nummemes = *std::istream_iterator<int>(std::cin);
+  numlexes = *std::istream_iterator<int>(std::cin);
+  numagents = *std::istream_iterator<int>(std::cin);
+  }
+
+  else{
+  //read from file DOES NOT CHECK IF FILE IS EMPTY!!!
+  // first line contains nummemes, numlexes, and numagents white space separated
+  getline(in, line);
+  std::vector <std::string> linesplit;
+  std::string buffer;
+  std::stringstream ss(line);
+
+  /*  while(ss >> buffer) {
+      linesplit.push_back(buffer);
+    }
+
+  nummemes = atoi(linesplit.pop_back); //HELP */
+  //numlexes =
+  //numagents = 
+  }
+  Meme<Memebase>::setn(nummemes); /* 10 */
+  Lexeme<Lexbase>::setn(numlexes); /* 15 */
+  Agent<Agentbase>::setn(numagents); /* 40 */
   std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
             << ", numlexes  = " << Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   
-  Meme<Memebase>::setn(memes); // 10
-  Lexeme<Lexbase>::setn(lexes); // 15
-  Agent<Agentbase>::setn(); // 40
-  
 
+  // not neccessary when language is imported?
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
   //           0: random
@@ -104,14 +109,10 @@ int agents;
   // syncstart = 1: everyone has same language
   //            -1: languages rotated
   //             0: random
-auto uniform = -1;
-auto syncstart = -1;
-  if(mode!="i"){
-    std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
-    uniform = *std::istream_iterator<int>(std::cin);
-    syncstart = *std::istream_iterator<int>(std::cin);
-    std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
-  }
+  std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+  const auto uniform = *std::istream_iterator<int>(std::cin);
+  const auto syncstart = *std::istream_iterator<int>(std::cin);
+  std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
   
 
   // The following two parameters are effectively in the exponent, so careful
@@ -150,36 +151,16 @@ auto syncstart = -1;
 
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
-  Memes memes();
-  Lexemes lexemes();
-  Agents agents();
-  if(mode != "i"){
-    memes(uniform != 0?Memes():Memes(r));
-    lexemes(uniform != 0?Lexemes():Lexemes(r));
-    agents(uniform != 0?Agents():Agents(r));
-  }
-    // Generate an entire population; write it out.
+  Memes memes(uniform != 0?Memes():Memes(r));
+  Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
+  Agents agents(uniform != 0?Agents():Agents(r));
+  // Generate an entire population; write it out.
 
-    // The memes currently can be defaulted in the first two cases below, but trying
-    // to keep it general.  Speed at initialization is unlikely to be an issue
-    Population population(uniform > 0?AgentLanguage(memes):
+  // The memes currently can be defaulted in the first two cases below, but trying
+  // to keep it general.  Speed at initialization is unlikely to be an issue
+  Population population(uniform > 0?AgentLanguage(memes):
 			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
 			AgentLanguage(memes,r));
-
-
-    if (syncstart < 0) {
-      int c=0;
-      for (auto &a: population)
-        a.cshift(c++);
-    } else if (syncstart == 0)
-      for (auto &a: population)
-        a.permute(r);
-    std::cout << "\t" << population;
-  if(mode=="i"){
-    population((std::istream_iterator<AgentLanguage>(infile)));
-  }
-
-/*
    if (syncstart < 0) {
      int c=0;
      for (auto &a: population)
@@ -187,19 +168,23 @@ auto syncstart = -1;
    } else if (syncstart == 0)
      for (auto &a: population)
       a.permute(r);
-  std::cout << "\t" << population; */
+  std::cout << "\t" << population;
+
+
 
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
+  std::ofstream file;
+  file.open(filename);
 
   if(mode=="e"){
   //write initial lang to file
-  outfile << Meme<Memebase>::getn()
-            << " " << Lexeme<Lexbase>::getn()
-            << " " << Agent<Agentbase>::getn() << std::endl;
-  outfile << "\t" << population;
+  file << "nummemes  = " << Meme<Memebase>::getn()
+            << ", numlexes  = " << Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+  file << "0\t" << population;
   }
 
   // For the number of outer loops, store the oldlanguage in a
@@ -211,7 +196,7 @@ auto syncstart = -1;
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
       if(mode=="e")
-        outfile << rounds << "\t" << population;
+        file << rounds << "\t" << population;
 
   }
     // Mark cache as moving to 'oldpop' in the next statement.
@@ -244,9 +229,6 @@ auto syncstart = -1;
   }
   std::cout << "\t" << population;
   if(mode=="e")
-    outfile << "final\t" << population;
-
-  outfile.close();
-  infile.close();
+    file << "final\t" << population;
   return 0;
 }
