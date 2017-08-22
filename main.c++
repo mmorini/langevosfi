@@ -4,9 +4,9 @@
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
 // This is used by Enum template in prints
-extern constexpr const char memeid [] = "M";
-extern constexpr const char lexid[] = "L";
-extern constexpr const char agentid[] = "A";
+extern const char memeid [] = "M";
+extern const char lexid[] = "L";
+extern const char agentid[] = "A";
 // Define the variables holding the sizes.
 template<> int Enum<memeid>::n = 0;
 template<> int Enum<lexid>::n = 0;
@@ -20,7 +20,7 @@ template<> int Enum<agentid>::n = 0;
 // marginal of its language, choose a lex according to its own
 // language, send it to a random neighbor, who interprets it according
 // to her own (presumably different) language.
-auto communicate(const Agents &agents,
+Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
 		 const Population &population,
@@ -62,20 +62,38 @@ int main(void) {
   std::ifstream infile;
   infile.open(filename);
 
-
+/*
   // language = nummemes*numlexes, population = numagents
   if(mode != "i"){
     std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-    Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
-    Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
-    Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+    Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); //10
+    Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); // 15
+    Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); // 40
     std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
               << ", numlexes  = " << Lexeme<Lexbase>::getn()
               << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   }
   else{
     
-  }
+  }*/
+
+
+int memes;
+int lexes;
+int agents;
+
+  std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
+  memes = *std::istream_iterator<int>(std::cin);
+  lexes = *std::istream_iterator<int>(std::cin);
+  agents = *std::istream_iterator<int>(std::cin);
+  std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
+            << ", numlexes  = " << Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+  
+  Meme<Memebase>::setn(memes); // 10
+  Lexeme<Lexbase>::setn(lexes); // 15
+  Agent<Agentbase>::setn(); // 40
+  
 
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
@@ -95,6 +113,7 @@ auto syncstart = -1;
     std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
   }
   
+
   // The following two parameters are effectively in the exponent, so careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
   const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
@@ -119,7 +138,7 @@ auto syncstart = -1;
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
-  std::cerr << "Provide unsigned integers and end file to seed random number generator" << std::endl;
+  std::cerr << "Provide unsigned integers seed random number generator (e.g. 1 19)" << std::endl;
   const std::vector<unsigned int> seed_vector((std::istream_iterator<unsigned int>(std::cin)),
 					      std::istream_iterator<unsigned int>());
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
@@ -127,8 +146,9 @@ auto syncstart = -1;
   std::cout << "Random number generator seeded with ";
   for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
-    
+  
 
+  //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
   Memes memes();
   Lexemes lexemes();
@@ -145,6 +165,8 @@ auto syncstart = -1;
     Population population(uniform > 0?AgentLanguage(memes):
 			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
 			AgentLanguage(memes,r));
+
+
     if (syncstart < 0) {
       int c=0;
       for (auto &a: population)
@@ -156,6 +178,17 @@ auto syncstart = -1;
   if(mode=="i"){
     population((std::istream_iterator<AgentLanguage>(infile)));
   }
+
+/*
+   if (syncstart < 0) {
+     int c=0;
+     for (auto &a: population)
+       a.cshift(c++);
+   } else if (syncstart == 0)
+     for (auto &a: population)
+      a.permute(r);
+  std::cout << "\t" << population; */
+
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);

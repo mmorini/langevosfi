@@ -40,8 +40,8 @@ public:
   using std::vector<T>::get_allocator;
   E size(void) const {return static_cast<E>(E::number());}
   int numsize(void) const {return E::number();}
-  explicit Enumvector(const allocator_type& alloc=allocator_type()):
-    std::vector<T>(E::number(),alloc){}
+  explicit Enumvector(/*const allocator_type& alloc=allocator_type()*/):
+    std::vector<T>(E::number()/*,alloc*/){}
   explicit Enumvector(const value_type& val,
 		  const allocator_type& alloc=allocator_type()):
     std::vector<T>(E::number(),val,alloc){}
@@ -96,9 +96,9 @@ public:
   const_reference at(const E& m) const{return std::vector<T>::at(m);}
   void assign(const value_type& val){std::vector<T>::assign(E::number(),val);}
   template<typename T2>
-  auto map(const T2 &f) const {
+  Enumvector<E,typename T2::result_type> map(const T2 &f) const {
     Enumvector<E,typename T2::result_type> r;
-    std::transform(cbegin(), cend(), r.begin(), [f](const auto &x){return f(&x);});
+    std::transform(cbegin(), cend(), r.begin(), [f](typename T2::argument_type &x){return f(&x);});
     return r;
   }
 };
