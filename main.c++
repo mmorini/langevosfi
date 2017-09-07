@@ -1,9 +1,8 @@
 #include "main.h++"
 #include <fstream>
-#include <sstream>
+#include <exception>
+// #include <sstream>
 #include <vector>
-// NANCY: need the following if you use atoi (compilers may not give an error)
-// #include <cstdlib>  
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
@@ -43,85 +42,71 @@ Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &agents,
   return retval;
 }
 
+class program_options {
+  std::ifstream instream_f;
+  std::ofstream outstream_f;
+  static void invalidusage(void) {
+    usage();
+    throw std::runtime_error("Invalid usage");
+  }
+public:
+  bool input_from_file, output_to_file;
+  std::istream &instream;
+  std::ostream &outstream;
+  program_options(const int argc, const char *const *const argv):
+    input_from_file(false), output_to_file(false),
+    instream(instream_f), outstream(outstream_f)
+  {
+    for (int i=0; i<argc; i++)
+      if (argv[i] == std::string("-i"))
+	if (!input_from_file && ++i < argc) {
+	  input_from_file = true;
+	  instream_f = std::ifstream(argv[i]);
+	} else
+	  invalidusage();
+      else if (argv[i] == std::string("-o"))
+	if (!output_to_file && ++i < argc) {
+	  output_to_file = true;
+	  outstream_f = std::ofstream(argv[i]);
+	} else
+	  invalidusage();
+      else
+	invalidusage();
+  }
+  ~program_options() {
+    if(input_from_file) instream_f.close();
+    if(output_to_file) outstream_f.close();
+  }
+  static void usage(void) {
+    std::cerr << "Usage: <progname> [options]" <<std::endl
+              << "where options may be " << std::endl
+              << "\t-i <inputlanguagefile>" << std::endl
+              << "\t-o <outputlanguagefile>" << std::endl
+              << "No option may be repeated" << std::endl;
+  }
+}; 
+
 // OK now the main loop
-int main(void) {
+int main(const int argc, char **const argv) {
 
-  //sets import or export wish
-  std::cerr << "Do you wish to import [i] or export [e] the language or neither [n]?" << std::endl; 
-  std::string mode;
-  std::cin >> mode;
-  std::cout << "mode: " << mode << std::endl;
+  const program_options po(argc,argv);
+
+  if (!po.input_from_file)
+    std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
   
-  std::string filename = "";
-  std::string line = "";
+  const auto nummemes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
+             numlexes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
+             numagents = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin);
 
-  if(mode=="e" || mode=="i"){
-	std::cerr << "Provide file name " << std::endl;
-	std::cin >> filename;
-	std::cout << "Provided file is: " << filename << std::endl;
-  }
-  
-  std::ifstream in (filename);
-  
-  int nummemes = 0;
-  int numlexes = 0;
-  int numagents = 0;
-
-  //if no input file, read from command line
-  if(mode != "i"){
-  // language = nummemes*numlexes, population = numagents
-  std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-
-  nummemes = *std::istream_iterator<int>(std::cin);
-  numlexes = *std::istream_iterator<int>(std::cin);
-  numagents = *std::istream_iterator<int>(std::cin);
-  }
-
-  else{
-  //read from file DOES NOT CHECK IF FILE IS EMPTY!!!
-  // first line contains nummemes, numlexes, and numagents white space separated
-  getline(in, line);
-  // std::vector <std::string> linesplit; // NANCY see later
-  // std::string buffer; // NANCY see later
-  std::stringstream ss(line);
-
-  // NANCY: see the commented section here to see how to make the
-  // stuff you were trying to do work, but there is a much easier way
-  // after the commented section.
-
-  // while(ss >> buffer) {
-  //   linesplit.push_back(buffer);
-  // }
-
-  // NANCY: The following compiles. std:: is the safe thing to do before atoi
-  //        linesplit.pop_back() does not return the popped element, it just
-  //        deletes it. (You had also forgotten the (), so you were naming the
-  //        function, not calling it.)
-  //        linesplit.back() does give you the last element, but it does not
-  //        pop it.  It also gives you a std::string, but atoi, which is 
-  //        a C function does not know how to deal with that. the c_str()
-  //        converts it to const char *
-  // nummemes = std::atoi(linesplit.back().c_str()); linesplit.pop_back();
-  //numlexes =
-  //numagents = 
-
-  // NANCY: Here is the simple way to do it.
-  ss >> nummemes >> numlexes >> numagents;
-  // NANCY: or you can do this if you wanted the initializer syntax.
-  // nummemes = *std::istream_iterator<int>(ss);
-  // numlexes = *std::istream_iterator<int>(ss);
-  // numagents = *std::istream_iterator<int>(ss);
-
-  }
-  Meme<Memebase>::setn(nummemes); /* 10 */
-  Lexeme<Lexbase>::setn(numlexes); /* 15 */
-  Agent<Agentbase>::setn(numagents); /* 40 */
+  Meme<Memebase>::setn(nummemes); 
+  Lexeme<Lexbase>::setn(numlexes); 
+  Agent<Agentbase>::setn(numagents); 
   std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
             << ", numlexes  = " << Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   
 
-  // not neccessary when language is imported?
+  // not neccessary when language is imported.
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
   //           0: random
@@ -131,13 +116,15 @@ int main(void) {
   // syncstart = 1: everyone has same language
   //            -1: languages rotated
   //             0: random
+  if (!po.input_from_file)
   std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
-  const auto uniform = *std::istream_iterator<int>(std::cin);
-  const auto syncstart = *std::istream_iterator<int>(std::cin);
+  const auto uniform = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
+  const auto syncstart = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
+  if (!po.input_from_file)
   std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
   
 
-  // The following two parameters are effectively in the exponent, so careful
+  // The following two parameters are effectively in the exponent, so be careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
   const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
   const auto penalty = *std::istream_iterator<double>(std::cin); /* 100 */
@@ -198,6 +185,8 @@ int main(void) {
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
+  std::string filename("Yettoberemoved");
+  std::string mode("Yettoberemoved");
   std::ofstream file;
   file.open(filename);
 
