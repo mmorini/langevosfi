@@ -151,5 +151,4 @@ inline std::ostream& operator<< (std::ostream& o, const Population &e) {
 
 Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &, const Lexemes &, const Memes &,
 						const Population &, int);
-int main(void);
 #endif
