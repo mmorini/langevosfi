@@ -24,7 +24,7 @@ language.h++.gch: language.h++ enumvector.h++ probvector.h++ counts.h++
 counts.h++.gch: counts.h++ enumvector.h++
 main.h++.gch: main.h++ network.h++ probvector.h++ enumvector.h++ myutil.h++ \
               enum.h++ meme.h++ lex.h++ agent.h++ language.h++ counts.h++ \
-              selfiterator.h++
+              selfiterator.h++ main_decls.h++
 
 TAGS: $(MFILES) $(CFILES) $(HFILES)
 	'$(ETAGS)' $^ 
