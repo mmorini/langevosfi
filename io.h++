@@ -73,7 +73,7 @@ std::istream& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial spec
   // Don't construct directly in ee! Need virtual assignment to avoid slicing.
   Enumvector<E,T> e; 
   std::string tmp;
-  for (auto a: indices(e.front())) {
+  for (auto a __attribute__((unused)): indices(e.front())) {
     i>>tmp; // should check tmp is E of B
   }
   for (auto &vv: e) {

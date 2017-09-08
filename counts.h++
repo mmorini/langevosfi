@@ -17,6 +17,11 @@ struct Counts {
   double mean(void) const {return success/tries;}
 };
 
+inline
+std::ostream& operator<< (std::ostream& o, const Counts c) {
+  return o << c.success << "/" << c.tries << " ";
+}
+
 template<typename T>
 void summarize(const Enumvector<T,Counts> &counts) {
   Counts totcounts;
