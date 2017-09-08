@@ -2,21 +2,21 @@
 # CXXFLAGS += -std=c++14
 CXXFLAGS += -std=c++11
 CXXFLAGS += -O4 -pedantic -Wall
-ETAGS = etags
-
-GIT = git
+ETAGS = 'etags'
+GIT = 'git'
 
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
 	probvector.h++ counts.h++ main.h++ main_decls.h++
 CFILES = main.c++
 MFILES = Makefile
+
 main: main.o
 main.o: main.c++ main.h++.gch
 %.o: %.c++
 	$(COMPILE.cc) '$<'
 %: %.o
-	$(LINK.cc) -o '$@' $^
+	$(LINK.cc) -o '$@' $(^:%='%')
 
 .SUFFIXES: .h++.gch
 %.h++.gch: %.h++
@@ -30,20 +30,19 @@ main.h++.gch: main.h++ network.h++ probvector.h++ enumvector.h++ myutil.h++ \
               selfiterator.h++ main_decls.h++
 
 TAGS: $(MFILES) $(CFILES) $(HFILES)
-	'$(ETAGS)' $^ 
+	$(ETAGS) $(^:%='%')
 
+.PHONY: clean gitclean
 clean:
-	rm -f main main.o selfiterator.h++.gch enum.h++.gch enumvector.h++.gch \
-	   myutil.h++.gch language.h++.gch network.h++.gch probvector.h++.gch \
-	   counts.h++.gch agent.h++.gch meme.h++.gch main.h++.gch lex.h++.gch \
-	   TAGS
-	rm -rf main.dSYM
-GITCLEAN=$(shell git status -s $(CFILES) $(HFILES) $(MFILES))
+	$(RM) 'main' 'main.o' $(HFILES:%='%.gch') 'TAGS'
+	$(RM) -r 'main.dSYM'
+
+GITCLEAN=$(shell '$(GIT)' status -s $(CFILES:%='%') $(HFILES:%='%') $(MFILES:%='%'))
 gitclean: clean
 ifeq ($(GITCLEAN),)
-	$(RM) $(CFILES) $(HFILES) $(MFILES)
+	$(RM) $(CFILES:%='%') $(HFILES:%='%') $(MFILES:%='%')
 	$(GIT) checkout .
 else
-	@echo "Aborting because git modified"
-	@git status -s
+	@echo 'Aborting because git modified'
+	@$(GIT) status -s
 endif
