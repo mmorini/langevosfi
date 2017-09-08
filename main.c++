@@ -177,7 +177,7 @@ int main(const int argc, char **const argv) {
 			Population(uniform > 0?AgentLanguage(memes):
 				   uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
 				   AgentLanguage(memes,r)));
-  if (po.input_from_file) {
+  if (!po.input_from_file) {
     if (syncstart < 0) {
       int c=0;
       for (auto &a: population)
