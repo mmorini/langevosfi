@@ -57,7 +57,7 @@ public:
     input_from_file(false), output_to_file(false),
     instream(instream_f), outstream(outstream_f)
   {
-    for (int i=0; i<argc; i++)
+    for (int i=1; i<argc; i++)
       if (argv[i] == std::string("-i"))
 	if (!input_from_file && ++i < argc) {
 	  input_from_file = true;
