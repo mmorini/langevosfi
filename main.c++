@@ -77,7 +77,7 @@ public:
   std::istream &instream;
   std::ostream &outstream;
   program_options(const int argc, const char *const *const argv):
-    input_from_file(false), output_to_file(false),
+    input_from_file(false), output_to_file(false), model(A),
     instream(instream_f), outstream(outstream_f)
   {
     for (int i=1; i<argc; i++)
