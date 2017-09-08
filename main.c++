@@ -95,9 +95,9 @@ public:
 	  invalidusage();
       else if (argv[i] == std::string("-m"))
 	if (++i < argc)
-	  if (std::toupper(*argc[i]) == 'A')
+	  if (std::toupper(*argv[i]) == 'A')
 	    model = A;
-	  else if (std::toupper(*argc[i]) == 'B')
+	  else if (std::toupper(*argv[i]) == 'B')
 	    model = B;
 	  else
 	    invalidusage();
@@ -129,7 +129,7 @@ public:
 // like this.
 
 template<ModelType model>
-int runModel(void) {
+int runModel(const program_options& po) {
 
   const auto nummemes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
              numlexes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
@@ -271,8 +271,8 @@ int runModel(void) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0){
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
-      if(mode=="e")
-        file << rounds << "\t" << population;
+      if(po.output_to_file)
+        po.outstream << rounds << "\t" << population;
     }
     switch(model) {
     case A: {
@@ -346,7 +346,7 @@ int main(int argc, char* argv[]) {
   
   if(po.model == B) {
     std::cout << "model = B" << std::endl;
-    return runModel<B>();
+    return runModel<B>(po);
   }
-  else return runModel<A>();
+  else return runModel<A>(po);
 }
