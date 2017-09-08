@@ -106,7 +106,8 @@ int main(const int argc, char **const argv) {
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   
 
-  // not neccessary when language is imported.
+  std::string ignore;
+
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
   //           0: random
@@ -117,19 +118,22 @@ int main(const int argc, char **const argv) {
   //            -1: languages rotated
   //             0: random
   if (!po.input_from_file)
-  std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
-  const auto uniform = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
+    std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+  else
+    std::cerr << "uniform (0 or nonzero)?" << std::endl;
+  const auto uniform = *std::istream_iterator<int>(std::cin);
   const auto syncstart = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
   if (!po.input_from_file)
   std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
+  std::getline(std::cin,ignore);
   
-
   // The following two parameters are effectively in the exponent, so be careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
   const auto mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
   const auto penalty = *std::istream_iterator<double>(std::cin); /* 100 */
   std::cout <<   "mutrate = " << mutrate
             << ", penalty = " << penalty << std::endl;
+  std::getline(std::cin,ignore);
 
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
@@ -145,6 +149,7 @@ int main(const int argc, char **const argv) {
             << ", outer = " << outer
 	    << ", printinterval = " << printinterval
 	    << std::endl;
+  std::getline(std::cin,ignore);
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
@@ -154,7 +159,8 @@ int main(const int argc, char **const argv) {
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
-  for (const auto s: seed_vector) std::cout << s << " ";
+  std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
+  // for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
   
 
@@ -167,35 +173,35 @@ int main(const int argc, char **const argv) {
 
   // The memes currently can be defaulted in the first two cases below, but trying
   // to keep it general.  Speed at initialization is unlikely to be an issue
-  Population population(uniform > 0?AgentLanguage(memes):
-			uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
-			AgentLanguage(memes,r));
-   if (syncstart < 0) {
-     int c=0;
-     for (auto &a: population)
-       a.cshift(c++);
-   } else if (syncstart == 0)
-     for (auto &a: population)
-      a.permute(r);
-  std::cout << "\t" << population;
-
-
-
+  Population population(po.input_from_file?Population(std::istream_iterator<AgentLanguage>(po.instream)):
+			Population(uniform > 0?AgentLanguage(memes):
+				   uniform < 0?AgentLanguage(memes,unitlang((AgentLanguage*)0)):
+				   AgentLanguage(memes,r)));
+  if (po.input_from_file) {
+    if (syncstart < 0) {
+      int c=0;
+      for (auto &a: population)
+	a.cshift(c++);
+    } else if (syncstart == 0)
+      for (auto &a: population)
+	a.permute(r);
+    std::cout << "\t" << population;
+  }
+  
   // Initialize everybodies counts and write out summary.
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
   std::string filename("Yettoberemoved");
-  std::string mode("Yettoberemoved");
   std::ofstream file;
   file.open(filename);
 
-  if(mode=="e"){
-  //write initial lang to file
-  file << "nummemes  = " << Meme<Memebase>::getn()
-            << ", numlexes  = " << Lexeme<Lexbase>::getn()
-            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
-  file << "0\t" << population;
+  if(po.output_to_file){
+    //write initial lang to file
+    po.outstream << "nummemes  = " << Meme<Memebase>::getn()
+		 << ", numlexes  = " << Lexeme<Lexbase>::getn()
+		 << ", numagents = " << Agent<Agentbase>::getn() << std::endl
+		 << "Initial" << std::endl << "\t" << population;
   }
 
   // For the number of outer loops, store the oldlanguage in a
@@ -206,10 +212,9 @@ int main(const int argc, char **const argv) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0){
       std::cout << "Round number " << rounds << std::endl
 		<< "\t" << population;
-      if(mode=="e")
-        file << rounds << "\t" << population;
-
-  }
+      if(po.output_to_file)
+        po.outstream << rounds << "\t" << population;
+    }
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
     auto oldpop = population;
@@ -239,7 +244,7 @@ int main(const int argc, char **const argv) {
     }
   }
   std::cout << "\t" << population;
-  if(mode=="e")
-    file << "final\t" << population;
+  if(po.output_to_file)
+    po.outstream << "final" << std::endl << "\t" << population;
   return 0;
 }
