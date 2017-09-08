@@ -3,6 +3,9 @@
 CXXFLAGS += -std=c++11
 CXXFLAGS += -O4 -pedantic -Wall
 ETAGS = etags
+
+GIT = git
+
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
 	probvector.h++ counts.h++ main.h++ main_decls.h++
