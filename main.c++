@@ -192,16 +192,16 @@ int main(const int argc, char **const argv) {
   auto counts=communicate(agents,lexemes,memes,population,inner);
   summarize(counts);
 
-  std::string filename("Yettoberemoved");
-  std::ofstream file;
-  file.open(filename);
-
   if(po.output_to_file){
     //write initial lang to file
     po.outstream << "nummemes  = " << Meme<Memebase>::getn()
 		 << ", numlexes  = " << Lexeme<Lexbase>::getn()
 		 << ", numagents = " << Agent<Agentbase>::getn() << std::endl
-		 << "Initial" << std::endl << "\t" << population;
+                 << "Memes" << std::endl << "\t" << memes
+                 << "Lexemes" << std::endl << "\t" << lexemes
+                 << "Agents" << std::endl << "\t" << agents
+		 << "Initial" << std::endl << "\t" << population
+                 << "Counts" << std::endl << "\t" << counts;
   }
 
   // For the number of outer loops, store the oldlanguage in a
@@ -209,12 +209,13 @@ int main(const int argc, char **const argv) {
   // communicate, and choose the new or the old language by throwing a
   // random number.
   for (auto rounds: range(outer)) {
-    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0){
-      std::cout << "Round number " << rounds << std::endl
-		<< "\t" << population;
-      if(po.output_to_file)
-        po.outstream << rounds << "\t" << population;
-    }
+    if(po.output_to_file)
+      po.outstream << rounds << "\t" << population
+		   << "Counts" << std::endl << "\t" << counts;
+    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+	std::cout << "Round number " << rounds << std::endl
+		  << "\t" << population
+		  << "Counts" << std::endl << "\t" << counts;
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
     auto oldpop = population;
