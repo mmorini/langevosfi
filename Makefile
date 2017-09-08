@@ -5,7 +5,7 @@ CXXFLAGS += -O4 -pedantic -Wall
 ETAGS = etags
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
-	probvector.h++ counts.h++ main.h++
+	probvector.h++ counts.h++ main.h++ main_decls.h++
 CFILES = main.c++
 MFILES = Makefile
 main: main.o
@@ -35,3 +35,12 @@ clean:
 	   counts.h++.gch agent.h++.gch meme.h++.gch main.h++.gch lex.h++.gch \
 	   TAGS
 	rm -rf main.dSYM
+GITCLEAN=$(shell git status -s $(CFILES) $(HFILES) $(MFILES))
+gitclean: clean
+ifeq ($(GITCLEAN),)
+	$(RM) $(CFILES) $(HFILES) $(MFILES)
+	$(GIT) checkout .
+else
+	@echo "Aborting because git modified"
+	@git status -s
+endif
