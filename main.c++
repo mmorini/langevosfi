@@ -1,5 +1,8 @@
 #include "main.h++"
 #include <fstream>
+#include <exception>
+// #include <sstream>
+#include <vector>
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
 
@@ -61,6 +64,62 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
   return retval;
 }
 
+class program_options {
+  std::ifstream instream_f;
+  std::ofstream outstream_f;
+  static void invalidusage(void) {
+    usage();
+    throw std::runtime_error("Invalid usage");
+  }
+public:
+  bool input_from_file, output_to_file;
+  ModelType model;
+  std::istream &instream;
+  std::ostream &outstream;
+  program_options(const int argc, const char *const *const argv):
+    input_from_file(false), output_to_file(false),
+    instream(instream_f), outstream(outstream_f)
+  {
+    for (int i=1; i<argc; i++)
+      if (argv[i] == std::string("-i"))
+	if (!input_from_file && ++i < argc) {
+	  input_from_file = true;
+	  instream_f = std::ifstream(argv[i]);
+	} else
+	  invalidusage();
+      else if (argv[i] == std::string("-o"))
+	if (!output_to_file && ++i < argc) {
+	  output_to_file = true;
+	  outstream_f = std::ofstream(argv[i]);
+	} else
+	  invalidusage();
+      else if (argv[i] == std::string("-m"))
+	if (++i < argc)
+	  if (std::toupper(*argc[i]) == 'A')
+	    model = A;
+	  else if (std::toupper(*argc[i]) == 'B')
+	    model = B;
+	  else
+	    invalidusage();
+	else
+	  invalidusage();
+      else
+	invalidusage();
+  }
+  ~program_options() {
+    if(input_from_file) instream_f.close();
+    if(output_to_file) outstream_f.close();
+  }
+  static void usage(void) {
+    std::cerr << "Usage: <progname> [options]" <<std::endl
+              << "where options may be " << std::endl
+              << "\t-i <inputlanguagefile>" << std::endl
+              << "\t-o <outputlanguagefile>" << std::endl
+              << "\t-m A|B" << std::endl
+              << "No option may be repeated" << std::endl;
+  }
+}; 
+
 // OK now the main loop
 
 // This is Tanmoy's original Model A
@@ -72,32 +131,20 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
 template<ModelType model>
 int runModel(void) {
 
-  //sets import or export wish
-  std::cerr << "Do you wish to import [i] or export [e] the language or neither [n]?" << std::endl; 
-  std::string mode;
-  std::cin >> mode;
-  std::cout << "mode: " << mode << std::endl;
-  
-  std::string filename;
+  const auto nummemes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
+             numlexes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
+             numagents = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin);
 
-  if(mode=="e" || mode=="i"){
-	std::cerr << "Provide file name " << std::endl;
-	std::cin >> filename;
-	std::cout << "Provided file is: " << filename << std::endl;
-  }
-
-
-  // language = nummemes*numlexes, population = numagents
-  std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  Meme<Memebase>::setn(*std::istream_iterator<int>(std::cin)); /* 10 */
-  Lexeme<Lexbase>::setn(*std::istream_iterator<int>(std::cin)); /* 15 */
-  Agent<Agentbase>::setn(*std::istream_iterator<int>(std::cin)); /* 40 */
+  Meme<Memebase>::setn(nummemes); 
+  Lexeme<Lexbase>::setn(numlexes); 
+  Agent<Agentbase>::setn(numagents); 
   std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
             << ", numlexes  = " << Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
   
 
-  // not neccessary when language is imported?
+  std::string ignore;
+
   // uniform = 1: completely ambiguous language
   //          -1: no synonymy
   //           0: random
@@ -107,10 +154,15 @@ int runModel(void) {
   // syncstart = 1: everyone has same language
   //            -1: languages rotated
   //             0: random
-  std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+  if (!po.input_from_file)
+    std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
+  else
+    std::cerr << "uniform (0 or nonzero)?" << std::endl;
   const auto uniform = *std::istream_iterator<int>(std::cin);
-  const auto syncstart = *std::istream_iterator<int>(std::cin);
+  const auto syncstart = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
+  if (!po.input_from_file)
   std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
+  std::getline(std::cin,ignore);
 
   double mutrate=0, penalty=0, lambda=0; // Not quite right! Two problems: first these should be
 		                         // declared const, and secondly they should be in a union
@@ -132,6 +184,7 @@ int runModel(void) {
     std::cout <<   "lambda = " << lambda << std::endl;
     break;
   }
+  std::getline(std::cin,ignore);
 
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
@@ -147,6 +200,7 @@ int runModel(void) {
             << ", outer = " << outer
 	    << ", printinterval = " << printinterval
 	    << std::endl;
+  std::getline(std::cin,ignore);
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
@@ -156,7 +210,8 @@ int runModel(void) {
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
-  for (const auto s: seed_vector) std::cout << s << " ";
+  std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
+  // for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
   
   //Not needed when lang is imported?
@@ -170,15 +225,21 @@ int runModel(void) {
 
   // The memes currently can be defaulted in the first two cases below, but trying
   // to keep it general.  Speed at initialization is unlikely to be an issue
-  Population<typename chooselang<model>::Language> population(chooselang<model>::langinit(uniform,lambda,memes,r));
-   if (syncstart < 0) {
-     int c=0;
-     for (auto &a: population)
-       a.cshift(c++);
-   } else if (syncstart == 0)
-     for (auto &a: population)
-      a.permute(r);
-  std::cout << "\t" << population;
+  Population<typename chooselang<model>::Language> population(po.input_from_file?
+							      Population<typename chooselang<model>::Language>
+							      (std::istream_iterator<typename chooselang<model>::Language>(po.instream)):
+							      Population<typename chooselang<model>::Language>
+							      (chooselang<model>::langinit(uniform,lambda,memes,r)));
+  if (po.input_from_file) {
+    if (syncstart < 0) {
+      int c=0;
+      for (auto &a: population)
+	a.cshift(c++);
+    } else if (syncstart == 0)
+      for (auto &a: population)
+	a.permute(r);
+    std::cout << "\t" << population;
+  }
 
   Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> counts;
   if (model==A) {
@@ -187,15 +248,16 @@ int runModel(void) {
     summarize(counts);
   }
 
-  std::ofstream file;
-  file.open(filename);
-
-  if(mode=="e"){
-  //write initial lang to file
-  file << "nummemes  = " << Meme<Memebase>::getn()
-            << ", numlexes  = " << Lexeme<Lexbase>::getn()
-            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
-  file << "0\t" << population;
+  if(po.output_to_file){
+    //write initial lang to file
+    po.outstream << "nummemes  = " << Meme<Memebase>::getn()
+		 << ", numlexes  = " << Lexeme<Lexbase>::getn()
+		 << ", numagents = " << Agent<Agentbase>::getn() << std::endl
+                 << "Memes" << std::endl << "\t" << memes
+                 << "Lexemes" << std::endl << "\t" << lexemes
+                 << "Agents" << std::endl << "\t" << agents
+		 << "Initial" << std::endl << "\t" << population
+                 << "Counts" << std::endl << "\t" << counts;
   }
 
   // Model A: For the number of outer loops, store the oldlanguage in a
@@ -214,6 +276,13 @@ int runModel(void) {
     }
     switch(model) {
     case A: {
+      if(po.output_to_file)
+	po.outstream << rounds << "\t" << population
+		     << "Counts" << std::endl << "\t" << counts;
+      if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+	std::cout << "Round number " << rounds << std::endl
+		  << "\t" << population
+		  << "Counts" << std::endl << "\t" << counts;
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
       auto oldpop = population;
@@ -248,6 +317,14 @@ int runModel(void) {
       // Generate new counts and write out summary.
       auto counts=communicate_model<model>(agents,lexemes,memes,population,inner); summarize(counts);
       
+      if(po.output_to_file)
+	po.outstream << rounds << "\t" << population
+		     << "Counts" << std::endl << "\t" << counts;
+      if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+	std::cout << "Round number " << rounds << std::endl
+		  << "\t" << population
+		  << "Counts" << std::endl << "\t" << counts;
+
       // DIFFERENT: In model B we always mutate the lexicon
       for (auto a: indices(counts)) population[a].lexmutate(0.0,r,counts[a]); // SIGMA unused here, but we could make it more random...
       break;
@@ -255,16 +332,21 @@ int runModel(void) {
     }
   }
   std::cout << "\t" << population;
-  if(mode=="e")
-    file << "final\t" << population;
+  if(po.output_to_file)
+    po.outstream << "final" << std::endl << "\t" << population;
   return 0;
 }
 
 
 int main(int argc, char* argv[]) {
-	if(argc>1 && (argv[1][0] == 'b' || argv[1][0] == 'B')) {
-		std::cout << "model = B" << std::endl;
-		return runModel<B>();
-	}
-	else return runModel<A>();
+  const program_options po(argc,argv);
+  
+  if (!po.input_from_file)
+    std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
+  
+  if(po.model == B) {
+    std::cout << "model = B" << std::endl;
+    return runModel<B>();
+  }
+  else return runModel<A>();
 }

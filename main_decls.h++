@@ -233,7 +233,4 @@ public:
   }
 };
 
-int main(int, char*[]);
-
-
 #endif
