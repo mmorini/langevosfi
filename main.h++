@@ -12,6 +12,7 @@
 #include "selfiterator.h++"
 #include "main_decls.h++"
 #include "io.h++"
+#include "experience.h++"
 #include <cmath>
 #include <iostream>
 #include <iterator>

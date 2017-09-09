@@ -7,7 +7,7 @@ GIT = 'git'
 
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
-	probvector.h++ counts.h++ main.h++ main_decls.h++
+	probvector.h++ counts.h++ main.h++ main_decls.h++ experience.h++
 CFILES = main.c++
 MFILES = Makefile
 
@@ -27,7 +27,7 @@ language.h++.gch: language.h++ enumvector.h++ probvector.h++ counts.h++
 counts.h++.gch: counts.h++ enumvector.h++
 main.h++.gch: main.h++ network.h++ probvector.h++ enumvector.h++ myutil.h++ \
               enum.h++ meme.h++ lex.h++ agent.h++ language.h++ counts.h++ \
-              selfiterator.h++ main_decls.h++
+              selfiterator.h++ main_decls.h++ experience.h++
 
 TAGS: $(MFILES) $(CFILES) $(HFILES)
 	$(ETAGS) $(^:%='%')
