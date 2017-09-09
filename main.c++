@@ -61,13 +61,14 @@ public:
       if (argv[i] == std::string("-i"))
 	if (!input_from_file && ++i < argc) {
 	  input_from_file = true;
-	  instream_f = std::ifstream(argv[i]);
+	  // instream_f = std::ifstream(argv[i]);
+	  instream_f.open(argv[i]);
 	} else
 	  invalidusage();
       else if (argv[i] == std::string("-o"))
 	if (!output_to_file && ++i < argc) {
 	  output_to_file = true;
-	  outstream_f = std::ofstream(argv[i]);
+	  outstream_f.open(argv[i]);
 	} else
 	  invalidusage();
       else
