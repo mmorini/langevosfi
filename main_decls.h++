@@ -170,6 +170,7 @@ public:
 class ReinforcementLearnerLanguage: public Language<BitstringMemes,Lexemes> {
    double lambda;
 public:
+  ReinforcementLearnerLanguage() {} // default constructor needed for i/o library istream_iterator implementation
 	ReinforcementLearnerLanguage(double lambda) : lambda(lambda) { }
 	ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const int mask=-1):  Language(m,mask), lambda(lambda) {}
 	ReinforcementLearnerLanguage(double lambda, const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask), lambda(lambda) {}
