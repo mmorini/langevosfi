@@ -20,12 +20,23 @@ static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experien
   * have been encountered; so we need to use the increase_association method instead.
   */
 
+// The forward declaration of operator<< template is needed syntactically for 
+// the friend declaration.  We can avoid the friend declaration with a public
+// member function called from the operator template, but this is cleaner.
+// Also, we could put the definition of the operator template here, but it is
+// neater to put it after the class definition.
+template <typename Meme, typename Lexeme> class Experience;
+
+template <typename Meme, typename Lexeme>
+std::ostream& operator<<(std::ostream&, const Experience<Meme,Lexeme>&);
+
 template <typename Meme, typename Lexeme> // It has to be a template cos we don't know what Meme and Lexeme are yet
 class Experience {
 
 	using keytype = std::pair<Meme,Lexeme>;
 	std::map<keytype, double> association;
-  
+
+        friend std::ostream& operator<< <> (std::ostream&, const Experience&);
 public:
 
 	/* To maintain compatibility with Counts, we include these public fields... */
@@ -84,6 +95,13 @@ void summarize(const Enumvector<T,Experience> &experiences) {
 		tries += e.tries;
 	}
 	std::cout << "Comprehension " << (success/tries) << std::endl;
+}
+
+template <typename Meme, typename Lexeme>
+std::ostream& operator<<(std::ostream& o, const Experience<Meme,Lexeme>& e) {
+  for (auto cit: e.association)
+    o << " " << cit.first.first << " " << cit.first.second << " " << cit.second << std::endl;
+  return o;
 }
 
 #endif
