@@ -230,7 +230,7 @@ int runModel(const program_options& po) {
 							      (std::istream_iterator<typename chooselang<model>::Language>(po.instream)):
 							      Population<typename chooselang<model>::Language>
 							      (chooselang<model>::langinit(uniform,lambda,memes,r)));
-  if (po.input_from_file) {
+  if (!po.input_from_file) {
     if (syncstart < 0) {
       int c=0;
       for (auto &a: population)
