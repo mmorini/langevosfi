@@ -99,6 +99,7 @@ void summarize(const Enumvector<T,Experience> &experiences) {
 
 template <typename Meme, typename Lexeme>
 std::ostream& operator<<(std::ostream& o, const Experience<Meme,Lexeme>& e) {
+  o << e.success << "/" << e.tries << std::endl;
   for (auto cit: e.association)
     o << " " << cit.first.first << " " << cit.first.second << " " << cit.second << std::endl;
   return o;
