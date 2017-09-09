@@ -12,7 +12,8 @@ CFILES = main.c++
 MFILES = Makefile
 
 main: main.o
-main.o: main.c++ main.h++.gch
+# main.o: main.c++ main.h++.gch
+main.o: $(CFILES) $(HFILES)
 %.o: %.c++
 	$(COMPILE.cc) '$<'
 %: %.o
