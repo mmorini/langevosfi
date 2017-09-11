@@ -28,6 +28,15 @@ public:
   Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)) {}
 
   const AdjacencyMatrix& getmatrix() const {return adjacency;}
+  const AdjacencyMatrix& resetadjacency(const AdjacencyMatrix& a) {
+    adjacency = a; copynorm(); return adjacency;
+  }
+  const AdjacencyMatrix& resetadjacency(AdjacencyMatrix&& a) {
+    adjacency = std::forward<decltype(a)>(a); copynorm(); return adjacency;
+  }
+
+
+
   static const AdjacencyMatrix hypercubic_adjacency(const int dim=Agent::getn()) {
     AdjacencyMatrix r;
     int i=0;
