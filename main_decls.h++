@@ -77,6 +77,8 @@ protected:
 // the two memes a and b are.  Both have default implementations.
 class Memes: public Network<Meme<Memebase>> {
 public:
+  Memes(const Network& n): Network(n) {}
+  Memes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
   Memes() {}
   Memes(const Enumvector<Meme<Memebase>,double>& e): Network(e) {}
   Memes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e)) {}
@@ -94,6 +96,8 @@ protected:
 };
 class Lexemes: public Network<Lexeme<Lexbase>> {
 public:
+  Lexemes(const Network& n): Network(n) {}
+  Lexemes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
   Lexemes(const int m=-1): Network(m) {}
   Lexemes(std::mt19937&r, const int m=-1): Network(r,m){}
   Lexemes(const Probvector<Lexeme<Lexbase>>& p): Network(p){}
@@ -112,6 +116,8 @@ protected:
 };
 class Agents: public Network<Agent<Agentbase>> {
 public:
+  Agents(const Network& n): Network(n) {}
+  Agents(Network&& n): Network(std::forward<decltype(n)>(n)) {}
   Agents() {}
   Agents(std::mt19937&r, const int m=-1): Network(r,m){}
   // If slicing is an issue, define the virtual = operators

@@ -50,17 +50,24 @@ class program_options {
     throw std::runtime_error("Invalid usage");
   }
 public:
-  bool input_from_file, output_to_file;
+  bool input_from_file, input_all_from_file, output_to_file;
   std::istream &instream;
   std::ostream &outstream;
   program_options(const int argc, const char *const *const argv):
-    input_from_file(false), output_to_file(false),
+    input_from_file(false), input_all_from_file(false), output_to_file(false),
     instream(instream_f), outstream(outstream_f)
   {
     for (int i=1; i<argc; i++)
       if (argv[i] == std::string("-i"))
-	if (!input_from_file && ++i < argc) {
+	if (!input_from_file && !input_all_from_file && ++i < argc) {
 	  input_from_file = true;
+	  // instream_f = std::ifstream(argv[i]);
+	  instream_f.open(argv[i]);
+	} else
+	  invalidusage();
+      else if (argv[i] == std::string("-I"))
+	if (!input_from_file && !input_all_from_file && ++i < argc) {
+	  input_from_file = input_all_from_file = true;
 	  // instream_f = std::ifstream(argv[i]);
 	  instream_f.open(argv[i]);
 	} else
@@ -82,8 +89,9 @@ public:
     std::cerr << "Usage: <progname> [options]" <<std::endl
               << "where options may be " << std::endl
               << "\t-i <inputlanguagefile>" << std::endl
+              << "\t-I <inputallfile>" << std::endl
               << "\t-o <outputlanguagefile>" << std::endl
-              << "No option may be repeated" << std::endl;
+              << "No option may be repeated. -i and -I cannot be used together" << std::endl;
   }
 }; 
 
@@ -167,9 +175,12 @@ int main(const int argc, char **const argv) {
 
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
-  Memes memes(uniform != 0?Memes():Memes(r));
-  Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
-  Agents agents(uniform != 0?Agents():Agents(r));
+  Memes memes(po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
+	      uniform != 0?Memes():Memes(r));
+  Lexemes lexemes(po.input_all_from_file?Lexemes(*std::istream_iterator<Lexemes::Network>(po.instream)):
+		  uniform != 0?Lexemes():Lexemes(r));
+  Agents agents(po.input_all_from_file?Agents(*std::istream_iterator<Agents::Network>(po.instream)):
+		uniform != 0?Agents():Agents(r));
   // Generate an entire population; write it out.
 
   // The memes currently can be defaulted in the first two cases below, but trying
