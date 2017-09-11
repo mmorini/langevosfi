@@ -15,15 +15,21 @@ template<typename Agent,typename probvector=Probvector<Agent,std::mt19937>>
 class Network: public probvector {
 public:
   typedef Enumvector<Agent,probvector> AdjacencyMatrix;
-  Network(const int m=-1): probvector(m), adjacency(*static_cast<const probvector*>(this)) {copynorm();}
-  Network(typename probvector::Generator &r,const int m=-1): probvector(r,m), adjacency(*static_cast<const probvector*>(this)) {copynorm();}
   // static_cast in the following does overload resolution since std::function constructor is templatized and fails to do so.
   Network(const AdjacencyMatrix &a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(a) {}
   Network(AdjacencyMatrix &&a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(std::forward<decltype(a)>(a)) {}
-  Network(const probvector& p): probvector(p), adjacency(*static_cast<const probvector*>(this)) {copynorm();}
-  Network(probvector&& p): probvector(std::forward<decltype(p)>(p)), adjacency(*static_cast<const probvector*>(this)) {copynorm();}
-  Network(const Enumvector<Agent,double>& e): probvector(e,false), adjacency(*static_cast<const probvector*>(this)) {copynorm();}
-  Network(Enumvector<Agent,double>&& e): probvector(std::forward<decltype(e)>(e)), adjacency(*static_cast<const probvector*>(this)) {copynorm();}
+  Network(const probvector& p, AdjacencyMatrix &&a): probvector(p), adjacency(std::forward<decltype(a)>(a)) {copynorm();}
+  Network(probvector&& p, AdjacencyMatrix &&a): probvector(std::forward<decltype(p)>(p)), adjacency(std::forward<decltype(a)>(a)) {copynorm();}
+  Network(const probvector& p): Network(p, AdjacencyMatrix(p)) {}
+  Network(probvector&& p): Network(std::forward<decltype(p)>(p), AdjacencyMatrix(p)) {}
+  Network(const int m=-1): Network(probvector(m)) {}
+  Network(typename probvector::Generator &r,const int m=-1): Network(probvector(r,m)) {}
+  Network(const Enumvector<Agent,double>& e): Network(probvector(e,false)) {}
+  Network(Enumvector<Agent,double>&& e): probvector(std::forward<decltype(e)>(e),false) {}
+
+  Network(const probvector& p, const AdjacencyMatrix &a): probvector(p), adjacency(a) {copynorm();}
+  Network(probvector&& p, const AdjacencyMatrix &a): probvector(std::forward<decltype(p)>(p)), adjacency(a) {copynorm();}
+
   Network(const Network&) = default;
   Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)) {}
 
