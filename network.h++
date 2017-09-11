@@ -86,7 +86,8 @@ public:
     return adjacency[a].generate(r);
   }
   virtual double match(const Agent &a, const Agent &b) const {
-    return a.match(b);
+    // return a.match(b);
+    return adjacency[a][b];
   }
 private:
   AdjacencyMatrix adjacency;
