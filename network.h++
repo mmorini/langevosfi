@@ -28,7 +28,7 @@ public:
   Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)) {}
 
   const AdjacencyMatrix& getmatrix() const {return adjacency;}
-  static const AdjacencyMatrix hypercubic_adjacency(const int dim) {
+  static const AdjacencyMatrix hypercubic_adjacency(const int dim=Agent::getn()) {
     AdjacencyMatrix r;
     int i=0;
     for (const auto a: indices(r)) {
@@ -46,6 +46,32 @@ public:
       }
       i++;
     }
+    return r;
+  }
+  static const AdjacencyMatrix diagonal_adjacency(const int dim=Agent::getn()) {
+    AdjacencyMatrix r;
+    int i=0;
+    for (const auto a: indices(r))
+      if (i++<dim) {
+	Enumvector<Agent,double> e;
+	for (const auto b: indices(r[a]))
+	  e[b] = a==b;
+	r[a] = e;
+      } else
+	r[a] *= 0;
+    return r;
+  }
+  static const AdjacencyMatrix basematch_adjacency(const int dim=Agent::getn()) {
+    AdjacencyMatrix r;
+    int i=0;
+    for (const auto a: indices(r))
+      if (i++<dim) {
+	Enumvector<Agent,double> e;
+	for (const auto b: indices(r[a]))
+	  e[b] = a.match(b);
+	r[a] = e;
+      } else
+	r[a] *= 0;
     return r;
   }
 
