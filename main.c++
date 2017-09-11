@@ -128,13 +128,18 @@ int main(const int argc, char **const argv) {
   //             0: random
   if (!po.input_from_file)
     std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
-  else
+  else if (!po.input_all_from_file)
     std::cerr << "uniform (0 or nonzero)?" << std::endl;
-  const auto uniform = *std::istream_iterator<int>(std::cin);
+  const auto uniform = po.input_all_from_file?0:*std::istream_iterator<int>(std::cin);
   const auto syncstart = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
+  if (!po.input_all_from_file)
+    std::cout << "uniform = " << uniform << " ";
   if (!po.input_from_file)
-  std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
-  std::getline(std::cin,ignore);
+    std::cout << " syncstart = " << syncstart;
+  if (!po.input_all_from_file) {
+    std::cout << std::endl;
+    std::getline(std::cin,ignore);
+  }
   
   // The following two parameters are effectively in the exponent, so be careful
   std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
