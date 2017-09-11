@@ -173,8 +173,8 @@ int main(const int argc, char **const argv) {
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
-  std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
-  // for (const auto s: seed_vector) std::cout << s << " ";
+  // std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
+  for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
   
 
