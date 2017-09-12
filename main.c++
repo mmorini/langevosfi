@@ -1,7 +1,7 @@
 #include "main.h++"
 #include <fstream>
 #include <exception>
-// #include <sstream>
+#include <sstream>
 #include <vector>
 
 static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
@@ -46,9 +46,6 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
     const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
     const Meme<Memebase> &m2(population[a2].memegen(l2,r));
     switch(model) {
-    case A:
-      retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
-      break;
     case B: {
       const auto ran = std::generate_canonical<double, 20>(r);
       const double match = population[a1].match(memes,m1,m2,population[a2]);
@@ -59,6 +56,10 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
 	retval[a1].increase_association( m1, l1, -1.0 );
       break;
     }
+      // Make case A the default to catch case P
+    default:
+      retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
+      break;
     }
   }
   return retval;
@@ -103,12 +104,7 @@ public:
 	  invalidusage();
       else if (argv[i] == std::string("-m"))
 	if (++i < argc)
-	  if (std::toupper(*argv[i]) == 'A')
-	    model = A;
-	  else if (std::toupper(*argv[i]) == 'B')
-	    model = B;
-	  else
-	    invalidusage();
+	  std::istringstream(argv[i]) >> model;
 	else
 	  invalidusage();
       else
@@ -182,20 +178,21 @@ int runModel(const program_options& po) {
 		                         // declared const, and secondly they should be in a union
 				         // which depends on model.
   switch (model) {
-  case A:
-    // The following two parameters are effectively in the exponent, so careful
-    std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
-    mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
-    penalty = *std::istream_iterator<double>(std::cin); /* 100 */
-    std::cout <<   "mutrate = " << mutrate
-	      << ", penalty = " << penalty << std::endl;
-    break;
   case B:
     // Reinforcement learning parameter -- DIFFERENT
     
     std::cerr << "Provide reinforcement learning rate (e.g., 0.01)" << std::endl;
     lambda = *std::istream_iterator<double>(std::cin); /* 0.01 */
     std::cout <<   "lambda = " << lambda << std::endl;
+    break;
+  default:
+    // case A is default to catch case P as well.
+    // The following two parameters are effectively in the exponent, so careful
+    std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
+    mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
+    penalty = *std::istream_iterator<double>(std::cin); /* 100 */
+    std::cout <<   "mutrate = " << mutrate
+	      << ", penalty = " << penalty << std::endl;
     break;
   }
   std::getline(std::cin,ignore);
@@ -230,11 +227,19 @@ int runModel(const program_options& po) {
   
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
-  Memes pmemes(po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
-	       uniform != 0?Memes():Memes(r));
-  BitstringMemes bmemes(po.input_all_from_file?BitstringMemes(*std::istream_iterator<BitstringMemes::Network>(po.instream)):
-               uniform != 0?BitstringMemes():BitstringMemes(r)); // DIFFERENT: The type of memes is different in ModelA
-  Memes &memes(model==A?pmemes:bmemes);
+  // Don't use random numbers in the wrong branch
+  Memes pmemes(model != B?
+	       po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
+	       model==P?
+	       uniform != 0?Memes(Network(hypercubic_adjacency())):Memes(Network(Probvector(r),hypercubic_adjacency)):
+	       uniform != 0?Memes():Memes(r):
+	       Memes());
+  BitstringMemes bmemes(model == B?
+			po.input_all_from_file?BitstringMemes(*std::istream_iterator<BitstringMemes::Network>(po.instream)):
+			uniform != 0?BitstringMemes():BitstringMemes(r):
+			BitStringMemes()); // DIFFERENT: The type of memes is different in ModelA
+  // model A is default, catches model P
+  Memes &memes(model==B?bmemes:pmemes);
   Lexemes lexemes(po.input_all_from_file?Lexemes(*std::istream_iterator<Lexemes::Network>(po.instream)):
 		  uniform != 0?Lexemes():Lexemes(r));
   Agents agents(po.input_all_from_file?Agents(*std::istream_iterator<Agents::Network>(po.instream)):
@@ -260,9 +265,10 @@ int runModel(const program_options& po) {
   }
 
   Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> counts;
-  if (model==A) {
+  if (model!=B) {
     // Initialize everybodies counts and write out summary.
-    counts=communicate_model<model>(agents,lexemes,memes,population,inner);
+    // A is default!
+    counts=communicate_model<A>(agents,lexemes,memes,population,inner);
     summarize(counts);
   }
 
@@ -290,42 +296,6 @@ int runModel(const program_options& po) {
       std::cout << "Round number " << rounds << std::endl
 		<< population;
     switch(model) {
-    case A: {
-      if(po.output_to_file)
-	po.outstream << rounds << population
-		     << "Counts" << std::endl << "\t" << counts;
-      if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
-	std::cout << "Round number " << rounds << std::endl
-		  << population
-		  << "Counts" << std::endl << "\t" << counts;
-      // Mark cache as moving to 'oldpop' in the next statement.
-      for (auto &a: population) a.decache();
-      auto oldpop = population;
-      auto oldcounts = counts;
-      
-      // Mutate each language
-      for (auto &a: population) a.lexmutate(mutrate,r);
-      
-      // Generate new counts and write out summary.
-      counts=communicate_model<model>(agents,lexemes,memes,population,inner); summarize(counts);
-      
-      // Look at each agent's language
-      for(auto a: indices(counts)) {
-	// Accept new language if it did not get tried, else accept
-	// randomly if it is worse and deterministically if it is better.
-	if(counts[a].tries>0 && oldcounts[a].tries>0) {
-	  auto delta = counts[a].mean() - oldcounts[a].mean();
-	  if (delta < 0 &&
-	      std::generate_canonical<double, 20>(r) >
-	      std::exp(penalty*delta)) {
-	    // std::move promises the oldpop and oldcounts array element
-	    // won't be used any more, so steal whatever data structure you can.
-	    population[a] = std::move(oldpop[a]);
-	    counts[a] = std::move(oldcounts[a]);
-	  }
-	}
-      }
-      break; }
     case B: {
       // DIFFERENT: In model B we don't need to keep track of the old language
       
@@ -344,6 +314,44 @@ int runModel(const program_options& po) {
       for (auto a: indices(counts)) population[a].lexmutate(0.0,r,counts[a]); // SIGMA unused here, but we could make it more random...
       break;
     }
+      // A is default, catches P
+    default: {
+      if(po.output_to_file)
+	po.outstream << rounds << population
+		     << "Counts" << std::endl << "\t" << counts;
+      if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
+	std::cout << "Round number " << rounds << std::endl
+		  << population
+		  << "Counts" << std::endl << "\t" << counts;
+      // Mark cache as moving to 'oldpop' in the next statement.
+      for (auto &a: population) a.decache();
+      auto oldpop = population;
+      auto oldcounts = counts;
+      
+      // Mutate each language
+      for (auto &a: population) a.lexmutate(mutrate,r);
+      
+      // Generate new counts and write out summary.
+      // A is default, catching P
+      counts=communicate_model<A>(agents,lexemes,memes,population,inner); summarize(counts);
+      
+      // Look at each agent's language
+      for(auto a: indices(counts)) {
+	// Accept new language if it did not get tried, else accept
+	// randomly if it is worse and deterministically if it is better.
+	if(counts[a].tries>0 && oldcounts[a].tries>0) {
+	  auto delta = counts[a].mean() - oldcounts[a].mean();
+	  if (delta < 0 &&
+	      std::generate_canonical<double, 20>(r) >
+	      std::exp(penalty*delta)) {
+	    // std::move promises the oldpop and oldcounts array element
+	    // won't be used any more, so steal whatever data structure you can.
+	    population[a] = std::move(oldpop[a]);
+	    counts[a] = std::move(oldcounts[a]);
+	  }
+	}
+      }
+      break; }
     }
   }
   std::cout <<  population;
@@ -359,9 +367,7 @@ int main(int argc, char* argv[]) {
   if (!po.input_from_file)
     std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
   
-  if(po.model == B) {
-    std::cout << "model = B" << std::endl;
-    return runModel<B>(po);
-  }
-  else return runModel<A>(po);
+  std::cout << "model = " << po.model << std::endl;
+
+  return runModel<po.model==P?A:po.model>(po);
 }

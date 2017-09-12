@@ -5,7 +5,9 @@
 #include <random>
 #include <utility>
 #include <ostream>
+#include <istream>
 #include <iterator>
+#include <cctype>
 
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
@@ -228,9 +230,24 @@ template<typename AgentLanguage>
 Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &, const Lexemes &, const Memes &,
 						const Population<AgentLanguage> &, int);
 
-enum ModelType {A, B};
-template<enum ModelType m> class chooselang{};
-template<> class chooselang<A>{
+enum ModelType {A, B, P};
+inline
+std::ostream& operator<<(std::ostream &o, const ModelType m) {
+  return o << (m==A?"A":m==B?"B":m==P?"P":"Invalid");
+}
+inline
+std::istream& operator>>(std::istream &o, ModelType &m) {
+  char model;
+  auto retval = i >> model;
+  model = std::toupper(model);
+  m = model == 'B'?B: model == 'P'?P: A;
+  return i;
+}
+
+
+template<enum ModelType m> class chooselang{
+  // Make this the default
+  // template<> class chooselang<A>{
 public:
   typedef AgentLanguage Language;
   static Language langinit(const int uniform, const double lambda,
