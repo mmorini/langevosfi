@@ -72,25 +72,33 @@ class program_options {
     throw std::runtime_error("Invalid usage");
   }
 public:
-  bool input_from_file, output_to_file;
+  bool input_from_file, input_all_from_file, output_to_file;
   ModelType model;
   std::istream &instream;
   std::ostream &outstream;
   program_options(const int argc, const char *const *const argv):
-    input_from_file(false), output_to_file(false), model(A),
+    input_from_file(false), input_all_from_file(false), output_to_file(false), model(A),
     instream(instream_f), outstream(outstream_f)
   {
     for (int i=1; i<argc; i++)
       if (argv[i] == std::string("-i"))
-	if (!input_from_file && ++i < argc) {
+	if (!input_from_file && !input_all_from_file && ++i < argc) {
 	  input_from_file = true;
-	  instream_f = std::ifstream(argv[i]);
+	  // instream_f = std::ifstream(argv[i]);
+	  instream_f.open(argv[i]);
+	} else
+	  invalidusage();
+      else if (argv[i] == std::string("-I"))
+	if (!input_from_file && !input_all_from_file && ++i < argc) {
+	  input_from_file = input_all_from_file = true;
+	  // instream_f = std::ifstream(argv[i]);
+	  instream_f.open(argv[i]);
 	} else
 	  invalidusage();
       else if (argv[i] == std::string("-o"))
 	if (!output_to_file && ++i < argc) {
 	  output_to_file = true;
-	  outstream_f = std::ofstream(argv[i]);
+	  outstream_f.open(argv[i]);
 	} else
 	  invalidusage();
       else if (argv[i] == std::string("-m"))
@@ -114,9 +122,10 @@ public:
     std::cerr << "Usage: <progname> [options]" <<std::endl
               << "where options may be " << std::endl
               << "\t-i <inputlanguagefile>" << std::endl
+              << "\t-I <inputallfile>" << std::endl
               << "\t-o <outputlanguagefile>" << std::endl
               << "\t-m A|B" << std::endl
-              << "No option may be repeated" << std::endl;
+              << "No option may be repeated. -i and -I cannot be used together" << std::endl;
   }
 }; 
 
@@ -156,13 +165,18 @@ int runModel(const program_options& po) {
   //             0: random
   if (!po.input_from_file)
     std::cerr << "uniform (-1, 0 or 1), and syncstart (+1, -1, or 0)" << std::endl;
-  else
+  else if (!po.input_all_from_file)
     std::cerr << "uniform (0 or nonzero)?" << std::endl;
-  const auto uniform = *std::istream_iterator<int>(std::cin);
+  const auto uniform = po.input_all_from_file?0:*std::istream_iterator<int>(std::cin);
   const auto syncstart = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
+  if (!po.input_all_from_file)
+    std::cout << "uniform = " << uniform << " ";
   if (!po.input_from_file)
-  std::cout << "uniform = " << uniform << " syncstart = " << syncstart << std::endl;
-  std::getline(std::cin,ignore);
+    std::cout << " syncstart = " << syncstart;
+  if (!po.input_all_from_file) {
+    std::cout << std::endl;
+    std::getline(std::cin,ignore);
+  }
 
   double mutrate=0, penalty=0, lambda=0; // Not quite right! Two problems: first these should be
 		                         // declared const, and secondly they should be in a union
@@ -210,17 +224,21 @@ int runModel(const program_options& po) {
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
-  std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
-  // for (const auto s: seed_vector) std::cout << s << " ";
+  // std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
+  for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
   
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
-  Memes pmemes(uniform != 0?Memes():Memes(r));
-  BitstringMemes bmemes(uniform != 0?BitstringMemes():BitstringMemes(r)); // DIFFERENT: The type of memes is different in ModelA
+  Memes pmemes(po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
+	       uniform != 0?Memes():Memes(r));
+  BitstringMemes bmemes(po.input_all_from_file?BitstringMemes(*std::istream_iterator<BitstringMemes::Network>(po.instream)):
+               uniform != 0?BitstringMemes():BitstringMemes(r)); // DIFFERENT: The type of memes is different in ModelA
   Memes &memes(model==A?pmemes:bmemes);
-  Lexemes lexemes(uniform != 0?Lexemes():Lexemes(r));
-  Agents agents(uniform != 0?Agents():Agents(r));
+  Lexemes lexemes(po.input_all_from_file?Lexemes(*std::istream_iterator<Lexemes::Network>(po.instream)):
+		  uniform != 0?Lexemes():Lexemes(r));
+  Agents agents(po.input_all_from_file?Agents(*std::istream_iterator<Agents::Network>(po.instream)):
+		uniform != 0?Agents():Agents(r));
   // Generate an entire population; write it out.
 
   // The memes currently can be defaulted in the first two cases below, but trying
@@ -238,7 +256,7 @@ int runModel(const program_options& po) {
     } else if (syncstart == 0)
       for (auto &a: population)
 	a.permute(r);
-    std::cout << "\t" << population;
+    std::cout << population;
   }
 
   Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> counts;
@@ -253,10 +271,10 @@ int runModel(const program_options& po) {
     po.outstream << "nummemes  = " << Meme<Memebase>::getn()
 		 << ", numlexes  = " << Lexeme<Lexbase>::getn()
 		 << ", numagents = " << Agent<Agentbase>::getn() << std::endl
-                 << "Memes" << std::endl << "\t" << memes
-                 << "Lexemes" << std::endl << "\t" << lexemes
-                 << "Agents" << std::endl << "\t" << agents
-		 << "Initial" << std::endl << "\t" << population
+                 << "Memes" << std::endl << memes
+                 << "Lexemes" << std::endl << lexemes
+                 << "Agents" << std::endl << agents
+		 << "Initial" << std::endl << population
                  << "Counts" << std::endl << "\t" << counts;
   }
 
@@ -268,20 +286,17 @@ int runModel(const program_options& po) {
   // apply reinforcement learning to the resulting experience
     
   for (auto rounds: range(outer)) {
-    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0){
+    if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
       std::cout << "Round number " << rounds << std::endl
-		<< "\t" << population;
-      if(po.output_to_file)
-        po.outstream << rounds << "\t" << population;
-    }
+		<< population;
     switch(model) {
     case A: {
       if(po.output_to_file)
-	po.outstream << rounds << "\t" << population
+	po.outstream << rounds << population
 		     << "Counts" << std::endl << "\t" << counts;
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
-		  << "\t" << population
+		  << population
 		  << "Counts" << std::endl << "\t" << counts;
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
@@ -318,11 +333,11 @@ int runModel(const program_options& po) {
       auto counts=communicate_model<model>(agents,lexemes,memes,population,inner); summarize(counts);
       
       if(po.output_to_file)
-	po.outstream << rounds << "\t" << population
+	po.outstream << rounds << population
 		     << "Counts" << std::endl << "\t" << counts;
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
-		  << "\t" << population
+		  << population
 		  << "Counts" << std::endl << "\t" << counts;
 
       // DIFFERENT: In model B we always mutate the lexicon
@@ -331,9 +346,9 @@ int runModel(const program_options& po) {
     }
     }
   }
-  std::cout << "\t" << population;
+  std::cout <<  population;
   if(po.output_to_file)
-    po.outstream << "final" << std::endl << "\t" << population;
+    po.outstream << "final" << std::endl << population;
   return 0;
 }
 

@@ -104,14 +104,16 @@ std::istream& operator>> (std::istream& i, Language<M,L>& e) { // partial specia
 
 template<typename A, typename P>
 std::ostream& operator<< (std::ostream& o, const Network<A,P>& n) {
-  return o << n.getmatrix();
+  return o << n.isdiag() << std::endl << n.getmatrix();
 }
 
 template<typename A, typename P>
 std::istream& operator>> (std::istream& i, Network<A,P>& n) {
   typename Network<A,P>::AdjacencyMatrix a;
+  const bool diagstate = *std::istream_iterator<bool>(i);
   i >> a;
   n = Network<A,P>(std::move(a)); // virtual =
+  n.adjacency_is_diag = diagstate;
   return i;
 }
 
