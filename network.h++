@@ -16,6 +16,7 @@ class Network: public probvector {
 public:
   typedef Enumvector<Agent,probvector> AdjacencyMatrix;
   // static_cast in the following does overload resolution since std::function constructor is templatized and fails to do so.
+  // Need the std::function since the map is also templatized
   Network(const AdjacencyMatrix &a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(a) {}
   Network(AdjacencyMatrix &&a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(std::forward<decltype(a)>(a)) {}
   Network(const probvector& p, AdjacencyMatrix &&a): probvector(p), adjacency(std::forward<decltype(a)>(a)) {copynorm();}
