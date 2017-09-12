@@ -8,19 +8,25 @@
 #include <random>
 #include <functional>
 #include <utility>
+#include <istream>
 
 static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
+// Forward declaration to allow friend declaration
+template<typename A, typename P> class Network;
+template<typename A, typename P> std::istream& operator>> (std::istream&, Network<A,P>&);
+
 template<typename Agent,typename probvector=Probvector<Agent,std::mt19937>>
 class Network: public probvector {
+  friend std::istream& operator>> <> (std::istream&, Network&);
 public:
   typedef Enumvector<Agent,probvector> AdjacencyMatrix;
   // static_cast in the following does overload resolution since std::function constructor is templatized and fails to do so.
   // Need the std::function since the map is also templatized
-  Network(const AdjacencyMatrix &a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(a) {}
-  Network(AdjacencyMatrix &&a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(std::forward<decltype(a)>(a)) {}
-  Network(const probvector& p, AdjacencyMatrix &&a): probvector(p), adjacency(std::forward<decltype(a)>(a)) {copynorm();}
-  Network(probvector&& p, AdjacencyMatrix &&a): probvector(std::forward<decltype(p)>(p)), adjacency(std::forward<decltype(a)>(a)) {copynorm();}
+  Network(const AdjacencyMatrix &a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(a), adjacency_is_diag(false) {}
+  Network(AdjacencyMatrix &&a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(std::forward<decltype(a)>(a)), adjacency_is_diag(false) {}
+  Network(const probvector& p, AdjacencyMatrix &&a): probvector(p), adjacency(std::forward<decltype(a)>(a)), adjacency_is_diag(false) {copynorm();}
+  Network(probvector&& p, AdjacencyMatrix &&a): probvector(std::forward<decltype(p)>(p)), adjacency(std::forward<decltype(a)>(a)), adjacency_is_diag(false) {copynorm();}
   Network(const probvector& p): Network(p, AdjacencyMatrix(p)) {}
   Network(probvector&& p): Network(std::forward<decltype(p)>(p), AdjacencyMatrix(p)) {}
   Network(const int m=-1): Network(probvector(m)) {}
@@ -28,15 +34,15 @@ public:
   Network(const Enumvector<Agent,double>& e): Network(probvector(e,false)) {}
   Network(const Enumvector<Agent,double>& e, const AdjacencyMatrix &a): Network(probvector(e,false),a) {}
   Network(const Enumvector<Agent,double>& e, AdjacencyMatrix &&a): Network(probvector(e,false),std::forward<decltype(a)>(a)) {}
-  Network(Enumvector<Agent,double>&& e): probvector(std::forward<decltype(e)>(e),false) {}
+  Network(Enumvector<Agent,double>&& e): Network(probvector(std::forward<decltype(e)>(e),false)) {}
   Network(Enumvector<Agent,double>&& e, const AdjacencyMatrix &a): Network(probvector(std::forward<decltype(e)>(e),false),a) {}
   Network(Enumvector<Agent,double>&& e, AdjacencyMatrix &&a): Network(probvector(std::forward<decltype(e)>(e),false),std::forward<decltype(a)>(a)) {}
 
-  Network(const probvector& p, const AdjacencyMatrix &a): probvector(p), adjacency(a) {copynorm();}
-  Network(probvector&& p, const AdjacencyMatrix &a): probvector(std::forward<decltype(p)>(p)), adjacency(a) {copynorm();}
+  Network(const probvector& p, const AdjacencyMatrix &a): probvector(p), adjacency(a), adjacency_is_diag(false) {copynorm();}
+  Network(probvector&& p, const AdjacencyMatrix &a): probvector(std::forward<decltype(p)>(p)), adjacency(a), adjacency_is_diag(false) {copynorm();}
 
   Network(const Network&) = default;
-  Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)) {}
+  Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)), adjacency_is_diag(std::move(n.adjacency_is_diag)) {}
 
   const AdjacencyMatrix& getmatrix() const {return adjacency;}
   const AdjacencyMatrix& resetadjacency(const AdjacencyMatrix& a) {
@@ -45,8 +51,6 @@ public:
   const AdjacencyMatrix& resetadjacency(AdjacencyMatrix&& a) {
     adjacency = std::forward<decltype(a)>(a); copynorm(); return adjacency;
   }
-
-
 
   static const AdjacencyMatrix hypercubic_adjacency(const int dim=Agent::getn()) {
     AdjacencyMatrix r;
@@ -129,14 +133,22 @@ public:
   virtual ~Network(void) {}
 
   virtual Agent neighbor(const Agent& a,typename probvector::Generator &r) const {
-    return adjacency[a].generate(r);
+    return adjacency_is_diag?a:adjacency[a].generate(r);
   }
   virtual double match(const Agent &a, const Agent &b) const {
     // return a.match(b);
     return adjacency[a][b];
   }
+  bool isdiag() const {
+    return adjacency_is_diag;
+  }
+protected:
+  void declarediag(bool state=true) {
+    adjacency_is_diag = state;
+  }
 private:
   AdjacencyMatrix adjacency;
+  bool adjacency_is_diag;
   void copynorm() {
     for (const auto i: indices(adjacency)) adjacency[i] *= (*const_cast<const Network*>(this))[i]/adjacency[i].norm();
   }
