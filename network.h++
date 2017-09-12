@@ -25,7 +25,11 @@ public:
   Network(const int m=-1): Network(probvector(m)) {}
   Network(typename probvector::Generator &r,const int m=-1): Network(probvector(r,m)) {}
   Network(const Enumvector<Agent,double>& e): Network(probvector(e,false)) {}
+  Network(const Enumvector<Agent,double>& e, const AdjacencyMatrix &a): Network(probvector(e,false),a) {}
+  Network(const Enumvector<Agent,double>& e, AdjacencyMatrix &&a): Network(probvector(e,false),std::forward<decltype(a)>(a)) {}
   Network(Enumvector<Agent,double>&& e): probvector(std::forward<decltype(e)>(e),false) {}
+  Network(Enumvector<Agent,double>&& e, const AdjacencyMatrix &a): Network(probvector(std::forward<decltype(e)>(e),false),a) {}
+  Network(Enumvector<Agent,double>&& e, AdjacencyMatrix &&a): Network(probvector(std::forward<decltype(e)>(e),false),std::forward<decltype(a)>(a)) {}
 
   Network(const probvector& p, const AdjacencyMatrix &a): probvector(p), adjacency(a) {copynorm();}
   Network(probvector&& p, const AdjacencyMatrix &a): probvector(std::forward<decltype(p)>(p)), adjacency(a) {copynorm();}
