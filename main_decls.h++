@@ -77,17 +77,28 @@ protected:
 // the two memes a and b are.  Both have default implementations.
 class Memes: public Network<Meme<Memebase>> {
 public:
-  Memes() {}
-  Memes(const Enumvector<Meme<Memebase>,double>& e): Network(e) {}
-  Memes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e)) {}
-  Memes(std::mt19937&r, const int m=-1): Network(r,m){}
+  Memes(const Network& n): Network(n) {}
+  Memes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
+  // All other constructors enforce basematch_adjacency
+  Memes(): Network(Probvector(-1),basematch_adjacency()) {}
+  Memes(const Enumvector<Meme<Memebase>,double>& e): Network(e,basematch_adjacency()) {}
+  Memes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e),basematch_adjacency()) {}
+  Memes(std::mt19937&r, const int m=-1): Network(Probvector(r,m),basematch_adjacency()){}
   // If slicing is an issue, define the virtual = operators
 };
 
 class BitstringMemes: public Memes {
 	unsigned bits = count_bits(Meme<Memebase>::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
 public:
-	using Memes::Memes; // We can inherit all the constructors here
+        // using Memes::Memes; // We can inherit all the constructors here
+  BitstringMemes(const Network& n): Network(n) {}
+  BitstringMemes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
+  // All other constructors enforce hypercubic_adjacency
+  BitstringMemes(): Network(Probvector(-1),hypercubic_adjacency()) {}
+  BitstringMemes(const Enumvector<Meme<Memebase>,double>& e): Network(e,hypercubic_adjacency()) {}
+  BitstringMemes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e),hypercubic_adjacency()) {}
+  BitstringMemes(std::mt19937&r, const int m=-1): Network(Probvector(r,m),hypercubic_adjacency()){}
+  // If slicing is an issue, define the virtual = operators
 	
 	// ... and overload the virtual functions
 	
@@ -120,11 +131,15 @@ protected:
 };
 class Lexemes: public Network<Lexeme<Lexbase>> {
 public:
-  Lexemes(const int m=-1): Network(m) {}
-  Lexemes(std::mt19937&r, const int m=-1): Network(r,m){}
-  Lexemes(const Probvector<Lexeme<Lexbase>>& p): Network(p){}
-  Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
-  double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
+  Lexemes(const Network& n): Network(n) {}
+  Lexemes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
+  // All others enforce digonal_adjacency
+  Lexemes(const int m=-1): Network(m,diagonal_adjacency()) {declarediag();}
+  Lexemes(std::mt19937&r, const int m=-1): Network(Probvector(r,m),diagonal_adjacency()){declarediag();}
+  Lexemes(const Probvector<Lexeme<Lexbase>>& p): Network(p,diagonal_adjacency()){declarediag();}
+  // The following two are no longer needed: they follow from the diagonal_adjacency
+  // Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
+  // double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
   // If slicing is an issue, define the virtual = operators
 };
 
@@ -138,6 +153,8 @@ protected:
 };
 class Agents: public Network<Agent<Agentbase>> {
 public:
+  Agents(const Network& n): Network(n) {}
+  Agents(Network&& n): Network(std::forward<decltype(n)>(n)) {}
   Agents() {}
   Agents(std::mt19937&r, const int m=-1): Network(r,m){}
   // If slicing is an issue, define the virtual = operators

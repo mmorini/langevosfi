@@ -98,7 +98,9 @@ public:
   template<typename T2>
   Enumvector<E,typename T2::result_type> map(const T2 &f) const {
     Enumvector<E,typename T2::result_type> r;
-    std::transform(cbegin(), cend(), r.begin(), [f](typename T2::argument_type &x){return f(&x);});
+    std::transform(cbegin(), cend(), r.begin(),
+		   [f](typename std::remove_pointer<typename T2::argument_type>::type &x)
+		   {return f(&x);});
     return r;
   }
 };
