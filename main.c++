@@ -202,7 +202,7 @@ int main(const int argc, char **const argv) {
     } else if (syncstart == 0)
       for (auto &a: population)
 	a.permute(r);
-    std::cout << "\t" << population;
+    std::cout << population;
   }
   
   // Initialize everybodies counts and write out summary.
@@ -214,10 +214,10 @@ int main(const int argc, char **const argv) {
     po.outstream << "nummemes  = " << Meme<Memebase>::getn()
 		 << ", numlexes  = " << Lexeme<Lexbase>::getn()
 		 << ", numagents = " << Agent<Agentbase>::getn() << std::endl
-                 << "Memes" << std::endl << "\t" << memes
-                 << "Lexemes" << std::endl << "\t" << lexemes
-                 << "Agents" << std::endl << "\t" << agents
-		 << "Initial" << std::endl << "\t" << population
+                 << "Memes" << std::endl << memes
+                 << "Lexemes" << std::endl << lexemes
+                 << "Agents" << std::endl << agents
+		 << "Initial" << std::endl << population
                  << "Counts" << std::endl << "\t" << counts;
   }
 
@@ -227,11 +227,11 @@ int main(const int argc, char **const argv) {
   // random number.
   for (auto rounds: range(outer)) {
     if(po.output_to_file)
-      po.outstream << rounds << "\t" << population
+      po.outstream << rounds << std::endl << population
 		   << "Counts" << std::endl << "\t" << counts;
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
-		  << "\t" << population
+		  << population
 		  << "Counts" << std::endl << "\t" << counts;
     // Mark cache as moving to 'oldpop' in the next statement.
     for (auto &a: population) a.decache();
@@ -261,8 +261,8 @@ int main(const int argc, char **const argv) {
       }
     }
   }
-  std::cout << "\t" << population;
+  std::cout <<  population;
   if(po.output_to_file)
-    po.outstream << "final" << std::endl << "\t" << population;
+    po.outstream << "final" << std::endl << population;
   return 0;
 }
