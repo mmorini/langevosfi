@@ -236,9 +236,9 @@ std::ostream& operator<<(std::ostream &o, const ModelType m) {
   return o << (m==A?"A":m==B?"B":m==P?"P":"Invalid");
 }
 inline
-std::istream& operator>>(std::istream &o, ModelType &m) {
+std::istream& operator>>(std::istream &i, ModelType &m) {
   char model;
-  auto retval = i >> model;
+  i >> model;
   model = std::toupper(model);
   m = model == 'B'?B: model == 'P'?P: A;
   return i;

@@ -231,13 +231,13 @@ int runModel(const program_options& po) {
   Memes pmemes(model != B?
 	       po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
 	       model==P?
-	       uniform != 0?Memes(Network(hypercubic_adjacency())):Memes(Network(Probvector(r),hypercubic_adjacency)):
+	       uniform != 0?Memes(Memes::Network(Memes::hypercubic_adjacency())):Memes(Memes::Network(Memes::Probvector(r),Memes::hypercubic_adjacency())):
 	       uniform != 0?Memes():Memes(r):
 	       Memes());
   BitstringMemes bmemes(model == B?
 			po.input_all_from_file?BitstringMemes(*std::istream_iterator<BitstringMemes::Network>(po.instream)):
 			uniform != 0?BitstringMemes():BitstringMemes(r):
-			BitStringMemes()); // DIFFERENT: The type of memes is different in ModelA
+			BitstringMemes()); // DIFFERENT: The type of memes is different in ModelA
   // model A is default, catches model P
   Memes &memes(model==B?bmemes:pmemes);
   Lexemes lexemes(po.input_all_from_file?Lexemes(*std::istream_iterator<Lexemes::Network>(po.instream)):
@@ -267,8 +267,9 @@ int runModel(const program_options& po) {
   Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> counts;
   if (model!=B) {
     // Initialize everybodies counts and write out summary.
-    // A is default!
-    counts=communicate_model<A>(agents,lexemes,memes,population,inner);
+    // A is default! model==B below is false, but need to mask compiler
+    // trying to compile call to A in a dead branch
+    counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner);
     summarize(counts);
   }
 
@@ -333,7 +334,9 @@ int runModel(const program_options& po) {
       
       // Generate new counts and write out summary.
       // A is default, catching P
-      counts=communicate_model<A>(agents,lexemes,memes,population,inner); summarize(counts);
+      // The model==B test is necessary to stop compiler trying to 
+      // compile the wrong thing even in a dead branch
+      counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner); summarize(counts);
       
       // Look at each agent's language
       for(auto a: indices(counts)) {
@@ -369,5 +372,6 @@ int main(int argc, char* argv[]) {
   
   std::cout << "model = " << po.model << std::endl;
 
-  return runModel<po.model==P?A:po.model>(po);
+  // Need constexpr for template choice
+  return (po.model==B?runModel<B>:runModel<A>)(po);
 }
