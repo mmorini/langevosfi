@@ -5,10 +5,14 @@
 // Network<Meme<Memebase>> test(Network<Meme<Memebase>>::hypercubic_adjacency(2)); (four memes on a bypercube)
 
 #include "probvector.h++"
+#include "myutil.h++"
 #include <random>
 #include <functional>
 #include <utility>
 #include <istream>
+#include <bitset>
+#include <limits>
+#include <cassert>
 
 static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
@@ -63,6 +67,29 @@ public:
 	  const int k = i^j;
 	  e[b] = j < dim && !k && !(k&(k-1));
 	  j++;
+	}
+	r[a] = e;
+      } else {
+	r[a] *= 0;
+      }
+      i++;
+    }
+    return r;
+  }
+  static const AdjacencyMatrix bitset_adjacency(const int dim=Agent::getn()) {
+    assert(std::numeric_limits<decltype(dim)>::is_specialized);
+    assert(std::numeric_limits<decltype(dim)>::radix==2);
+    AdjacencyMatrix r;
+    int i=0;
+    for (const auto a: indices(r)) {
+      if (i<dim) {
+	Enumvector<Agent,double> e;
+	int j=0;
+	for (const auto b: indices(e)) {
+	  if (j < dim)
+	    e[b] = std::bitset<std::numeric_limits<decltype(dim)>::digits>(i&j++).count()/static_cast<double>(count_bits(dim));
+	  else
+	    e[b] = 0;
 	}
 	r[a] = e;
       } else {

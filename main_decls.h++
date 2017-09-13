@@ -95,11 +95,11 @@ public:
         // using Memes::Memes; // We can inherit all the constructors here
   BitstringMemes(const Network& n): Memes(n) {}
   BitstringMemes(Network&& n): Memes(std::forward<decltype(n)>(n)) {}
-  // All other constructors enforce hypercubic_adjacency
-  BitstringMemes(): Memes(Network(Probvector(-1),hypercubic_adjacency())) {}
-  BitstringMemes(const Enumvector<Meme<Memebase>,double>& e): Memes(Network(e,hypercubic_adjacency())) {}
-  BitstringMemes(Enumvector<Meme<Memebase>,double>&& e): Memes(Network(std::forward<decltype(e)>(e),hypercubic_adjacency())) {}
-  BitstringMemes(std::mt19937&r, const int m=-1): Memes(Network(Probvector(r,m),hypercubic_adjacency())) {}
+  // All other constructors enforce bitset_adjacency
+  BitstringMemes(): Memes(Network(Probvector(-1),bitset_adjacency())) {}
+  BitstringMemes(const Enumvector<Meme<Memebase>,double>& e): Memes(Network(e,bitset_adjacency())) {}
+  BitstringMemes(Enumvector<Meme<Memebase>,double>&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
+  BitstringMemes(std::mt19937&r, const int m=-1): Memes(Network(Probvector(r,m),bitset_adjacency())) {}
   // If slicing is an issue, define the virtual = operators
 	
 	// ... and overload the virtual functions

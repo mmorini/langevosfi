@@ -231,7 +231,7 @@ int runModel(const program_options& po) {
   Memes pmemes(model != B?
 	       po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
 	       model==P?
-	       uniform != 0?Memes(Memes::Network(Memes::hypercubic_adjacency())):Memes(Memes::Network(Memes::Probvector(r),Memes::hypercubic_adjacency())):
+	       uniform != 0?Memes(Memes::Network(Memes::bitset_adjacency())):Memes(Memes::Network(Memes::Probvector(r),Memes::bitset_adjacency())):
 	       uniform != 0?Memes():Memes(r):
 	       Memes());
   BitstringMemes bmemes(model == B?
