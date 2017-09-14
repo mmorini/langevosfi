@@ -14,7 +14,7 @@ struct Counts {
   void operator += (const Counts c) {
     success += c.success; tries += c.tries;
   }
-  double mean(void) const {return success/tries;}
+  constexpr double mean(void) const {return success/tries;}
 };
 
 inline

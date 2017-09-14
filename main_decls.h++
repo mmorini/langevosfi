@@ -214,10 +214,10 @@ public:
 template<typename AgentLanguage> 
 class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
 public:
-  Population(){}
-  Population(const AgentLanguage &l): Enumvector<Agent<Agentbase>,AgentLanguage>(l) {}
-  Population(const Enumvector<Agent<Agentbase>,AgentLanguage>& e): Enumvector<Agent<Agentbase>,AgentLanguage>(e) {}
-  Population(Enumvector<Agent<Agentbase>,AgentLanguage>&& e): Enumvector<Agent<Agentbase>,AgentLanguage>(std::forward<decltype(e)>(e)) {}
+  constexpr Population(){}
+  constexpr Population(const AgentLanguage &l): Enumvector<Agent<Agentbase>,AgentLanguage>(l) {}
+  constexpr Population(const Enumvector<Agent<Agentbase>,AgentLanguage>& e): Enumvector<Agent<Agentbase>,AgentLanguage>(e) {}
+  constexpr Population(Enumvector<Agent<Agentbase>,AgentLanguage>&& e): Enumvector<Agent<Agentbase>,AgentLanguage>(std::forward<decltype(e)>(e)) {}
 };
 
 template<typename AgentLanguage>

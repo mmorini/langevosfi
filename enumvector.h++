@@ -11,7 +11,7 @@ static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvect
 template<typename E,typename T> class Enumvector: std::vector<T> {
 private:
   template<typename D, typename P, typename R>
-  static bool checktype(const std::iterator<std::input_iterator_tag,T,D,P,R> &i);
+  static constexpr bool checktype(const std::iterator<std::input_iterator_tag,T,D,P,R> &i);
 public:
   using typename std::vector<T>::value_type;
   using typename std::vector<T>::allocator_type;

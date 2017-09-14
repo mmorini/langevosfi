@@ -190,7 +190,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
 
  private:
   mprobvector marginal;
-  const mprobvector& getmarginal(void) const {
+  constexpr const mprobvector& getmarginal(void) const {
     return marginal;
   }
   mutable bool cachedead = false;

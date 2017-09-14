@@ -7,8 +7,8 @@ template<class Agentbase>
 class Agent: public Agentbase {
 public:
   virtual ~Agent(){}
-  explicit Agent(const int&  n):Agentbase(n){}
-  Agent(const Agentbase& a):Agentbase(a){}
-  Agent(const typename Agentbase::Enum& a): Agentbase(a){}
+  explicit constexpr Agent(const int&  n):Agentbase(n){}
+  constexpr Agent(const Agentbase& a):Agentbase(a){}
+  constexpr Agent(const typename Agentbase::Enum& a): Agentbase(a){}
 };
 #endif

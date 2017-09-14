@@ -44,7 +44,7 @@ public:
 	int tries = 0;
 
 	/* ...and this public function */
-	double mean(void) const {return success/tries;}
+        constexpr double mean(void) const {return success/tries;}
 
 	/* Increase the meme-lexeme association by a certain amount; no doubt Tanmoy would overload
 	 lots of operators to allow for a terser syntax */
@@ -74,11 +74,11 @@ public:
   	 * We access the Meme, Lexeme and association as iterator.first.first, iterator.first.second and iterator.second
   	 * respectively 
   	 **/
-  	typename decltype(association)::const_iterator begin() const {
+        constexpr typename decltype(association)::const_iterator begin() const {
   		return association.begin();
   	}
   	
-  	typename decltype(association)::const_iterator end() const  {
+  	constexpr typename decltype(association)::const_iterator end() const  {
   		return association.end();
   	}
   	  
