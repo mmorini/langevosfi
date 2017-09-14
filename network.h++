@@ -126,25 +126,25 @@ public:
     return r;
   }
 
-  virtual Network& operator=(const Enumvector<Agent,double>& e) {
+  virtual Network& operator=(const Enumvector<Agent,double>& e) override {
     probvector::operator=(e);
     for (auto &a: adjacency) a = e;
     copynorm();
     return *this;
   }
-  virtual Network& operator=(Enumvector<Agent,double>&& e) {
+  virtual Network& operator=(Enumvector<Agent,double>&& e) override {
     probvector::operator=(std::forward<decltype(e)>(e));
     for (auto &a: adjacency) a = e;
     copynorm();
     return *this;
   }
-  virtual Network& operator=(const probvector& e){
+  virtual Network& operator=(const probvector& e) override{
     probvector::operator=(e);
     for (auto &a: adjacency) a = e;
     copynorm();
     return *this;
   }
-  virtual Network& operator=(probvector&& e){
+  virtual Network& operator=(probvector&& e) override{
     probvector::operator=(std::forward<decltype(e)>(e));
     for (auto &a: adjacency) a = e;
     copynorm();
