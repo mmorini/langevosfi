@@ -133,12 +133,12 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     l.initCache();
     return *this;
   }
-  virtual Language& operator=(Enumvector<Meme,lprobvector>&& e) {
+  virtual Language& operator=(Enumvector<Meme,lprobvector>&& e) override {
     Enumvector<Meme,lprobvector>::operator=(std::forward<decltype(e)>(e));
     extractmarginal();
     return *this;
   }
-  virtual Language& operator=(const Enumvector<Meme,lprobvector>& e) {
+  virtual Language& operator=(const Enumvector<Meme,lprobvector>& e) override {
     Enumvector<Meme,lprobvector>::operator=(e);
     extractmarginal();
     return *this;

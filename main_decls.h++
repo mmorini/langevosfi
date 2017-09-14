@@ -196,8 +196,8 @@ public:
     ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const Language &l):Language(m,l), lambda(lambda) {}
 
 	
-	void lexmutate(const double sigma, Lexemes::Generator &r,
-			 const Experience<Language::Meme,Language::Lexeme> &experience = Experience<Language::Meme,Language::Lexeme>()) {
+  virtual void lexmutate(const double sigma, Lexemes::Generator &r,
+			 const Experience<Language::Meme,Language::Lexeme> &experience = Experience<Language::Meme,Language::Lexeme>()) override {
 		// Go through each association and boost/suppress by the relevant amount
 // 		std::cout << "ReinforcementLearnerLanguage::lexmutate" << std::endl;
 		for(auto& assn : experience) {

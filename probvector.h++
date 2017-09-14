@@ -58,13 +58,13 @@ public:
     setupdone=false;
     return *this;
   }
-  virtual Probvector& operator=(const Enumvector<E,double>& e) {
+  virtual Probvector& operator=(const Enumvector<E,double>& e) override {
     Enumvector<E,double>::operator=(e);
     normalize();
     setupdone=false;
     return *this;
   }
-  virtual Probvector& operator=(Enumvector<E,double>&& e) {
+  virtual Probvector& operator=(Enumvector<E,double>&& e) override {
     Enumvector<E,double>::operator=(std::forward<decltype(e)>(e));
     normalize();
     setupdone=false;
