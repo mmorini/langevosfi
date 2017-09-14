@@ -7,7 +7,7 @@
 
 static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
-const double infinity=1.e100;
+constexpr double infinity=1.e100;
 inline double probit(const double p) {
   return p<=0.0?-infinity:p>=1.0?infinity:std::log(p/(1-p));
 }
@@ -55,6 +55,8 @@ void myshuffle(RandomIt first, RandomIt last,
   }
 }
 
+/*
+
 // Determine how many of the first n bits differ between two integers
 // (If they don't come unsigned, they will me made unsigned)
 unsigned common_bits(int b1, int b2, int n) { 
@@ -67,6 +69,14 @@ unsigned common_bits(int b1, int b2, int n) {
 	return m;
 }
 
+*/
+
+constexpr unsigned common_bits (const int b1, const int b2, const int n) {
+  return b2?common_bits(~(b1^b2),0,n):
+    b1&(1U<<n)-1? common_bits(b1&b1-1,0,n)+1: 0;
+}
+
+/*
 // Count how many bits are required to store the set of numbers 0, 1, ..., n-1
 // Note if n<=0, we will get 0.
 // (If everyone used unsigned in preference to int habitually, this would never happen)
@@ -75,7 +85,11 @@ unsigned count_bits(int n) {
 	while(1<<b < n) ++b;
 	return b;
 }
-		
+*/
 
+constexpr unsigned count_bits(const int n) {
+  // parentheses around n-1 to silence compiler warning
+  return n<=1?count_bits(((n-1)>>1)+1)+1:0;
+}
 
 #endif

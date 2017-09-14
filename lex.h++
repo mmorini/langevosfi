@@ -7,8 +7,8 @@ template<class Lexbase>
 class Lexeme: public Lexbase {
 public:
   virtual ~Lexeme(){}
-  explicit Lexeme(const int&  n):Lexbase(n){}
-  Lexeme(const Lexbase& m):Lexbase(m){}
-  Lexeme(const typename Lexbase::Enum& a): Lexbase(a){} 
+  explicit constexpr Lexeme(const int&  n):Lexbase(n){}
+  constexpr Lexeme(const Lexbase& m):Lexbase(m){}
+  constexpr Lexeme(const typename Lexbase::Enum& a): Lexbase(a){} 
 };
 #endif

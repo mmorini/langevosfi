@@ -45,10 +45,10 @@ public:
   Network(const probvector& p, const AdjacencyMatrix &a): probvector(p), adjacency(a), adjacency_is_diag(false) {copynorm();}
   Network(probvector&& p, const AdjacencyMatrix &a): probvector(std::forward<decltype(p)>(p)), adjacency(a), adjacency_is_diag(false) {copynorm();}
 
-  Network(const Network&) = default;
-  Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)), adjacency_is_diag(std::move(n.adjacency_is_diag)) {}
+  constexpr Network(const Network&) = default;
+  constexpr Network(Network&&n): probvector(static_cast<probvector&&>(n)), adjacency(std::move(n.adjacency)), adjacency_is_diag(std::move(n.adjacency_is_diag)) {}
 
-  const AdjacencyMatrix& getmatrix() const {return adjacency;}
+  constexpr const AdjacencyMatrix& getmatrix() const {return adjacency;}
   const AdjacencyMatrix& resetadjacency(const AdjacencyMatrix& a) {
     adjacency = a; copynorm(); return adjacency;
   }
@@ -166,7 +166,7 @@ public:
     // return a.match(b);
     return adjacency[a][b];
   }
-  bool isdiag() const {
+  constexpr bool isdiag() const {
     return adjacency_is_diag;
   }
 protected:

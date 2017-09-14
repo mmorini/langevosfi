@@ -17,7 +17,7 @@ public:
     virtual const char *what() const noexcept {return msg.c_str();}
     badsize(const std::string &s): msg(s) {}
     badsize(std::string &&s): msg(std::forward<std::string>(s)) {}
-    badsize() = delete;
+    constexpr badsize() = delete;
   };
     
   static void setn(const int newn) {
@@ -31,7 +31,7 @@ public:
   friend inline std::ostream& operator<< (std::ostream& o, const Enum& e) {
     return o << std::string(id) << static_cast<int>(e);
   }
-  int uniqid() const {return val;}
+  constexpr int uniqid() const {return val;}
   virtual double match(const Enum& m) const {
     return m==*this?1.0-1.0*(n-1)/(n*n):1.0/(n*n);
   }
@@ -39,7 +39,7 @@ public:
     static_cast<int&>(*this)=static_cast<int>(m);
     return *this;
   }
-  Enum(const Enum &m):val(static_cast<int>(m)){}
+  constexpr Enum(const Enum &m):val(static_cast<int>(m)){}
 protected:
   Enum(const int val):val(val){
     if (!n) 
@@ -56,10 +56,10 @@ private:
   }
   static int number(void) {return n;}
   explicit operator int& (void) {return val;}
-  Enum operator+(const Enum &i) const {
+  constexpr Enum operator+(const Enum &i) const {
     return Enum(static_cast<int>(*this)+static_cast<int>(i));
   }
-  Enum operator-(const Enum &i) const {
+  constexpr Enum operator-(const Enum &i) const {
     return Enum(static_cast<int>(*this)-static_cast<int>(i));
   }
   Enum& operator++(void) {
@@ -88,27 +88,27 @@ private:
 public:
   // This conversion operatore was private in Tanmoy's original code, but needs to be 
   // public if we want to be able to interpret the Enum as a sequence of bits
-  explicit operator int (void) const {return val;}  
+  explicit constexpr operator int (void) const {return val;}  
 
   // These comparison operators were private in Tanmoy's original code, but need to be
   // public if we want to use Enums in a map key
-  bool operator<(const Enum &other) const {
+  constexpr bool operator<(const Enum &other) const {
     return static_cast<int>(*this) < static_cast<int>(other);
   }
-  bool operator>(const Enum &other) const {
+  constexpr bool operator>(const Enum &other) const {
     return static_cast<int>(*this) > static_cast<int>(other);
   }
-  bool operator<=(const Enum &other) const {
+  constexpr bool operator<=(const Enum &other) const {
     return static_cast<int>(*this) <= static_cast<int>(other);
   }
-  bool operator>=(const Enum &other) const {
+  constexpr bool operator>=(const Enum &other) const {
     return static_cast<int>(*this) >= static_cast<int>(other);
   }
 
-  bool operator==(const Enum &other) const {
+  constexpr bool operator==(const Enum &other) const {
     return static_cast<int>(*this) == static_cast<int>(other);
   }
-  bool operator!=(const Enum &other) const {
+  constexpr bool operator!=(const Enum &other) const {
     return static_cast<int>(*this) != static_cast<int>(other);
   }
   template<typename,typename> friend class Enumvector;

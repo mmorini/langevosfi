@@ -7,9 +7,9 @@ template<class Memebase>
 class Meme: public Memebase {
 public:
   virtual ~Meme(){}
-  explicit Meme(const int&  n):Memebase(n){}
-  Meme(const Memebase& m):Memebase(m){}
-  Meme(const typename Memebase::Enum& m): Memebase(m){}
-  Meme() {}
+  explicit constexpr Meme(const int&  n):Memebase(n){}
+  constexpr Meme(const Memebase& m):Memebase(m){}
+  constexpr Meme(const typename Memebase::Enum& m): Memebase(m){}
+  constexpr Meme() {}
 };
 #endif

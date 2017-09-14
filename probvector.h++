@@ -39,8 +39,8 @@ public:
     }
     normalize(false);
   }
-  Probvector(const Probvector&) = default;
-  Probvector(Probvector&&p): Enumvector<E,double>(static_cast<Enumvector<E,double>&&>(p)),
+  constexpr Probvector(const Probvector&) = default;
+  constexpr Probvector(Probvector&&p): Enumvector<E,double>(static_cast<Enumvector<E,double>&&>(p)),
 			     weight(p.weight), setupdone(p.setupdone), s(std::move(p.s)) {}
 
   Probvector& cshift(int n=1) {
@@ -95,7 +95,7 @@ public:
   operator[] (const E& e) const {
     return Enumvector<E,double>::operator[](e);
   }
-  double norm(void) const {
+  constexpr double norm(void) const {
     return weight;
   }
   double& norm(void) {
