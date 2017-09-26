@@ -73,7 +73,7 @@ unsigned common_bits(int b1, int b2, int n) {
 
 constexpr unsigned common_bits (const int b1, const int b2, const int n) {
   return b2?common_bits(~(b1^b2),0,n):
-    b1&(1U<<n)-1? common_bits(b1&b1-1,0,n)+1: 0;
+    b1&((1U<<n)-1)? common_bits(b1&(b1-1),0,n)+1: 0;
 }
 
 /*
