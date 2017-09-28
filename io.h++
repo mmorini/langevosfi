@@ -93,12 +93,12 @@ Probvector<E,G> probbase(const Probvector<E,G>&);
 
 template<typename M, typename L>
 std::ostream& operator<< (std::ostream& o, const Language<M,L>& e) { // partial specialization
-  return o << static_cast<const Enumvector<typename M::Index,L>&>(e);
+  return o << static_cast<const Enumvector<typename M::Index,typename L::Probvector>&>(e);
 }
 
 template<typename M, typename L>
 std::istream& operator>> (std::istream& i, Language<M,L>& e) { // partial specialization
-  return i >> static_cast<Enumvector<typename M::Index,L>&>(e);
+  return i >> static_cast<Enumvector<typename M::Index,typename L::Probvector>&>(e);
        // relies on virtual =
 }
 
