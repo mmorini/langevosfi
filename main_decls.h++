@@ -138,7 +138,7 @@ public:
   // All others enforce digonal_adjacency
   Lexemes(const int m=-1): Network(m,diagonal_adjacency()) {declarediag();}
   Lexemes(std::mt19937&r, const int m=-1): Network(Probvector(r,m),diagonal_adjacency()){declarediag();}
-  Lexemes(const Probvector<Lexeme<Lexbase>>& p): Network(p,diagonal_adjacency()){declarediag();}
+  Lexemes(const Probvector& p): Network(p,diagonal_adjacency()){declarediag();}
   // The following two are no longer needed: they follow from the diagonal_adjacency
   // Lexeme<Lexbase> neighbor(const Lexeme<Lexbase>& l, std::mt19937&) const {return l;}
   // double match(const Lexeme<Lexbase> &l1, const Lexeme<Lexbase> &l2) const {return l1==l2;}
