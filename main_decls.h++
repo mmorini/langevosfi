@@ -165,8 +165,8 @@ public:
 class AgentLanguage: public Language<Memes,Lexemes> {
 public:
   AgentLanguage(){}
-  AgentLanguage(const Enumvector<Memes::Index,Lexemes>& e): Language(e) {}
-  AgentLanguage(Enumvector<Memes::Index,Lexemes>&& e): Language(std::forward<decltype(e)>(e)) {}
+  AgentLanguage(const Enumvector<Memes::Index,Lexemes::Probvector>& e): Language(e) {}
+  AgentLanguage(Enumvector<Memes::Index,Lexemes::Probvector>&& e): Language(std::forward<decltype(e)>(e)) {}
   AgentLanguage(const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask){}
   AgentLanguage(Memes &&m,std::mt19937& r, const int mask=-1):Language(std::forward<decltype(m)>(m),r,mask){}
   AgentLanguage(const Memes &m, const int mask=-1):Language(m,mask){}
