@@ -76,7 +76,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
     marginal(lang.marginal)
       {
 	for (auto a: indices(lang.cache))
-	  cache[a]=lang.cache[a]?new Mprobvector(*lang.cache[a]):0;
+	  cache[a]=lang.cache[a]?new Mprobvector(*lang.cache[a]):nullptr;
 	cshift(shift);
       }
   Language(const Language &lang, lgenerator &g):
@@ -121,16 +121,17 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
   virtual Language& operator=(const Language & l) {
     Enumvector<Meme,Lprobvector>::operator=(l);
     marginal = l.marginal;
+    deleteCache();
     if (l.cachedead) {
       cache = std::move(l.cache);
       l.initCache();
-    } else
-      initCache();
+    } 
     return *this;
   }
   virtual Language& operator=(Language &&l) {
     Enumvector<Meme,Lprobvector>::operator=(std::forward<decltype(l)>(l));
     marginal = std::move(l.marginal);
+    deleteCache();
     cache = std::move(l.cache);
     l.initCache();
     return *this;
@@ -200,7 +201,8 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
   
   void initCache(void) const {
     for (auto& p: cache)
-      p = 0;
+      p = nullptr;
+    // Need to change deleteCache if initCache does anything else
   }
   Mprobvector& Cachelookup(const Lexeme l) const {
     cachedead = false;
@@ -214,12 +216,12 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
   }
 protected: // Expose this to subclasses to use in lexmutate
   void deleteCache(void) const {
-    for (auto& c:cache) {
-      if(c!=0) {
+    for (auto& c:cache)
+      if(c!=nullptr) {
 	delete c;
-	c = 0;
+	c = nullptr;
       }
-    }
+    // Must call initCache if that is nontrivial
   }
 private:
   void newmarginal() {
@@ -238,7 +240,7 @@ private:
 };
 
 template<typename mprobvector, typename lprobvector>
-inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lprobvector>*r=0) {
+inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lprobvector>*r=nullptr) {
   Language<mprobvector,lprobvector> retval;
   using Lprobvector=typename lprobvector::Probvector;
   Lprobvector lprob(unitprob<typename lprobvector::Index, typename lprobvector::Generator>());
