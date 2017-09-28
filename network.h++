@@ -24,6 +24,7 @@ template<typename Agent,typename probvector=Probvector<Agent,std::mt19937>>
 class Network: public probvector {
   friend std::istream& operator>> <> (std::istream&, Network&);
 public:
+  typedef probvector ProbVector;
   typedef Enumvector<Agent,probvector> AdjacencyMatrix;
   // static_cast in the following does overload resolution since std::function constructor is templatized and fails to do so.
   // Need the std::function since the map is also templatized

@@ -15,6 +15,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   using Meme = typename mprobvector::Index;
   using lgenerator = typename lprobvector::Generator;
   using mgenerator = typename mprobvector::Generator;
+  using Mprobvector = typename mprobvector::ProbVector;
   Language(void) {extractmarginal();}
   Language(const Enumvector<Meme,lprobvector>& e):
     Enumvector<Meme,lprobvector>(e)
@@ -23,21 +24,21 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
     Enumvector<Meme,lprobvector>
     (std::forward<decltype(e)>(e))
       {extractmarginal();}
-  Language(const mprobvector &marg, mgenerator &r, const int mask=-1):
+  Language(const Mprobvector &marg, mgenerator &r, const int mask=-1):
     marginal(marg)
       {
 	for(auto &m: *this)
 	  m = lprobvector(r,mask);
 	newmarginal();
       }
-  Language(mprobvector &&marg, mgenerator &r, const int mask=-1):
-    marginal(std::forward<mprobvector>(marg))
+  Language(Mprobvector &&marg, mgenerator &r, const int mask=-1):
+    marginal(std::forward<Mprobvector>(marg))
       {
 	for(auto &m: *this)
 	  m = lprobvector(r,mask);
 	newmarginal();
       }
-  Language(const mprobvector &marg, const int mask=-1):
+  Language(const Mprobvector &marg, const int mask=-1):
     marginal(marg)
      {
        if(mask>0)
@@ -45,36 +46,36 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
 	   m = lprobvector(mask);
        newmarginal();
      }
-  Language(mprobvector &&marg, const int mask=-1):
-    marginal(std::forward<mprobvector>(marg))
+  Language(Mprobvector &&marg, const int mask=-1):
+    marginal(std::forward<Mprobvector>(marg))
      {
        if(mask>0)
 	 for(auto &m: *this)
 	   m = lprobvector(mask);
        newmarginal();
      }
-  Language(const mprobvector &marg, const Language &lang):
+  Language(const Mprobvector &marg, const Language &lang):
     Enumvector<Meme,lprobvector>(lang),
     marginal(marg)
       {newmarginal();}
-  Language(const mprobvector &marg, Language &&lang):
+  Language(const Mprobvector &marg, Language &&lang):
     Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
     marginal(marg)
       {newmarginal();}
-  Language(mprobvector &&marg, const Language &lang):
+  Language(Mprobvector &&marg, const Language &lang):
     Enumvector<Meme,lprobvector>(lang),
-    marginal(std::forward<mprobvector>(marg))
+    marginal(std::forward<Mprobvector>(marg))
       {newmarginal();}
-  Language(mprobvector &&marg, Language &&lang):
+  Language(Mprobvector &&marg, Language &&lang):
     Enumvector<Meme,lprobvector>(std::forward<Language>(lang)),
-    marginal(std::forward<mprobvector>(marg))
+    marginal(std::forward<Mprobvector>(marg))
       {newmarginal();}
   Language(const Language &lang, const int shift=0):
     Enumvector<Meme,lprobvector>(lang),
     marginal(lang.marginal)
       {
 	for (auto a: indices(lang.cache))
-	  cache[a]=lang.cache[a]?new mprobvector(*lang.cache[a]):0;
+	  cache[a]=lang.cache[a]?new Mprobvector(*lang.cache[a]):0;
 	cshift(shift);
       }
   Language(const Language &lang, lgenerator &g):
@@ -189,24 +190,24 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   }
 
  private:
-  mprobvector marginal;
-  constexpr const mprobvector& getmarginal(void) const {
+  Mprobvector marginal;
+  constexpr const Mprobvector& getmarginal(void) const {
     return marginal;
   }
   mutable bool cachedead = false;
-  mutable Enumvector<Lexeme,mprobvector*> cache = static_cast<decltype(cache)>(0);
+  mutable Enumvector<Lexeme,Mprobvector*> cache = static_cast<decltype(cache)>(0);
   
   void initCache(void) const {
     for (auto& p: cache)
       p = 0;
   }
-  mprobvector& Cachelookup(const Lexeme l) const {
+  Mprobvector& Cachelookup(const Lexeme l) const {
     cachedead = false;
     if (!cache[l]) {
       Enumvector<Meme,double> p;
       for (auto m: indices(p))
 	p[m] = marginal[m]*(*this)[m][l];
-      cache[l] = new mprobvector(std::move(p));
+      cache[l] = new Mprobvector(std::move(p));
     }
     return *cache[l];
   }
