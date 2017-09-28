@@ -15,7 +15,7 @@ class Language: public Enumvector<typename mprobvector::Index,lprobvector> {
   using Meme = typename mprobvector::Index;
   using lgenerator = typename lprobvector::Generator;
   using mgenerator = typename mprobvector::Generator;
-  using Mprobvector = typename mprobvector::ProbVector;
+  using Mprobvector = typename mprobvector::Probvector;
   Language(void) {extractmarginal();}
   Language(const Enumvector<Meme,lprobvector>& e):
     Enumvector<Meme,lprobvector>(e)
