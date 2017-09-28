@@ -196,7 +196,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
     return marginal;
   }
   mutable bool cachedead = false;
-  mutable Enumvector<Lexeme,Mprobvector*> cache = static_cast<decltype(cache)>(0);
+  mutable Enumvector<Lexeme,Mprobvector*> cache = static_cast<decltype(cache)>(nullptr);
   
   void initCache(void) const {
     for (auto& p: cache)
