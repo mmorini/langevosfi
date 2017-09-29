@@ -8,10 +8,9 @@ namespace Agent {
 template<class Agentbase>
 class Agent: public Agentbase {
 public:
-  virtual ~Agent(){}
-  explicit constexpr Agent(const int&  n):Agentbase(n){}
+  virtual ~Agent() = default;
+  using Agentbase::Agentbase;
   constexpr Agent(const Agentbase& a):Agentbase(a){}
-  constexpr Agent(const typename Agentbase::Enum& a): Agentbase(a){}
 };
 
 }

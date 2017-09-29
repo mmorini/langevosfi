@@ -40,13 +40,13 @@ public:
     return *this;
   }
   constexpr Enum(const Enum &m):val(static_cast<int>(m)){}
-protected:
-  Enum(const int val):val(val){
+  explicit Enum(const int val):val(val){
     if (!n) 
       throw badsize(std::string("Size of Enum<")+std::string(id)
 		    + std::string("> not set"));
   }
-  virtual ~Enum(void){}
+protected:
+  virtual ~Enum(void) = default;
 private:
   int val;
   Enum(void):val(-1){
@@ -56,10 +56,18 @@ private:
   }
   static int number(void) {return n;}
   explicit operator int& (void) {return val;}
+  /*
   constexpr Enum operator+(const Enum &i) const {
     return Enum(static_cast<int>(*this)+static_cast<int>(i));
   }
   constexpr Enum operator-(const Enum &i) const {
+    return Enum(static_cast<int>(*this)-static_cast<int>(i));
+  }
+  */
+  constexpr Enum operator+(const int i) {
+    return Enum(static_cast<int>(*this)+static_cast<int>(i));
+  }
+  constexpr Enum operator-(const int i) {
     return Enum(static_cast<int>(*this)-static_cast<int>(i));
   }
   Enum& operator++(void) {

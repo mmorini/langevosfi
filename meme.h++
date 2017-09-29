@@ -8,10 +8,10 @@ namespace Meme {
 template<class Memebase>
 class Meme: public Memebase {
 public:
+  using Memebase::Memebase;
+  
   virtual ~Meme(){}
-  explicit constexpr Meme(const int&  n):Memebase(n){}
   constexpr Meme(const Memebase& m):Memebase(m){}
-  constexpr Meme(const typename Memebase::Enum& m): Memebase(m){}
   constexpr Meme() {}
 };
 

@@ -76,7 +76,7 @@ public:
   }
   template<typename generator>
   Enumvector& shuffle(generator &r) {
-    myshuffle(begin(), end(), r);
+    util::myshuffle(begin(), end(), r);
     return *this;
   }
   Enumvector& permute(const Enumvector<E,E> &reorder) {

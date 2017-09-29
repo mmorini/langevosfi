@@ -92,7 +92,7 @@ public:
 	int j=0;
 	for (const auto b: indices(e)) {
 	  if (j < dim)
-	    e[b] = std::bitset<std::numeric_limits<decltype(dim)>::digits>(i&j++).count()/static_cast<double>(count_bits(dim));
+	    e[b] = std::bitset<std::numeric_limits<decltype(dim)>::digits>(i&j++).count()/static_cast<double>(util::count_bits(dim));
 	  else
 	    e[b] = 0;
 	}
