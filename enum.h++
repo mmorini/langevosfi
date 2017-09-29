@@ -64,10 +64,10 @@ private:
     return Enum(static_cast<int>(*this)-static_cast<int>(i));
   }
   */
-  constexpr Enum operator+(const int i) {
+  constexpr Enum operator+(const int i) const {
     return Enum(static_cast<int>(*this)+static_cast<int>(i));
   }
-  constexpr Enum operator-(const int i) {
+  constexpr Enum operator-(const int i) const {
     return Enum(static_cast<int>(*this)-static_cast<int>(i));
   }
   Enum& operator++(void) {
