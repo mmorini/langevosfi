@@ -220,8 +220,7 @@ inline std::ostream& operator<< (std::ostream& o, const Population<AgentLanguage
 
 template<typename AgentLanguage>
 EnumVector::Enumvector<Agent::Agent<Agentbase>,Counts::Counts> communicate(const Agents &, const Lexemes &, const Memes &,
-							    const Population<AgentLanguage> &, int);
-
+									   const Population<AgentLanguage> &, int=1, int=1, int=1, int=1);
 enum ModelType {A, B, P};
 inline
 std::ostream& operator<<(std::ostream &o, const ModelType m) {
