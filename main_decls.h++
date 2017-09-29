@@ -77,46 +77,48 @@ protected:
 //
 // that returns a number between 0 and 1 indicating how substitutable
 // the two memes a and b are.  Both have default implementations.
-class Memes: public Network<Meme<Memebase>> {
-public:
+class Memes: public Network::Network<Meme::Meme<Memebase>> {
+ public:
+  using Meme = typename Memes::Agent;
+  using Enumvector = typename Memes::Enumvector;
   Memes(const Network& n): Network(n) {}
   Memes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
   // All other constructors enforce basematch_adjacency
   Memes(): Network(Probvector(-1),basematch_adjacency()) {}
-  Memes(const Enumvector<Meme<Memebase>,double>& e): Network(e,basematch_adjacency()) {}
-  Memes(Enumvector<Meme<Memebase>,double>&& e): Network(std::forward<decltype(e)>(e),basematch_adjacency()) {}
+  Memes(const Enumvector& e): Network(e,basematch_adjacency()) {}
+  Memes(Enumvector&& e): Network(std::forward<decltype(e)>(e),basematch_adjacency()) {}
   Memes(std::mt19937&r, const int m=-1): Network(Probvector(r,m),basematch_adjacency()) {}
   // If slicing is an issue, define the virtual = operators
 };
 
 class BitstringMemes: public Memes {
-	unsigned bits = count_bits(Meme<Memebase>::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
+	unsigned bits = count_bits(Meme::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
 public:
         // using Memes::Memes; // We can inherit all the constructors here
   BitstringMemes(const Network& n): Memes(n) {}
   BitstringMemes(Network&& n): Memes(std::forward<decltype(n)>(n)) {}
   // All other constructors enforce bitset_adjacency
   BitstringMemes(): Memes(Network(Probvector(-1),bitset_adjacency())) {}
-  BitstringMemes(const Enumvector<Meme<Memebase>,double>& e): Memes(Network(e,bitset_adjacency())) {}
-  BitstringMemes(Enumvector<Meme<Memebase>,double>&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
+  BitstringMemes(const Enumvector& e): Memes(Network(e,bitset_adjacency())) {}
+  BitstringMemes(Enumvector&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
   BitstringMemes(std::mt19937&r, const int m=-1): Memes(Network(Probvector(r,m),bitset_adjacency())) {}
   // If slicing is an issue, define the virtual = operators
 	
 	// ... and overload the virtual functions
 	
 	// Neighbor: we randomly tweak a bit
-	Meme<Memebase> neighbor(const Meme<Memebase>& m, std::mt19937& r) const override {
+  Meme neighbor(const Meme& m, std::mt19937& r) const override {
 		std::uniform_int_distribution<> bit_twiddler(0, bits-1);
 		int was = static_cast<int>(m);
 		int is;
 		do {
 			is = was ^ (1 << bit_twiddler(r));
-		} while(is >= Meme<Memebase>::getn());
-		return Meme<Memebase>(is);
+		} while(is >= Meme::getn());
+		return Meme(is);
 	}
 	
 	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
-	double match(const Meme<Memebase>& a, const Meme<Memebase>& b) const override {
+	double match(const Meme& a, const Meme& b) const override {
 // 		std::cout << "BitstringMemes::match" << std::endl;
 		return static_cast<double>(common_bits(static_cast<int>(a), static_cast<int>(b),bits)) / static_cast<double>(bits);
 	}
@@ -131,7 +133,7 @@ protected:
   explicit Lexbase(const int &n): Enum(n) {}
   Lexbase(const Enum &n): Enum(n) {}
 };
-class Lexemes: public Network<Lexeme<Lexbase>> {
+class Lexemes: public Network::Network<Lex::Lexeme<Lexbase>> {
 public:
   Lexemes(const Network& n): Network(n) {}
   Lexemes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
@@ -153,7 +155,7 @@ protected:
   explicit Agentbase(const int &n): Enum(n) {}
   Agentbase(const Enum &n): Enum(n) {}
 };
-class Agents: public Network<Agent<Agentbase>> {
+class Agents: public Network::Network<Agent::Agent<Agentbase>> {
 public:
   Agents(const Network& n): Network(n) {}
   Agents(Network&& n): Network(std::forward<decltype(n)>(n)) {}
@@ -162,11 +164,12 @@ public:
   // If slicing is an issue, define the virtual = operators
 };
 
-class AgentLanguage: public Language<Memes,Lexemes> {
+class AgentLanguage: public Language::Language<Memes,Lexemes> {
 public:
+  using Enumvector=AgentLanguage::Enumvector;
   AgentLanguage(){}
-  AgentLanguage(const Enumvector<Memes::Index,Lexemes::Probvector>& e): Language(e) {}
-  AgentLanguage(Enumvector<Memes::Index,Lexemes::Probvector>&& e): Language(std::forward<decltype(e)>(e)) {}
+  AgentLanguage(const Enumvector& e): Language(e) {}
+  AgentLanguage(Enumvector&& e): Language(std::forward<decltype(e)>(e)) {}
   AgentLanguage(const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask){}
   AgentLanguage(Memes &&m,std::mt19937& r, const int mask=-1):Language(std::forward<decltype(m)>(m),r,mask){}
   AgentLanguage(const Memes &m, const int mask=-1):Language(m,mask){}
@@ -186,7 +189,7 @@ public:
   * This overrides the lexmutate method to do the reinforcement learning based on some experience.
   * We need another parameter lambda which is the scale of the reinforcement learning
   */
-class ReinforcementLearnerLanguage: public Language<BitstringMemes,Lexemes> {
+class ReinforcementLearnerLanguage: public Language::Language<BitstringMemes,Lexemes> {
    double lambda;
 public:
   ReinforcementLearnerLanguage() {} // default constructor needed for i/o library istream_iterator implementation
@@ -197,7 +200,7 @@ public:
 
 	
   virtual void lexmutate(const double sigma, Lexemes::Generator &r,
-			 const Experience<Language::Meme,Language::Lexeme> &experience = Experience<Language::Meme,Language::Lexeme>()) override {
+			 const Experience::Experience<Language::Meme,Language::Lexeme> &experience = Experience::Experience<Language::Meme,Language::Lexeme>()) override {
 		// Go through each association and boost/suppress by the relevant amount
 // 		std::cout << "ReinforcementLearnerLanguage::lexmutate" << std::endl;
 		for(auto& assn : experience) {
@@ -212,12 +215,13 @@ public:
 // without object slicing so that virtual functions are called properly, but I am not sure if
 // this can be done.
 template<typename AgentLanguage> 
-class Population: public Enumvector<Agent<Agentbase>,AgentLanguage> {
+class Population: public EnumVector::Enumvector<Agent::Agent<Agentbase>,AgentLanguage> {
 public:
+  using Enumvector=typename Population::Enumvector;
   constexpr Population(){}
-  constexpr Population(const AgentLanguage &l): Enumvector<Agent<Agentbase>,AgentLanguage>(l) {}
-  constexpr Population(const Enumvector<Agent<Agentbase>,AgentLanguage>& e): Enumvector<Agent<Agentbase>,AgentLanguage>(e) {}
-  constexpr Population(Enumvector<Agent<Agentbase>,AgentLanguage>&& e): Enumvector<Agent<Agentbase>,AgentLanguage>(std::forward<decltype(e)>(e)) {}
+  constexpr Population(const AgentLanguage &l): Enumvector(l) {}
+  constexpr Population(const Enumvector& e): Enumvector(e) {}
+  constexpr Population(Enumvector&& e): Enumvector(std::forward<decltype(e)>(e)) {}
 };
 
 template<typename AgentLanguage>
@@ -227,8 +231,8 @@ inline std::ostream& operator<< (std::ostream& o, const Population<AgentLanguage
 }
 
 template<typename AgentLanguage>
-Enumvector<Agent<Agentbase>,Counts> communicate(const Agents &, const Lexemes &, const Memes &,
-						const Population<AgentLanguage> &, int);
+EnumVector::Enumvector<Agent::Agent<Agentbase>,Counts::Counts> communicate(const Agents &, const Lexemes &, const Memes &,
+							    const Population<AgentLanguage> &, int);
 
 enum ModelType {A, B, P};
 inline

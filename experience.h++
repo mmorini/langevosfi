@@ -20,6 +20,9 @@ static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experien
   * have been encountered; so we need to use the increase_association method instead.
   */
 
+
+namespace Experience {
+
 // The forward declaration of operator<< template is needed syntactically for 
 // the friend declaration.  We can avoid the friend declaration with a public
 // member function called from the operator template, but this is cleaner.
@@ -87,7 +90,7 @@ public:
 // This gives the overall mean success rate for a bunch of experiences
 // Not sure how useful this will be
 template<typename T, typename Experience>
-void summarize(const Enumvector<T,Experience> &experiences) {
+void summarize(const EnumVector::Enumvector<T,Experience> &experiences) {
 	double success = 0.0;
 	int tries = 0;
 	for (Experience e: experiences) {
@@ -103,6 +106,8 @@ std::ostream& operator<<(std::ostream& o, const Experience<Meme,Lexeme>& e) {
   for (auto cit: e.association)
     o << " " << cit.first.first << " " << cit.first.second << " " << cit.second << std::endl;
   return o;
+}
+
 }
 
 #endif

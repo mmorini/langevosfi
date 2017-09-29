@@ -6,6 +6,8 @@
 
 static const char SELFITERATOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfiterator.h++: $Id$";
 
+namespace SelfIterator {
+
 // Stupid C++ does not allow one to iterate over integers
 // Here is a set of classes to allow that
 template<typename T, bool Increasing> class SelfIterator:
@@ -83,8 +85,10 @@ constexpr auto indices(const T &o)
 }
 
 template<typename T> 
-constexpr auto indices(size_t s, const T &o)
+constexpr auto indices(const size_t s, const T &o)
   -> decltype(range(o.size())) {  
-  return range(decltype(o.size())(static_cast<int>(s)),o.size());
+  return range(static_cast<decltype(o.size())>(static_cast<int>(s)),o.size());
+}
+
 }
 #endif

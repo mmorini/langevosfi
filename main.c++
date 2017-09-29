@@ -31,24 +31,24 @@ template<> int Enum<agentid>::n = 0;
 // The signalling agent records a success w.p m^2; a failure w.p. (1-m)^2 and does nothing otherwise
 // (Other rules are available, but I like this one)
 template<ModelType model>
-Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communicate_model(const Agents &agents,
+EnumVector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> communicate_model(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
  	         const Population<typename chooselang<model>::Language> &population,
 		 const int n) {
-  Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> retval;
-  for (auto rounds: range(n)) {
+  EnumVector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> retval;
+  for (auto rounds: SelfIterator::range(n)) {
     (void)rounds;
-    const Agent<Agentbase> &a1(agents.generate(r));
-    const Meme<Memebase> &m1(population[a1].memegen(r));
-    const Lexeme<Lexbase> &l1(population[a1].lexgen(m1,r));
-    const Agent<Agentbase> &a2(agents.neighbor(a1,r));
-    const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
-    const Meme<Memebase> &m2(population[a2].memegen(l2,r));
+    const auto &a1(agents.generate(r));
+    const auto &m1(population[a1].memegen(r));
+    const auto &l1(population[a1].lexgen(m1,r));
+    const auto &a2(agents.neighbor(a1,r));
+    const auto &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
+    const auto &m2(population[a2].memegen(l2,r));
     switch(model) {
     case B: {
       const auto ran = std::generate_canonical<double, 20>(r);
-      const double match = population[a1].match(memes,m1,m2,population[a2]);
+      const auto match = population[a1].match(memes,m1,m2,population[a2]);
       //     std::cout << "::communicate_modelB match->" << match << std::endl;
       if(ran < match*match)
 	retval[a1].increase_association( m1, l1, 1.0 );
@@ -140,12 +140,12 @@ int runModel(const program_options& po) {
              numlexes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
              numagents = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin);
 
-  Meme<Memebase>::setn(nummemes); 
-  Lexeme<Lexbase>::setn(numlexes); 
-  Agent<Agentbase>::setn(numagents); 
-  std::cout <<   "nummemes  = " << Meme<Memebase>::getn()
-            << ", numlexes  = " << Lexeme<Lexbase>::getn()
-            << ", numagents = " << Agent<Agentbase>::getn() << std::endl;
+  Meme::Meme<Memebase>::setn(nummemes); 
+  Lex::Lexeme<Lexbase>::setn(numlexes); 
+  Agent::Agent<Agentbase>::setn(numagents); 
+  std::cout <<   "nummemes  = " << Meme::Meme<Memebase>::getn()
+            << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
+            << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl;
   
 
   std::string ignore;
@@ -200,9 +200,9 @@ int runModel(const program_options& po) {
   // Inner iterations measures the fitness of the language
   // Outer iterations converges
   std::cerr << "Provide inner and outer iteration count, printinterval (e.g., " <<
-    8*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn() << " " <<
-    3*Agent<Agentbase>::getn()*Lexeme<Lexbase>::getn()*
-    Meme<Memebase>::getn()*Meme<Memebase>::getn() << " " <<
+    8*Agent::Agent<Agentbase>::getn()*Lex::Lexeme<Lexbase>::getn() << " " <<
+    3*Agent::Agent<Agentbase>::getn()*Lex::Lexeme<Lexbase>::getn()*
+    Meme::Meme<Memebase>::getn()*Meme::Meme<Memebase>::getn() << " " <<
     1 << ")" << std::endl;
   const auto inner=*std::istream_iterator<int>(std::cin),
              outer=*std::istream_iterator<int>(std::cin),
@@ -264,7 +264,7 @@ int runModel(const program_options& po) {
     std::cout << population;
   }
 
-  Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> counts;
+  EnumVector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> counts;
   if (model!=B) {
     // Initialize everybodies counts and write out summary.
     // A is default! model==B below is false, but need to mask compiler
@@ -275,9 +275,9 @@ int runModel(const program_options& po) {
 
   if(po.output_to_file){
     //write initial lang to file
-    po.outstream << "nummemes  = " << Meme<Memebase>::getn()
-		 << ", numlexes  = " << Lexeme<Lexbase>::getn()
-		 << ", numagents = " << Agent<Agentbase>::getn() << std::endl
+    po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
+		 << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
+		 << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
                  << "Memes" << std::endl << memes
                  << "Lexemes" << std::endl << lexemes
                  << "Agents" << std::endl << agents
@@ -292,7 +292,7 @@ int runModel(const program_options& po) {
   // Model B: For the number of outer loops, use the language for a round, and then
   // apply reinforcement learning to the resulting experience
     
-  for (auto rounds: range(outer)) {
+  for (auto rounds: SelfIterator::range(outer)) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
       std::cout << "Round number " << rounds << std::endl
 		<< population;
@@ -339,7 +339,7 @@ int runModel(const program_options& po) {
       counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner); summarize(counts);
       
       // Look at each agent's language
-      for(auto a: indices(counts)) {
+      for(auto a: SelfIterator::indices(counts)) {
 	// Accept new language if it did not get tried, else accept
 	// randomly if it is worse and deterministically if it is better.
 	if(counts[a].tries>0 && oldcounts[a].tries>0) {

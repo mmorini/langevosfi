@@ -16,16 +16,20 @@
 
 static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
+namespace Network {
+
 // Forward declaration to allow friend declaration
 template<typename A, typename P> class Network;
 template<typename A, typename P> std::istream& operator>> (std::istream&, Network<A,P>&);
 
-template<typename Agent,typename probvector=Probvector<Agent,std::mt19937>>
+template<typename agent,typename probvector=ProbVector::Probvector<agent,std::mt19937>>
 class Network: public probvector {
   friend std::istream& operator>> <> (std::istream&, Network&);
 public:
+  using Agent=agent;
   using Probvector=probvector;
-  typedef Enumvector<Agent,probvector> AdjacencyMatrix;
+  using Enumvector=typename Network::Enumvector;
+  typedef EnumVector::Enumvector<Agent,probvector> AdjacencyMatrix;
   // static_cast in the following does overload resolution since std::function constructor is templatized and fails to do so.
   // Need the std::function since the map is also templatized
   Network(const AdjacencyMatrix &a): probvector(a.map(std::function<double(const probvector*)>(static_cast<double(probvector::*)(void)const>(&probvector::norm)))), adjacency(a), adjacency_is_diag(false) {}
@@ -36,12 +40,12 @@ public:
   Network(probvector&& p): Network(std::forward<decltype(p)>(p), AdjacencyMatrix(p)) {}
   Network(const int m=-1): Network(probvector(m)) {}
   Network(typename probvector::Generator &r,const int m=-1): Network(probvector(r,m)) {}
-  Network(const Enumvector<Agent,double>& e): Network(probvector(e,false)) {}
-  Network(const Enumvector<Agent,double>& e, const AdjacencyMatrix &a): Network(probvector(e,false),a) {}
-  Network(const Enumvector<Agent,double>& e, AdjacencyMatrix &&a): Network(probvector(e,false),std::forward<decltype(a)>(a)) {}
-  Network(Enumvector<Agent,double>&& e): Network(probvector(std::forward<decltype(e)>(e),false)) {}
-  Network(Enumvector<Agent,double>&& e, const AdjacencyMatrix &a): Network(probvector(std::forward<decltype(e)>(e),false),a) {}
-  Network(Enumvector<Agent,double>&& e, AdjacencyMatrix &&a): Network(probvector(std::forward<decltype(e)>(e),false),std::forward<decltype(a)>(a)) {}
+  Network(const Enumvector& e): Network(probvector(e,false)) {}
+  Network(const Enumvector& e, const AdjacencyMatrix &a): Network(probvector(e,false),a) {}
+  Network(const Enumvector& e, AdjacencyMatrix &&a): Network(probvector(e,false),std::forward<decltype(a)>(a)) {}
+  Network(Enumvector&& e): Network(probvector(std::forward<decltype(e)>(e),false)) {}
+  Network(Enumvector&& e, const AdjacencyMatrix &a): Network(probvector(std::forward<decltype(e)>(e),false),a) {}
+  Network(Enumvector&& e, AdjacencyMatrix &&a): Network(probvector(std::forward<decltype(e)>(e),false),std::forward<decltype(a)>(a)) {}
 
   Network(const probvector& p, const AdjacencyMatrix &a): probvector(p), adjacency(a), adjacency_is_diag(false) {copynorm();}
   Network(probvector&& p, const AdjacencyMatrix &a): probvector(std::forward<decltype(p)>(p)), adjacency(a), adjacency_is_diag(false) {copynorm();}
@@ -62,7 +66,7 @@ public:
     int i=0;
     for (const auto a: indices(r)) {
       if (i<dim) {
-	Enumvector<Agent,double> e;
+	Enumvector e;
 	int j=0;
 	for (const auto b: indices(e)) {
 	  const int k = i^j;
@@ -84,7 +88,7 @@ public:
     int i=0;
     for (const auto a: indices(r)) {
       if (i<dim) {
-	Enumvector<Agent,double> e;
+	Enumvector e;
 	int j=0;
 	for (const auto b: indices(e)) {
 	  if (j < dim)
@@ -105,7 +109,7 @@ public:
     int i=0;
     for (const auto a: indices(r))
       if (i++<dim) {
-	Enumvector<Agent,double> e;
+	Enumvector e;
 	for (const auto b: indices(r[a]))
 	  e[b] = a==b;
 	r[a] = e;
@@ -118,7 +122,7 @@ public:
     int i=0;
     for (const auto a: indices(r))
       if (i++<dim) {
-	Enumvector<Agent,double> e;
+	Enumvector e;
 	for (const auto b: indices(r[a]))
 	  e[b] = a.match(b);
 	r[a] = e;
@@ -127,13 +131,13 @@ public:
     return r;
   }
 
-  virtual Network& operator=(const Enumvector<Agent,double>& e) override {
+  virtual Network& operator=(const Enumvector& e) override {
     probvector::operator=(e);
     for (auto &a: adjacency) a = e;
     copynorm();
     return *this;
   }
-  virtual Network& operator=(Enumvector<Agent,double>&& e) override {
+  virtual Network& operator=(Enumvector&& e) override {
     probvector::operator=(std::forward<decltype(e)>(e));
     for (auto &a: adjacency) a = e;
     copynorm();
@@ -181,4 +185,6 @@ private:
     for (const auto i: indices(adjacency)) adjacency[i] *= (*const_cast<const Network*>(this))[i]/adjacency[i].norm();
   }
 };
+
+}
 #endif

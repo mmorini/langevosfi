@@ -111,9 +111,9 @@ public:
   constexpr bool operator!=(const Enum &other) const {
     return static_cast<int>(*this) != static_cast<int>(other);
   }
-  template<typename,typename> friend class Enumvector;
-  template<typename,bool> friend class SelfIterator;
-  template<typename,bool> friend class Range;
+  // template<typename,typename> friend class Enumvector;
+  template<typename,bool> friend class SelfIterator::SelfIterator;
+  template<typename,bool> friend class SelfIterator::Range;
   // template<typename T> friend auto range(T);
 };
 
