@@ -60,9 +60,8 @@ extern const char agentid[];
 // empty extension.
 class Memebase: public Enum<memeid> {
 public:
-  virtual ~Memebase(){}
-protected:
-  explicit Memebase(const int &n): Enum(n) {}
+  virtual ~Memebase() = default;
+  using Enum::Enum;
   Memebase(const Enum &n): Enum(n) {}
 };
 // Memes must inherit publicly from Network<Meme> but can provide
@@ -92,12 +91,14 @@ class Memes: public Network::Network<Meme::Meme<Memebase>> {
 };
 
 class BitstringMemes: public Memes {
-	unsigned bits = count_bits(Meme::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
+  unsigned bits = util::count_bits(Meme::getn()); // It's not clear if this is evaluated only when the class is constructed... test this!
 public:
-        // using Memes::Memes; // We can inherit all the constructors here
-  BitstringMemes(const Network& n): Memes(n) {}
-  BitstringMemes(Network&& n): Memes(std::forward<decltype(n)>(n)) {}
-  // All other constructors enforce bitset_adjacency
+  using Memes::Memes;
+  BitstringMemes(const Memes &m): Memes(m) {}
+  BitstringMemes(Memes &&m): Memes(std::forward<decltype(m)>(m)) {}
+  // BitstringMemes(const Network& n): Memes(n) {}
+  // BitstringMemes(Network&& n): Memes(std::forward<decltype(n)>(n)) {}
+  // Override other constructors to enforce bitset_adjacency
   BitstringMemes(): Memes(Network(Probvector(-1),bitset_adjacency())) {}
   BitstringMemes(const Enumvector& e): Memes(Network(e,bitset_adjacency())) {}
   BitstringMemes(Enumvector&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
@@ -120,7 +121,7 @@ public:
 	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
 	double match(const Meme& a, const Meme& b) const override {
 // 		std::cout << "BitstringMemes::match" << std::endl;
-		return static_cast<double>(common_bits(static_cast<int>(a), static_cast<int>(b),bits)) / static_cast<double>(bits);
+	  return static_cast<double>(util::common_bits(static_cast<int>(a), static_cast<int>(b),bits)) / static_cast<double>(bits);
 	}
 };
 
@@ -128,9 +129,8 @@ public:
 // This is essentially a repeat of what we did above for Meme.
 class Lexbase: public Enum<lexid> {
 public:
-  virtual ~Lexbase(){}
-protected:
-  explicit Lexbase(const int &n): Enum(n) {}
+  virtual ~Lexbase() = default;
+  using Enum::Enum;
   Lexbase(const Enum &n): Enum(n) {}
 };
 class Lexemes: public Network::Network<Lex::Lexeme<Lexbase>> {
@@ -151,8 +151,7 @@ public:
 class Agentbase: public Enum<agentid> {
 public:
   virtual ~Agentbase(){}
-protected:
-  explicit Agentbase(const int &n): Enum(n) {}
+  using Enum::Enum;
   Agentbase(const Enum &n): Enum(n) {}
 };
 class Agents: public Network::Network<Agent::Agent<Agentbase>> {
@@ -168,21 +167,10 @@ class AgentLanguage: public Language::Language<Memes,Lexemes> {
 public:
   using Enumvector=AgentLanguage::Enumvector;
   AgentLanguage(){}
-  AgentLanguage(const Enumvector& e): Language(e) {}
-  AgentLanguage(Enumvector&& e): Language(std::forward<decltype(e)>(e)) {}
-  AgentLanguage(const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask){}
-  AgentLanguage(Memes &&m,std::mt19937& r, const int mask=-1):Language(std::forward<decltype(m)>(m),r,mask){}
-  AgentLanguage(const Memes &m, const int mask=-1):Language(m,mask){}
-  AgentLanguage(Memes &&m, const int mask=-1):Language(std::forward<decltype(m)>(m),mask){}
-  AgentLanguage(const Memes &m, const Language &l):Language(m,l){}
-  AgentLanguage(const Memes &m, Language &&l):Language(m,std::forward<decltype(l)>(l)){}
-  AgentLanguage(Memes &&m, const Language &l):Language(std::forward<decltype(m)>(m),l){}
-  AgentLanguage(Memes &&m, Language &&l):Language(std::forward<decltype(m)>(m),std::forward<decltype(l)>(l)){}
-  AgentLanguage(const Language& l, const int cshift=0):Language(l, cshift) {}
-  AgentLanguage(Language && l, const int cshift=0): Language(std::forward<decltype(l)>(l),cshift) {}
-  AgentLanguage(const Language& l, std::mt19937& r): Language(l,r) {}
-  AgentLanguage(Language&& l, std::mt19937& r): Language(std::forward<decltype(l)>(l),r) {}
-  ~AgentLanguage(){}
+  using Language::Language;
+  AgentLanguage(const Language& l):Language(l) {}
+  AgentLanguage(Language && l): Language(std::forward<decltype(l)>(l)) {}
+  ~AgentLanguage() = default;
 };
 
 /**

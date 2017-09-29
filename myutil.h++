@@ -7,6 +7,8 @@
 
 static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
+namespace util {
+
 constexpr double infinity=1.e100;
 inline double probit(const double p) {
   return p<=0.0?-infinity:p>=1.0?infinity:std::log(p/(1-p));
@@ -90,6 +92,8 @@ unsigned count_bits(int n) {
 constexpr unsigned count_bits(const int n) {
   // parentheses around n-1 to silence compiler warning
   return n<=1?count_bits(((n-1)>>1)+1)+1:0;
+}
+
 }
 
 #endif

@@ -8,10 +8,9 @@ namespace Lex {
 template<class Lexbase>
 class Lexeme: public Lexbase {
 public:
-  virtual ~Lexeme(){}
-  explicit constexpr Lexeme(const int&  n):Lexbase(n){}
+  virtual ~Lexeme() = default;
+  using Lexbase::Lexbase;
   constexpr Lexeme(const Lexbase& m):Lexbase(m){}
-  constexpr Lexeme(const typename Lexbase::Enum& a): Lexbase(a){} 
 };
 
 }

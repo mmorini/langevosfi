@@ -115,7 +115,7 @@ public:
   }
   virtual void mutate(const double sigma, generator &r) {
     for (auto &d: *this)
-      d = invprobit(probit(d)+BoxMueller(0,sigma,r));
+      d = util::invprobit(util::probit(d)+util::BoxMueller(0,sigma,r));
     normalize(false);
     setupdone = false;
   }
