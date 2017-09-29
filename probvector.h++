@@ -12,23 +12,26 @@
 
 static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
 
+namespace ProbVector {
+
 template<typename E,typename generator=std::mt19937> class Probvector:
-  public Enumvector<E,double> {
+  public EnumVector::Enumvector<E,double> {
 public:
   using Generator = generator;
   using Index = E;
+  using Enumvector = typename Probvector::Enumvector;
   virtual ~Probvector(void) {}
   Probvector(const int mask=-1, double norm=1.0):
-    Enumvector<E,double>(mask>0?1:0), weight(norm) {
+    Enumvector(mask>0?1:0), weight(norm) {
     if(mask>0)
       for(const auto &num: indices(mask,*this))
 	(*this)[num] = 0; 
     normalize(false);
   }
-  Probvector(const Enumvector<E,double>& e, bool unnorm=true):
-    Enumvector<E,double>(e){normalize(unnorm);}
-  Probvector(Enumvector<E,double>&& e, bool unnorm=true):
-    Enumvector<E,double>(std::forward<decltype(e)>(e))
+  Probvector(const Enumvector& e, bool unnorm=true):
+    Enumvector(e){normalize(unnorm);}
+  Probvector(Enumvector&& e, bool unnorm=true):
+    Enumvector(std::forward<decltype(e)>(e))
   {normalize(unnorm);}
   Probvector(generator &r,const int mask= -1,double norm=1.0):weight(norm) {
     int num = 0;
@@ -40,32 +43,32 @@ public:
     normalize(false);
   }
   constexpr Probvector(const Probvector&) = default;
-  constexpr Probvector(Probvector&&p): Enumvector<E,double>(static_cast<Enumvector<E,double>&&>(p)),
+  constexpr Probvector(Probvector&&p): Enumvector(static_cast<Enumvector&&>(p)),
 			     weight(p.weight), setupdone(p.setupdone), s(std::move(p.s)) {}
 
   Probvector& cshift(int n=1) {
-    Enumvector<E,double>::cshift(n);
+    Enumvector::cshift(n);
     setupdone=false;
     return *this;
   }
   Probvector& shuffle(generator &g) {
-    Enumvector<E,double>::shuffle(g);
+    Enumvector::shuffle(g);
     setupdone=false;
     return *this;
   }
-  Probvector& permute(const Enumvector<E,E> &p) {
-    Enumvector<E,double>::permute(p);
+  Probvector& permute(const EnumVector::Enumvector<E,E> &p) {
+    Enumvector::permute(p);
     setupdone=false;
     return *this;
   }
-  virtual Probvector& operator=(const Enumvector<E,double>& e) override {
-    Enumvector<E,double>::operator=(e);
+  virtual Probvector& operator=(const Enumvector& e) override {
+    Enumvector::operator=(e);
     normalize();
     setupdone=false;
     return *this;
   }
-  virtual Probvector& operator=(Enumvector<E,double>&& e) override {
-    Enumvector<E,double>::operator=(std::forward<decltype(e)>(e));
+  virtual Probvector& operator=(Enumvector&& e) override {
+    Enumvector::operator=(std::forward<decltype(e)>(e));
     normalize();
     setupdone=false;
     return *this;
@@ -91,9 +94,9 @@ public:
   }
 
 
-  typename Enumvector<E,double>::const_reference
+  typename Enumvector::const_reference
   operator[] (const E& e) const {
-    return Enumvector<E,double>::operator[](e);
+    return Enumvector::operator[](e);
   }
   constexpr double norm(void) const {
     return weight;
@@ -135,14 +138,14 @@ public:
 private:
   double weight = 1.0;
   mutable bool setupdone = false;
-  mutable Enumvector<E,double> s;
+  mutable Enumvector s;
   void normalize(bool updateweight=true) {
     auto sum = 0.0;
     for (auto d: *this) sum += d;
     if (sum > 0)
       for (auto &d: *this) d /= sum;
     else
-      Enumvector<E,double>::assign(1.0/Enumvector<E,double>::numsize());
+      Enumvector::assign(1.0/Enumvector::numsize());
     if (updateweight) weight=sum;
   }
   void setup() const {
@@ -152,15 +155,17 @@ private:
       s[e]=cumsum += (*this)[e];
     setupdone = true;
   }
-  typename Enumvector<E,double>::reference
+  typename Enumvector::reference
   operator[] (const E& e) {
-    return Enumvector<E,double>::operator[](e);
+    return Enumvector::operator[](e);
   }
 };
 
 template<typename E, typename generator=std::mt19937>
 inline const Probvector<E,generator> unitprob() {
-  return Probvector<E,generator>(unitvec<E,double>());
+  return Probvector<E,generator>(EnumVector::unitvec<E,double>());
+}
+
 }
 
 #endif

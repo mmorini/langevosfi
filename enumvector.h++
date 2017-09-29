@@ -5,9 +5,12 @@
 #include <utility>
 #include <algorithm>
 #include <iterator>
+#include "selfiterator.h++"
 #include "myutil.h++"
 
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
+
+namespace EnumVector {
 template<typename E,typename T> class Enumvector: std::vector<T> {
 private:
   template<typename D, typename P, typename R>
@@ -38,13 +41,13 @@ public:
   using std::vector<T>::data;
   using std::vector<T>::swap;
   using std::vector<T>::get_allocator;
-  E size(void) const {return static_cast<E>(E::number());}
-  int numsize(void) const {return E::number();}
+  E size(void) const {return static_cast<E>(E::getn());}
+  int numsize(void) const {return E::getn();}
   explicit Enumvector(/*const allocator_type& alloc=allocator_type()*/):
-    std::vector<T>(E::number()/*,alloc*/){}
+    std::vector<T>(E::getn()/*,alloc*/){}
   explicit Enumvector(const value_type& val,
 		  const allocator_type& alloc=allocator_type()):
-    std::vector<T>(E::number(),val,alloc){}
+    std::vector<T>(E::getn(),val,alloc){}
   Enumvector(const Enumvector& x): std::vector<T>(x) {}
   Enumvector(const Enumvector& x, const allocator_type& alloc):
     std::vector<T>(x,alloc) {}
@@ -54,7 +57,7 @@ public:
     std::vector<T>(std::forward<Enumvector(x)>(x),alloc) {}
   template<typename input_iterator>
   Enumvector(input_iterator i, decltype(checktype(i)) check=true):
-    std::vector<T>(E::number()) {
+    std::vector<T>(E::getn()) {
     bool first = true;
     for(auto &e: static_cast<std::vector<T>&>(*this)) {
       e = *(first?((first=false),i):++i); // Can't do *i++ which may set failbit at end
@@ -62,7 +65,7 @@ public:
   }
 #define ENUMVEC_HAS_ITER_CONSTR
   Enumvector& cshift(int n=1) {
-    size_t s = E::number();
+    size_t s = E::getn();
     if (s>0) {
       const Enumvector tmp(*this);
       n %= s;
@@ -94,7 +97,7 @@ public:
   }
   reference at(const E& m){return std::vector<T>::at(m);}
   const_reference at(const E& m) const{return std::vector<T>::at(m);}
-  void assign(const value_type& val){std::vector<T>::assign(E::number(),val);}
+  void assign(const value_type& val){std::vector<T>::assign(E::getn(),val);}
   template<typename T2>
   Enumvector<E,typename T2::result_type> map(const T2 &f) const {
     Enumvector<E,typename T2::result_type> r;
@@ -110,5 +113,21 @@ inline const Enumvector<E,T> unitvec() {
   Enumvector<E,T> res;
   res[static_cast<E>(0)] = 1;
   return res;
+}
+
+  template<typename E, typename T>
+  inline
+  constexpr auto indices(const Enumvector<E,T> &o)
+    ->decltype(SelfIterator::indices(o)) {
+    return SelfIterator::indices(o);
+  }
+
+  template<typename E, typename T>
+  inline
+  constexpr auto indices(const size_t s, const Enumvector<E,T> &o)
+    ->decltype(SelfIterator::indices(s,o)) {
+    return SelfIterator::indices(s,o);
+  }
+
 }
 #endif

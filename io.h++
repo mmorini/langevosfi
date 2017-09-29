@@ -16,6 +16,8 @@ static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
 template<typename E=void>
 static std::false_type has_Probvector_base(const volatile void*);
 
+namespace ProbVector { // extend
+
 template<typename E, typename G>
 static std::true_type has_Probvector_base(const volatile Probvector<E,G>*);
 
@@ -27,6 +29,10 @@ static Probvector<E,G> get_Probvector_base(Probvector<E,G>&&);
 
 template<typename E, typename G>
 static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
+
+}
+
+namespace EnumVector { // extend 
 
 template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
 std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
@@ -40,22 +46,26 @@ std::istream& operator>>(std::istream& i, Enumvector<E,T>& e) {
   return i;
 }
 
+}
+
+namespace ProbVector { // extend
+
 template<typename E, typename G>
 std::ostream& operator<< (std::ostream& o, const Probvector<E,G>& e) {
   o << e.norm() << "\t";
-  return o << static_cast<const Enumvector<E,double>>(e);
+  return o << static_cast<const typename Probvector<E,G>::Enumvector>(e);
 }
 
 template<typename E, typename G>
 std::istream& operator>>(std::istream& i, Probvector<E,G>& p) {
   const auto w(*std::istream_iterator<double>(i));
-  p = *std::istream_iterator<Enumvector<E,double>>(i); // virtual assignment
+  p = *std::istream_iterator<typename Probvector<E,G>::Enumvector>(i); // virtual assignment
   p *= w;
   return i;
 }
 
 template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
-std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partial specialization
+std::ostream& operator<< (std::ostream& o, const EnumVector::Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
   o<<"\t\t";
@@ -69,9 +79,9 @@ std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) { // partia
 }
 
 template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
-std::istream& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial specialization
+std::istream& operator>>(std::istream& i, EnumVector::Enumvector<E,T>& ee) { // partial specialization
   // Don't construct directly in ee! Need virtual assignment to avoid slicing.
-  Enumvector<E,T> e; 
+  typename std::remove_reference<decltype(ee)>::type e; 
   std::string tmp;
   for (auto a __attribute__((unused)): indices(e.front())) {
     i>>tmp; // should check tmp is E of B
@@ -91,16 +101,24 @@ std::istream& operator>>(std::istream& i, Enumvector<E,T>& ee) { // partial spec
 template<typename E, typename G>
 Probvector<E,G> probbase(const Probvector<E,G>&);
 
+}
+
+namespace Language { // extend
+
 template<typename M, typename L>
 std::ostream& operator<< (std::ostream& o, const Language<M,L>& e) { // partial specialization
-  return o << static_cast<const Enumvector<typename M::Index,typename L::Probvector>&>(e);
+  return o << static_cast<const typename Language<M,L>::Enumvector&>(e);
 }
 
 template<typename M, typename L>
 std::istream& operator>> (std::istream& i, Language<M,L>& e) { // partial specialization
-  return i >> static_cast<Enumvector<typename M::Index,typename L::Probvector>&>(e);
+  return i >> static_cast<typename Language<M,L>::Enumvector&>(e);
        // relies on virtual =
 }
+
+}
+
+namespace Network {
 
 template<typename A, typename P>
 std::ostream& operator<< (std::ostream& o, const Network<A,P>& n) {
@@ -115,6 +133,8 @@ std::istream& operator>> (std::istream& i, Network<A,P>& n) {
   n = Network<A,P>(std::move(a)); // virtual =
   n.adjacency_is_diag = diagstate;
   return i;
+}
+
 }
 
 #ifdef TEST_IO

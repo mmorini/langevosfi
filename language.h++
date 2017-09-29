@@ -8,8 +8,10 @@
 
 static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
 
+namespace Language {
+
 template<typename mprobvector, typename lprobvector>
-class Language: public Enumvector<typename mprobvector::Index,typename lprobvector::Probvector> {
+class Language: public EnumVector::Enumvector<typename mprobvector::Index,typename lprobvector::Probvector> {
  public:
   using Lexeme = typename lprobvector::Index;
   using Meme = typename mprobvector::Index;
@@ -17,12 +19,13 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
   using mgenerator = typename mprobvector::Generator;
   using Mprobvector = typename mprobvector::Probvector;
   using Lprobvector = typename lprobvector::Probvector;
+  using Enumvector = typename Language::Enumvector;
   Language(void) {extractmarginal();}
-  Language(const Enumvector<Meme,Lprobvector>& e):
-    Enumvector<Meme,Lprobvector>(e)
+  Language(const Enumvector& e):
+    Enumvector(e)
       {extractmarginal();}
-  Language(Enumvector<Meme,Lprobvector>&& e):
-    Enumvector<Meme,Lprobvector>
+  Language(Enumvector&& e):
+    Enumvector
     (std::forward<decltype(e)>(e))
       {extractmarginal();}
   Language(const Mprobvector &marg, mgenerator &r, const int mask=-1):
@@ -56,23 +59,23 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
        newmarginal();
      }
   Language(const Mprobvector &marg, const Language &lang):
-    Enumvector<Meme,Lprobvector>(lang),
+    Enumvector(lang),
     marginal(marg)
       {newmarginal();}
   Language(const Mprobvector &marg, Language &&lang):
-    Enumvector<Meme,Lprobvector>(std::forward<Language>(lang)),
+    Enumvector(std::forward<Language>(lang)),
     marginal(marg)
       {newmarginal();}
   Language(Mprobvector &&marg, const Language &lang):
-    Enumvector<Meme,Lprobvector>(lang),
+    Enumvector(lang),
     marginal(std::forward<Mprobvector>(marg))
       {newmarginal();}
   Language(Mprobvector &&marg, Language &&lang):
-    Enumvector<Meme,Lprobvector>(std::forward<Language>(lang)),
+    Enumvector(std::forward<Language>(lang)),
     marginal(std::forward<Mprobvector>(marg))
       {newmarginal();}
   Language(const Language &lang, const int shift=0):
-    Enumvector<Meme,Lprobvector>(lang),
+    Enumvector(lang),
     marginal(lang.marginal)
       {
 	for (auto a: indices(lang.cache))
@@ -80,13 +83,13 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
 	cshift(shift);
       }
   Language(const Language &lang, lgenerator &g):
-    Enumvector<Meme,Lprobvector>(lang),
+    Enumvector(lang),
     marginal(lang.marginal)
       {
 	permute(g);
       }
   Language(Language &&lang, const int shift=0):
-    Enumvector<Meme,Lprobvector>(std::forward<Language>(lang)),
+    Enumvector(std::forward<Language>(lang)),
     marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
     cache(std::forward<decltype(lang.cache)>(lang.cache))
       {
@@ -94,7 +97,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
 	lang.initCache();
       }
   Language(Language &&lang, lgenerator &g):
-    Enumvector<Meme,Lprobvector>(std::forward<Language>(lang)),
+    Enumvector(std::forward<Language>(lang)),
     marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
     cache(std::forward<decltype(lang.cache)>(lang.cache))
       {
@@ -110,7 +113,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
 	return *this;
       }
   Language& permute(lgenerator &g) {
-    Enumvector<Lexeme,Lexeme> p(static_cast<Lexeme>(0));
+    EnumVector::Enumvector<Lexeme,Lexeme> p(static_cast<Lexeme>(0));
 	for (auto a: indices(p)) p[a] = a;
 	p.shuffle(g);
 	for (auto &a: *this)
@@ -119,7 +122,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
 	return *this;
       }
   virtual Language& operator=(const Language & l) {
-    Enumvector<Meme,Lprobvector>::operator=(l);
+    Enumvector::operator=(l);
     marginal = l.marginal;
     deleteCache();
     if (l.cachedead) {
@@ -129,20 +132,20 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
     return *this;
   }
   virtual Language& operator=(Language &&l) {
-    Enumvector<Meme,Lprobvector>::operator=(std::forward<decltype(l)>(l));
+    Enumvector::operator=(std::forward<decltype(l)>(l));
     marginal = std::move(l.marginal);
     deleteCache();
     cache = std::move(l.cache);
     l.initCache();
     return *this;
   }
-  virtual Language& operator=(Enumvector<Meme,Lprobvector>&& e) override {
-    Enumvector<Meme,Lprobvector>::operator=(std::forward<decltype(e)>(e));
+  virtual Language& operator=(Enumvector&& e) override {
+    Enumvector::operator=(std::forward<decltype(e)>(e));
     extractmarginal();
     return *this;
   }
-  virtual Language& operator=(const Enumvector<Meme,Lprobvector>& e) override {
-    Enumvector<Meme,Lprobvector>::operator=(e);
+  virtual Language& operator=(const Enumvector& e) override {
+    Enumvector::operator=(e);
     extractmarginal();
     return *this;
   }
@@ -151,7 +154,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
     return marginal.generate(r);
   }
   virtual Meme randommeme(mgenerator &r,
-			  const Experience<Meme,Lexeme> &experiences = Experience<Meme,Lexeme>()) const {
+			  const Experience::Experience<Meme,Lexeme> &experiences = Experience::Experience<Meme,Lexeme>()) const {
     return memegen(r);
   }
   virtual Lexeme lexgen(const Meme m, lgenerator &r) const {
@@ -165,7 +168,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
     newmarginal();
   }
   virtual void lexmutate(const double sigma, lgenerator &r,
-			 const Experience<Meme,Lexeme> &experience = Experience<Meme,Lexeme>()) {
+			 const Experience::Experience<Meme,Lexeme> &experience = Experience::Experience<Meme,Lexeme>()) {
     // for (auto& m: *this)
     //     m.mutate(sigma,r);
     (*this)[randommeme(r)].mutate(sigma,r);
@@ -197,7 +200,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
     return marginal;
   }
   mutable bool cachedead = false;
-  mutable Enumvector<Lexeme,Mprobvector*> cache = static_cast<decltype(cache)>(nullptr);
+  mutable EnumVector::Enumvector<Lexeme,Mprobvector*> cache = static_cast<decltype(cache)>(nullptr);
   
   void initCache(void) const {
     for (auto& p: cache)
@@ -207,7 +210,7 @@ class Language: public Enumvector<typename mprobvector::Index,typename lprobvect
   Mprobvector& Cachelookup(const Lexeme l) const {
     cachedead = false;
     if (!cache[l]) {
-      Enumvector<Meme,double> p;
+      EnumVector::Enumvector<Meme,double> p;
       for (auto m: indices(p))
 	p[m] = marginal[m]*(*this)[m][l];
       cache[l] = new Mprobvector(std::move(p));
@@ -230,7 +233,7 @@ private:
     deleteCache();
   }
   void extractmarginal() {
-    Enumvector<Meme,double> temp;
+    typename Mprobvector::Enumvector temp;
     for (auto m: indices(*this))
       temp[m] = (*this)[m].norm();
     marginal = std::move(temp);
@@ -243,7 +246,7 @@ template<typename mprobvector, typename lprobvector>
 inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lprobvector>*r=nullptr) {
   Language<mprobvector,lprobvector> retval;
   using Lprobvector=typename lprobvector::Probvector;
-  Lprobvector lprob(unitprob<typename lprobvector::Index, typename lprobvector::Generator>());
+  Lprobvector lprob(ProbVector::unitprob<typename lprobvector::Index, typename lprobvector::Generator>());
   lprob += Lprobvector()*(1.0/retval.numsize()/retval.numsize());
   for (auto i: indices(retval)) {
     retval[i] = lprob;
@@ -251,6 +254,8 @@ inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lpr
   }
   retval.decache();
   return r?*r = std::move(retval):retval;
+}
+
 }
 
 #endif

@@ -3,6 +3,8 @@
 
 static const char MEME_HPP_SCCS_ID[] __attribute__((used)) = "@(#)meme.h++: $Id$";
 
+namespace Meme {
+
 template<class Memebase>
 class Meme: public Memebase {
 public:
@@ -12,4 +14,6 @@ public:
   constexpr Meme(const typename Memebase::Enum& m): Memebase(m){}
   constexpr Meme() {}
 };
+
+}
 #endif

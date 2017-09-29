@@ -3,6 +3,8 @@
 
 static const char LEX_HPP_SCCS_ID[] __attribute__((used)) = "@(#)lex.h++: $Id$";
 
+namespace Lex {
+
 template<class Lexbase>
 class Lexeme: public Lexbase {
 public:
@@ -11,4 +13,6 @@ public:
   constexpr Lexeme(const Lexbase& m):Lexbase(m){}
   constexpr Lexeme(const typename Lexbase::Enum& a): Lexbase(a){} 
 };
+
+}
 #endif

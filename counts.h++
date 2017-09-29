@@ -6,6 +6,8 @@
 
 static const char COUNTS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)counts.h++: $Id$";
 
+namespace Counts {
+
 struct Counts {
   double success=0; int tries=0;
   void operator += (const double s) {
@@ -23,10 +25,12 @@ std::ostream& operator<< (std::ostream& o, const Counts c) {
 }
 
 template<typename T>
-void summarize(const Enumvector<T,Counts> &counts) {
+void summarize(const EnumVector::Enumvector<T,Counts> &counts) {
   Counts totcounts;
   for (Counts c: counts) totcounts += c;
   std::cout << "Comprehension " << totcounts.mean() << std::endl;
+}
+
 }
 
 #endif

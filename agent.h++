@@ -3,6 +3,8 @@
 
 static const char AGENT_HPP_SCCS_ID[] __attribute__((used)) = "@(#)agent.h++: $Id$";
 
+namespace Agent {
+
 template<class Agentbase>
 class Agent: public Agentbase {
 public:
@@ -11,4 +13,6 @@ public:
   constexpr Agent(const Agentbase& a):Agentbase(a){}
   constexpr Agent(const typename Agentbase::Enum& a): Agentbase(a){}
 };
+
+}
 #endif
