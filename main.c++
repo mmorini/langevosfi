@@ -35,31 +35,43 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
 		 const Lexemes &lexemes,
 		 const Memes &memes,
  	         const Population<typename chooselang<model>::Language> &population,
-		 const int n) {
+	         const int n, const int b1, const int b2, const int b3, const int b4) {
   Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> retval;
   for (auto rounds: range(n)) {
     (void)rounds;
     const Agent<Agentbase> &a1(agents.generate(r));
-    const Meme<Memebase> &m1(population[a1].memegen(r));
-    const Lexeme<Lexbase> &l1(population[a1].lexgen(m1,r));
-    const Agent<Agentbase> &a2(agents.neighbor(a1,r));
-    const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
-    const Meme<Memebase> &m2(population[a2].memegen(l2,r));
-    switch(model) {
-    case B: {
-      const auto ran = std::generate_canonical<double, 20>(r);
-      const double match = population[a1].match(memes,m1,m2,population[a2]);
-      //     std::cout << "::communicate_modelB match->" << match << std::endl;
-      if(ran < match*match)
-	retval[a1].increase_association( m1, l1, 1.0 );
-      else if( ran < 1.0 - 2.0 * match * (1.0 - match) ) 
-	retval[a1].increase_association( m1, l1, -1.0 );
-      break;
-    }
-      // Make case A the default to catch case P
-    default:
-      retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
-      break;
+    for (auto partners: range(b1)) {
+      (void) partners;
+      const Agent<Agentbase> &a2(agents.neighbor(a1,r));
+      for (auto comms: range(b2)) {
+	(void) comms;
+	const Meme<Memebase> &m1(population[a1].memegen(r));
+	for (auto lexes: range(b3)) {
+	  (void) lexes;
+	  const Lexeme<Lexbase> &l1(population[a1].lexgen(m1,r));
+	  for (auto trans: range(b4)) {
+	    (void) trans;
+	    const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
+	    const Meme<Memebase> &m2(population[a2].memegen(l2,r));
+	    switch(model) {
+	    case B: {
+	      const auto ran = std::generate_canonical<double, 20>(r);
+	      const double match = population[a1].match(memes,m1,m2,population[a2]);
+	      // std::cout << "::communicate_modelB match->" << match << std::endl;
+	      if(ran < match*match)
+		retval[a1].increase_association( m1, l1, 1.0 );
+	      else if( ran < 1.0 - 2.0 * match * (1.0 - match) ) 
+		retval[a1].increase_association( m1, l1, -1.0 );
+	      break;
+	    }
+	      // Make case A the default to catch case P
+	    default:
+	      retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
+	      break;
+	    }
+	  }
+	}
+      }
     }
   }
   return retval;
@@ -213,6 +225,17 @@ int runModel(const program_options& po) {
 	    << std::endl;
   std::getline(std::cin,ignore);
 
+  std::cerr << "Provide blocking parameters: agents, pairs, memes, lexes (e.g., 1 1 1 1)" << std::endl;
+  const auto b1 = *std::istream_iterator<int>(std::cin),
+             b2 = *std::istream_iterator<int>(std::cin),
+             b3 = *std::istream_iterator<int>(std::cin),
+             b4 = *std::istream_iterator<int>(std::cin);
+  std::cout << " Blocking: agents = " << b1
+	    << "           pairs  = " << b2
+	    << "           memes  = " << b3
+            << "           lexes  = " << b4 << std::endl;
+  std::getline(std::cin,ignore);
+
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
   std::cerr << "Provide unsigned integers and end file to seed random number generator (e.g. 1 19)" << std::endl;
@@ -269,7 +292,7 @@ int runModel(const program_options& po) {
     // Initialize everybodies counts and write out summary.
     // A is default! model==B below is false, but need to mask compiler
     // trying to compile call to A in a dead branch
-    counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner);
+    counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4);
     summarize(counts);
   }
 
@@ -301,7 +324,7 @@ int runModel(const program_options& po) {
       // DIFFERENT: In model B we don't need to keep track of the old language
       
       // Generate new counts and write out summary.
-      auto counts=communicate_model<model>(agents,lexemes,memes,population,inner); summarize(counts);
+      auto counts=communicate_model<model>(agents,lexemes,memes,population,inner,b1,b2,b3,b4); summarize(counts);
       
       if(po.output_to_file)
 	po.outstream << rounds << population
@@ -336,7 +359,7 @@ int runModel(const program_options& po) {
       // A is default, catching P
       // The model==B test is necessary to stop compiler trying to 
       // compile the wrong thing even in a dead branch
-      counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner); summarize(counts);
+      counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4); summarize(counts);
       
       // Look at each agent's language
       for(auto a: indices(counts)) {
