@@ -90,7 +90,7 @@ public:
 // This gives the overall mean success rate for a bunch of experiences
 // Not sure how useful this will be
 template<typename T, typename Experience>
-void summarize(const EnumVector::Enumvector<T,Experience> &experiences) {
+void summarize(const Enumvector::Enumvector<T,Experience> &experiences) {
 	double success = 0.0;
 	int tries = 0;
 	for (Experience e: experiences) {

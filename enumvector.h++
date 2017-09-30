@@ -10,56 +10,57 @@
 
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 
-namespace EnumVector {
+namespace Enumvector {
 template<typename E,typename T> class Enumvector: std::vector<T> {
 private:
   template<typename D, typename P, typename R>
   static constexpr bool checktype(const std::iterator<std::input_iterator_tag,T,D,P,R> &i);
 public:
-  using typename std::vector<T>::value_type;
-  using typename std::vector<T>::allocator_type;
-  using typename std::vector<T>::reference;
-  using typename std::vector<T>::const_reference;
-  using typename std::vector<T>::pointer;
-  using typename std::vector<T>::const_pointer;
-  using typename std::vector<T>::iterator;
-  using typename std::vector<T>::const_iterator;
-  using typename std::vector<T>::reverse_iterator;
-  using typename std::vector<T>::const_reverse_iterator;
-  using typename std::vector<T>::difference_type;
+  using base_vector = typename Enumvector::vector;
+  using typename base_vector::value_type;
+  using typename base_vector::allocator_type;
+  using typename base_vector::reference;
+  using typename base_vector::const_reference;
+  using typename base_vector::pointer;
+  using typename base_vector::const_pointer;
+  using typename base_vector::iterator;
+  using typename base_vector::const_iterator;
+  using typename base_vector::reverse_iterator;
+  using typename base_vector::const_reverse_iterator;
+  using typename base_vector::difference_type;
   typedef E size_type;
-  using std::vector<T>::begin;
-  using std::vector<T>::end;
-  using std::vector<T>::rbegin;
-  using std::vector<T>::rend;
-  using std::vector<T>::cbegin;
-  using std::vector<T>::cend;
-  using std::vector<T>::crbegin;
-  using std::vector<T>::crend;
-  using std::vector<T>::front;
-  using std::vector<T>::back;
-  using std::vector<T>::data;
-  using std::vector<T>::swap;
-  using std::vector<T>::get_allocator;
+  using base_vector::begin;
+  using base_vector::end;
+  using base_vector::rbegin;
+  using base_vector::rend;
+  using base_vector::cbegin;
+  using base_vector::cend;
+  using base_vector::crbegin;
+  using base_vector::crend;
+  using base_vector::front;
+  using base_vector::back;
+  using base_vector::data;
+  using base_vector::swap;
+  using base_vector::get_allocator;
   E size(void) const {return static_cast<E>(E::getn());}
   int numsize(void) const {return E::getn();}
   explicit Enumvector(/*const allocator_type& alloc=allocator_type()*/):
-    std::vector<T>(E::getn()/*,alloc*/){}
+    base_vector(E::getn()/*,alloc*/){}
   explicit Enumvector(const value_type& val,
 		  const allocator_type& alloc=allocator_type()):
-    std::vector<T>(E::getn(),val,alloc){}
-  Enumvector(const Enumvector& x): std::vector<T>(x) {}
+    base_vector(E::getn(),val,alloc){}
+  Enumvector(const Enumvector& x): base_vector(x) {}
   Enumvector(const Enumvector& x, const allocator_type& alloc):
-    std::vector<T>(x,alloc) {}
+    base_vector(x,alloc) {}
   Enumvector(Enumvector&& x):
-    std::vector<T>(std::forward<Enumvector>(x)) {}
+    base_vector(std::forward<Enumvector>(x)) {}
   Enumvector(Enumvector&& x, const allocator_type& alloc):
-    std::vector<T>(std::forward<Enumvector(x)>(x),alloc) {}
+    base_vector(std::forward<Enumvector(x)>(x),alloc) {}
   template<typename input_iterator>
   Enumvector(input_iterator i, decltype(checktype(i)) check=true):
-    std::vector<T>(E::getn()) {
+    base_vector(E::getn()) {
     bool first = true;
-    for(auto &e: static_cast<std::vector<T>&>(*this)) {
+    for(auto &e: static_cast<base_vector&>(*this)) {
       e = *(first?((first=false),i):++i); // Can't do *i++ which may set failbit at end
     }
   }
@@ -85,19 +86,19 @@ public:
       (*this)[i] = std::move(tmp[reorder[i]]);
     return *this;
   }
-  reference operator[](const E& m){return std::vector<T>::operator[](static_cast<int>(m));}
+  reference operator[](const E& m){return base_vector::operator[](static_cast<int>(m));}
   const_reference operator[](const E& m) const{
-    return std::vector<T>::operator[](static_cast<int>(m));
+    return base_vector::operator[](static_cast<int>(m));
   }
   virtual Enumvector& operator= (const Enumvector& x) {
-    std::vector<T>::operator=(x); return *this;
+    base_vector::operator=(x); return *this;
   }
   virtual Enumvector& operator= (Enumvector&& x) {
-    std::vector<T>::operator=(std::forward<decltype(x)>(x)); return *this;
+    base_vector::operator=(std::forward<decltype(x)>(x)); return *this;
   }
-  reference at(const E& m){return std::vector<T>::at(m);}
-  const_reference at(const E& m) const{return std::vector<T>::at(m);}
-  void assign(const value_type& val){std::vector<T>::assign(E::getn(),val);}
+  reference at(const E& m){return base_vector::at(m);}
+  const_reference at(const E& m) const{return base_vector::at(m);}
+  void assign(const value_type& val){base_vector::assign(E::getn(),val);}
   template<typename T2>
   Enumvector<E,typename T2::result_type> map(const T2 &f) const {
     Enumvector<E,typename T2::result_type> r;
