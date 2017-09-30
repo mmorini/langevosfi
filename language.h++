@@ -5,6 +5,7 @@
 #include "probvector.h++"
 #include "experience.h++"
 #include <utility>
+#include <memory>
 
 static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
 
@@ -79,7 +80,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     marginal(lang.marginal)
       {
 	for (auto a: indices(lang.cache))
-	  cache[a]=lang.cache[a]?new Mprobvector(*lang.cache[a]):nullptr;
+	  cache[a]=lang.cache[a]?std::make_shared<Mprobvector>(*lang.cache[a]):nullptr;
 	cshift(shift);
       }
   Language(const Language &lang, lgenerator &g):
@@ -134,7 +135,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
   virtual Language& operator=(Language &&l) {
     base_Enumvector::operator=(std::forward<decltype(l)>(l));
     marginal = std::move(l.marginal);
-    deleteCache();
+    // deleteCache();
     cache = std::move(l.cache);
     l.initCache();
     return *this;
@@ -149,7 +150,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     extractmarginal();
     return *this;
   }
-  virtual ~Language(void) {deleteCache();}
+  virtual ~Language(void) {/*deleteCache();*/}
   virtual Meme memegen(mgenerator &r) const {
     return marginal.generate(r);
   }
@@ -200,12 +201,14 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     return marginal;
   }
   mutable bool cachedead = false;
-  mutable Enumvector::Enumvector<Lexeme,Mprobvector*> cache = static_cast<decltype(cache)>(nullptr);
+  // So that cache can be copied, we need shared_ptr, not unique_ptr
+  mutable Enumvector::Enumvector<Lexeme,std::shared_ptr<Mprobvector>> cache;
   
   void initCache(void) const {
     for (auto& p: cache)
       p = nullptr;
     // Need to change deleteCache if initCache does anything else
+    // initCache and deleteCache do the same thing in this implementation
   }
   Mprobvector& Cachelookup(const Lexeme l) const {
     cachedead = false;
@@ -213,18 +216,16 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
       Enumvector::Enumvector<Meme,double> p;
       for (auto m: indices(p))
 	p[m] = marginal[m]*(*this)[m][l];
-      cache[l] = new Mprobvector(std::move(p));
+      cache[l] = std::make_shared<Mprobvector>(std::move(p));
     }
     return *cache[l];
   }
 protected: // Expose this to subclasses to use in lexmutate
   void deleteCache(void) const {
     for (auto& c:cache)
-      if(c!=nullptr) {
-	delete c;
-	c = nullptr;
-      }
+      c = nullptr;
     // Must call initCache if that is nontrivial
+    // initCache and deleteCache do the same thing in this implementation
   }
 private:
   void newmarginal() {
