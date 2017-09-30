@@ -12,8 +12,6 @@
 #include <string>
 #include "myutil.h++"
 
-static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
-
 /*
 template<typename E=void>
 static std::false_type has_Probvector_base(const volatile void*);
@@ -34,6 +32,12 @@ static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
 
 }
 */
+
+namespace IO {
+
+static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
+
+}
 
 namespace Enumvector { // extend 
 

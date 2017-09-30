@@ -7,9 +7,9 @@
 #include <utility>
 #include <memory>
 
-static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
-
 namespace Language {
+
+static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
 
 template<typename mprobvector, typename lprobvector>
 class Language: public Enumvector::Enumvector<typename mprobvector::Index,typename lprobvector::Probvector> {

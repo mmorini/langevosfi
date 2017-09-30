@@ -58,7 +58,7 @@ extern const char agentid[];
 // from an instantiation of the Enum template, and the functions in
 // the Enum template have not been overriden.  Meme currently is an
 // empty extension.
-class Memebase: public Enum<memeid> {
+class Memebase: public Enum::Enum<Enum::memeid> {
 public:
   virtual ~Memebase() = default;
   using Enum::Enum;
@@ -127,7 +127,7 @@ public:
 
 
 // This is essentially a repeat of what we did above for Meme.
-class Lexbase: public Enum<lexid> {
+class Lexbase: public Enum::Enum<Enum::lexid> {
 public:
   virtual ~Lexbase() = default;
   using Enum::Enum;
@@ -148,7 +148,7 @@ public:
 };
 
 // This is essentially a repeat of what we did above for Meme.
-class Agentbase: public Enum<agentid> {
+class Agentbase: public Enum::Enum<Enum::agentid> {
 public:
   virtual ~Agentbase(){}
   using Enum::Enum;

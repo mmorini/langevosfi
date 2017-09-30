@@ -7,9 +7,6 @@
 #include "enumvector.h++"
 #include <iostream>
 
-// Not sure what this is; whoever does can replace it with the appropriate analog
-static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experience.h++: $Id$";
-
 /**
   * The purpose of this class is to keep a record of an agent's experience in a round.
   * Model A cares only about the success rate; Model B cares above the success of
@@ -22,6 +19,9 @@ static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experien
 
 
 namespace Experience {
+
+// Not sure what this is; whoever does can replace it with the appropriate analog
+static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experience.h++: $Id$";
 
 // The forward declaration of operator<< template is needed syntactically for 
 // the friend declaration.  We can avoid the friend declaration with a public

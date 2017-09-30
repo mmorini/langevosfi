@@ -1,9 +1,9 @@
 #ifndef MEME_HPP
 #define MEME_HPP
 
-static const char MEME_HPP_SCCS_ID[] __attribute__((used)) = "@(#)meme.h++: $Id$";
-
 namespace Meme {
+
+static const char MEME_HPP_SCCS_ID[] __attribute__((used)) = "@(#)meme.h++: $Id$";
 
 template<class Memebase>
 class Meme: public Memebase {
