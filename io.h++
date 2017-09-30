@@ -35,7 +35,7 @@ static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
 }
 */
 
-namespace EnumVector { // extend 
+namespace Enumvector { // extend 
 
 template<typename E, typename T, typename std::enable_if<!decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
 std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
@@ -68,7 +68,7 @@ std::istream& operator>>(std::istream& i, Probvector<E,G>& p) {
 }
 
 template<typename E, typename T, typename std::enable_if<decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
-std::ostream& operator<< (std::ostream& o, const EnumVector::Enumvector<E,T>& e) { // partial specialization
+std::ostream& operator<< (std::ostream& o, const Enumvector::Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
   o<<"\t\t";
@@ -82,7 +82,7 @@ std::ostream& operator<< (std::ostream& o, const EnumVector::Enumvector<E,T>& e)
 }
 
 template<typename E, typename T, typename std::enable_if<decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
-std::istream& operator>>(std::istream& i, EnumVector::Enumvector<E,T>& ee) { // partial specialization
+std::istream& operator>>(std::istream& i, Enumvector::Enumvector<E,T>& ee) { // partial specialization
   // Don't construct directly in ee! Need virtual assignment to avoid slicing.
   typename std::remove_reference<decltype(ee)>::type e; 
   std::string tmp;

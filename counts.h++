@@ -25,7 +25,7 @@ std::ostream& operator<< (std::ostream& o, const Counts c) {
 }
 
 template<typename T>
-void summarize(const EnumVector::Enumvector<T,Counts> &counts) {
+void summarize(const Enumvector::Enumvector<T,Counts> &counts) {
   Counts totcounts;
   for (Counts c: counts) totcounts += c;
   std::cout << "Comprehension " << totcounts.mean() << std::endl;

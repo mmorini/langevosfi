@@ -79,13 +79,13 @@ public:
 class Memes: public Network::Network<Meme::Meme<Memebase>> {
  public:
   using Meme = typename Memes::Agent;
-  using Enumvector = typename Memes::Enumvector;
+  using base_Enumvector = typename Memes::Enumvector;
   Memes(const Network& n): Network(n) {}
   Memes(Network&& n): Network(std::forward<decltype(n)>(n)) {}
   // All other constructors enforce basematch_adjacency
   Memes(): Network(Probvector(-1),basematch_adjacency()) {}
-  Memes(const Enumvector& e): Network(e,basematch_adjacency()) {}
-  Memes(Enumvector&& e): Network(std::forward<decltype(e)>(e),basematch_adjacency()) {}
+  Memes(const base_Enumvector& e): Network(e,basematch_adjacency()) {}
+  Memes(base_Enumvector&& e): Network(std::forward<decltype(e)>(e),basematch_adjacency()) {}
   Memes(std::mt19937&r, const int m=-1): Network(Probvector(r,m),basematch_adjacency()) {}
   // If slicing is an issue, define the virtual = operators
 };
@@ -100,8 +100,8 @@ public:
   // BitstringMemes(Network&& n): Memes(std::forward<decltype(n)>(n)) {}
   // Override other constructors to enforce bitset_adjacency
   BitstringMemes(): Memes(Network(Probvector(-1),bitset_adjacency())) {}
-  BitstringMemes(const Enumvector& e): Memes(Network(e,bitset_adjacency())) {}
-  BitstringMemes(Enumvector&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
+  BitstringMemes(const base_Enumvector& e): Memes(Network(e,bitset_adjacency())) {}
+  BitstringMemes(base_Enumvector&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
   BitstringMemes(std::mt19937&r, const int m=-1): Memes(Network(Probvector(r,m),bitset_adjacency())) {}
   // If slicing is an issue, define the virtual = operators
 	
@@ -165,7 +165,7 @@ public:
 
 class AgentLanguage: public Language::Language<Memes,Lexemes> {
 public:
-  using Enumvector=AgentLanguage::Enumvector;
+  using base_Enumvector=AgentLanguage::Enumvector;
   AgentLanguage(){}
   using Language::Language;
   AgentLanguage(const Language& l):Language(l) {}
@@ -199,17 +199,17 @@ public:
   }
 };
 
-// I would like instead of this for any subclass of AgentLanguage to be stored in the EnumVector
+// I would like instead of this for any subclass of AgentLanguage to be stored in the Enumvector
 // without object slicing so that virtual functions are called properly, but I am not sure if
 // this can be done.
 template<typename AgentLanguage> 
-class Population: public EnumVector::Enumvector<Agent::Agent<Agentbase>,AgentLanguage> {
+class Population: public Enumvector::Enumvector<Agent::Agent<Agentbase>,AgentLanguage> {
 public:
-  using Enumvector=typename Population::Enumvector;
+  using base_Enumvector=typename Population::Enumvector;
   constexpr Population(){}
-  constexpr Population(const AgentLanguage &l): Enumvector(l) {}
-  constexpr Population(const Enumvector& e): Enumvector(e) {}
-  constexpr Population(Enumvector&& e): Enumvector(std::forward<decltype(e)>(e)) {}
+  constexpr Population(const AgentLanguage &l): base_Enumvector(l) {}
+  constexpr Population(const base_Enumvector& e): base_Enumvector(e) {}
+  constexpr Population(base_Enumvector&& e): base_Enumvector(std::forward<decltype(e)>(e)) {}
 };
 
 template<typename AgentLanguage>
@@ -219,7 +219,7 @@ inline std::ostream& operator<< (std::ostream& o, const Population<AgentLanguage
 }
 
 template<typename AgentLanguage>
-EnumVector::Enumvector<Agent::Agent<Agentbase>,Counts::Counts> communicate(const Agents &, const Lexemes &, const Memes &,
+Enumvector::Enumvector<Agent::Agent<Agentbase>,Counts::Counts> communicate(const Agents &, const Lexemes &, const Memes &,
 									   const Population<AgentLanguage> &, int=1, int=1, int=1, int=1);
 enum ModelType {A, B, P};
 inline

@@ -31,12 +31,12 @@ template<> int Enum<agentid>::n = 0;
 // The signalling agent records a success w.p m^2; a failure w.p. (1-m)^2 and does nothing otherwise
 // (Other rules are available, but I like this one)
 template<ModelType model>
-EnumVector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> communicate_model(const Agents &agents,
+Enumvector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> communicate_model(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
  	         const Population<typename chooselang<model>::Language> &population,
 	         const int n, const int b1, const int b2, const int b3, const int b4) {
-  EnumVector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> retval;
+  Enumvector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> retval;
   for (auto rounds: SelfIterator::range(n)) {
     (void)rounds;
     const auto &a1(agents.generate(r));
@@ -287,7 +287,7 @@ int runModel(const program_options& po) {
     std::cout << population;
   }
 
-  EnumVector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> counts;
+  Enumvector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> counts;
   if (model!=B) {
     // Initialize everybodies counts and write out summary.
     // A is default! model==B below is false, but need to mask compiler

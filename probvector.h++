@@ -15,23 +15,23 @@ static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvect
 namespace ProbVector {
 
 template<typename E,typename generator=std::mt19937> class Probvector:
-  public EnumVector::Enumvector<E,double> {
+  public Enumvector::Enumvector<E,double> {
 public:
   using Generator = generator;
   using Index = E;
-  using Enumvector = typename Probvector::Enumvector;
+  using base_Enumvector = typename Probvector::Enumvector;
   virtual ~Probvector(void) {}
   Probvector(const int mask=-1, double norm=1.0):
-    Enumvector(mask>0?1:0), weight(norm) {
+    base_Enumvector(mask>0?1:0), weight(norm) {
     if(mask>0)
       for(const auto &num: indices(mask,*this))
 	(*this)[num] = 0; 
     normalize(false);
   }
-  Probvector(const Enumvector& e, bool unnorm=true):
-    Enumvector(e){normalize(unnorm);}
-  Probvector(Enumvector&& e, bool unnorm=true):
-    Enumvector(std::forward<decltype(e)>(e))
+  Probvector(const base_Enumvector& e, bool unnorm=true):
+    base_Enumvector(e){normalize(unnorm);}
+  Probvector(base_Enumvector&& e, bool unnorm=true):
+    base_Enumvector(std::forward<decltype(e)>(e))
   {normalize(unnorm);}
   Probvector(generator &r,const int mask= -1,double norm=1.0):weight(norm) {
     int num = 0;
@@ -43,32 +43,32 @@ public:
     normalize(false);
   }
   constexpr Probvector(const Probvector&) = default;
-  constexpr Probvector(Probvector&&p): Enumvector(static_cast<Enumvector&&>(p)),
+  constexpr Probvector(Probvector&&p): base_Enumvector(static_cast<base_Enumvector&&>(p)),
 			     weight(p.weight), setupdone(p.setupdone), s(std::move(p.s)) {}
 
   Probvector& cshift(int n=1) {
-    Enumvector::cshift(n);
+    base_Enumvector::cshift(n);
     setupdone=false;
     return *this;
   }
   Probvector& shuffle(generator &g) {
-    Enumvector::shuffle(g);
+    base_Enumvector::shuffle(g);
     setupdone=false;
     return *this;
   }
-  Probvector& permute(const EnumVector::Enumvector<E,E> &p) {
-    Enumvector::permute(p);
+  Probvector& permute(const Enumvector::Enumvector<E,E> &p) {
+    base_Enumvector::permute(p);
     setupdone=false;
     return *this;
   }
-  virtual Probvector& operator=(const Enumvector& e) override {
-    Enumvector::operator=(e);
+  virtual Probvector& operator=(const base_Enumvector& e) override {
+    base_Enumvector::operator=(e);
     normalize();
     setupdone=false;
     return *this;
   }
-  virtual Probvector& operator=(Enumvector&& e) override {
-    Enumvector::operator=(std::forward<decltype(e)>(e));
+  virtual Probvector& operator=(base_Enumvector&& e) override {
+    base_Enumvector::operator=(std::forward<decltype(e)>(e));
     normalize();
     setupdone=false;
     return *this;
@@ -94,9 +94,9 @@ public:
   }
 
 
-  typename Enumvector::const_reference
+  typename base_Enumvector::const_reference
   operator[] (const E& e) const {
-    return Enumvector::operator[](e);
+    return base_Enumvector::operator[](e);
   }
   constexpr double norm(void) const {
     return weight;
@@ -138,14 +138,14 @@ public:
 private:
   double weight = 1.0;
   mutable bool setupdone = false;
-  mutable Enumvector s;
+  mutable base_Enumvector s;
   void normalize(bool updateweight=true) {
     auto sum = 0.0;
     for (auto d: *this) sum += d;
     if (sum > 0)
       for (auto &d: *this) d /= sum;
     else
-      Enumvector::assign(1.0/Enumvector::numsize());
+      base_Enumvector::assign(1.0/base_Enumvector::numsize());
     if (updateweight) weight=sum;
   }
   void setup() const {
@@ -155,15 +155,15 @@ private:
       s[e]=cumsum += (*this)[e];
     setupdone = true;
   }
-  typename Enumvector::reference
+  typename base_Enumvector::reference
   operator[] (const E& e) {
-    return Enumvector::operator[](e);
+    return base_Enumvector::operator[](e);
   }
 };
 
 template<typename E, typename generator=std::mt19937>
 inline const Probvector<E,generator> unitprob() {
-  return Probvector<E,generator>(EnumVector::unitvec<E,double>());
+  return Probvector<E,generator>(Enumvector::unitvec<E,double>());
 }
 
 }
