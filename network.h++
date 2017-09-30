@@ -14,9 +14,9 @@
 #include <limits>
 #include <cassert>
 
-static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
-
 namespace Network {
+
+static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
 
 // Forward declaration to allow friend declaration
 template<typename A, typename P> class Network;

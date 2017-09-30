@@ -5,6 +5,8 @@
 #include <string>
 #include <exception>
 
+namespace Enum {
+
 static const char ENUM_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enum.h++: $Id$";
 
 template<const char *id>
@@ -125,4 +127,5 @@ public:
   // template<typename T> friend auto range(T);
 };
 
+}
 #endif

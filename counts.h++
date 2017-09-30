@@ -4,9 +4,9 @@
 #include "enumvector.h++"
 #include <iostream>
 
-static const char COUNTS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)counts.h++: $Id$";
-
 namespace Counts {
+
+static const char COUNTS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)counts.h++: $Id$";
 
 struct Counts {
   double success=0; int tries=0;

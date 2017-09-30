@@ -8,9 +8,10 @@
 #include "selfiterator.h++"
 #include "myutil.h++"
 
+namespace Enumvector {
+
 static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 
-namespace Enumvector {
 template<typename E,typename T> class Enumvector: std::vector<T> {
 private:
   template<typename D, typename P, typename R>

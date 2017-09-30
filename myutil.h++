@@ -5,9 +5,9 @@
 #include <random>
 #include <utility>
 
-static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
-
 namespace util {
+
+static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
 constexpr double infinity=1.e100;
 inline double probit(const double p) {
