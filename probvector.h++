@@ -12,7 +12,7 @@
 
 static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
 
-namespace ProbVector {
+namespace Probvector {
 
 template<typename E,typename generator=std::mt19937> class Probvector:
   public Enumvector::Enumvector<E,double> {

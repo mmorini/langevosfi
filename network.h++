@@ -22,7 +22,7 @@ namespace Network {
 template<typename A, typename P> class Network;
 template<typename A, typename P> std::istream& operator>> (std::istream&, Network<A,P>&);
 
-template<typename agent,typename probvector=ProbVector::Probvector<agent,std::mt19937>>
+template<typename agent,typename probvector=Probvector::Probvector<agent,std::mt19937>>
 class Network: public probvector {
   friend std::istream& operator>> <> (std::istream&, Network&);
 public:
