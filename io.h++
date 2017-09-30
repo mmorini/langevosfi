@@ -10,9 +10,11 @@
 #include <utility>
 #include <algorithm>
 #include <string>
+#include "myutil.h++"
 
 static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
 
+/*
 template<typename E=void>
 static std::false_type has_Probvector_base(const volatile void*);
 
@@ -31,16 +33,17 @@ template<typename E, typename G>
 static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
 
 }
+*/
 
 namespace EnumVector { // extend 
 
-template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
+template<typename E, typename T, typename std::enable_if<!decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
 std::ostream& operator<< (std::ostream& o, const Enumvector<E,T>& e) {
   std::copy(e.cbegin(), e.cend(), std::ostream_iterator<T>(o,"\t"));
   return o << std::endl;
 }
 
-template<typename E, typename T, typename std::enable_if<!decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
+template<typename E, typename T, typename std::enable_if<!decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
 std::istream& operator>>(std::istream& i, Enumvector<E,T>& e) {
   e = Enumvector<E,T>(std::istream_iterator<T>(i)); // virtual assignment
   return i;
@@ -64,7 +67,7 @@ std::istream& operator>>(std::istream& i, Probvector<E,G>& p) {
   return i;
 }
 
-template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
+template<typename E, typename T, typename std::enable_if<decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
 std::ostream& operator<< (std::ostream& o, const EnumVector::Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
@@ -73,12 +76,12 @@ std::ostream& operator<< (std::ostream& o, const EnumVector::Enumvector<E,T>& e)
   o<<std::endl;
   // The casts is to make sure that we are talking about the probvector base of T and not for example the whole T
   // which may be a network or some such thing!
-  for (const auto& a: indices(e)) o << a << "\t" << static_cast<typename std::add_lvalue_reference<decltype(get_Probvector_base(e[a]))>::type>(e[a]);
+  for (const auto& a: indices(e)) o << a << "\t" << static_cast<typename std::add_lvalue_reference<decltype(util::get_base_template<ProbVector::Probvector>(e[a]))>::type>(e[a]);
   o.precision(oldprec);
   return o;
 }
 
-template<typename E, typename T, typename std::enable_if<decltype(has_Probvector_base(std::declval<T*>()))::value,int>::type =0>
+template<typename E, typename T, typename std::enable_if<decltype(util::has_base_template<ProbVector::Probvector>(std::declval<T*>()))::value,int>::type =0>
 std::istream& operator>>(std::istream& i, EnumVector::Enumvector<E,T>& ee) { // partial specialization
   // Don't construct directly in ee! Need virtual assignment to avoid slicing.
   typename std::remove_reference<decltype(ee)>::type e; 
@@ -90,7 +93,7 @@ std::istream& operator>>(std::istream& i, EnumVector::Enumvector<E,T>& ee) { // 
     // Note that T could be things like Lexemes when we are reading in a Language.
     // and Lexemes are a whole network.  But, this is supposed to read only the
     // probabilities, not the network.  So, we need this subterfuge.
-    decltype(get_Probvector_base(std::declval<T>())) v;
+    decltype(util::get_base_template<ProbVector::Probvector>(std::declval<T>())) v;
     i>>tmp>>v; // should check tmp is E
     vv = v;
   }
