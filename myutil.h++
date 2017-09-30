@@ -94,6 +94,21 @@ constexpr unsigned count_bits(const int n) {
   return n<=1?count_bits(((n-1)>>1)+1)+1:0;
 }
 
+template<template<typename...> class Template>
+static std::false_type has_base_template(const volatile void*);
+
+template<template<typename...> class Template, typename ...Param>
+static std::true_type has_base_template(const volatile Template<Param...>*);
+
+template<template<typename...> class Template, typename ...Param>
+static Template<Param...> get_base_template(Template<Param...>&);
+
+template<template<typename...> class Template, typename ...Param>
+static Template<Param...> get_base_template(Template<Param...>&&);
+
+template<template<typename...> class Template, typename ...Param>
+static const Template<Param...> get_base_template(const Template<Param...>&);
+
 }
 
 #endif
