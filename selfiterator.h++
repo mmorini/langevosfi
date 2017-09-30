@@ -14,17 +14,18 @@ template<typename T, bool Increasing> class SelfIterator:
   public std::iterator<std::random_access_iterator_tag,T> {
   T value;
 public:
+  using base_iterator = typename SelfIterator::iterator;
   constexpr SelfIterator(const T& v): value(v) {}
   constexpr SelfIterator(const SelfIterator<T,!Increasing> o): value(Increasing?o.value-1:o.value+1) {}
   constexpr T operator*(void) const {return Increasing?value+0:value-1;}
   constexpr SelfIterator operator+(const T &i) const {return Increasing?value+i:value-i;}
   constexpr SelfIterator operator-(const T &i) const {return Increasing?value-i:value+i;}
-  std::iterator<std::random_access_iterator_tag,T>& operator++(void) {Increasing?value++:value--; return *this;}
-  std::iterator<std::random_access_iterator_tag,T> operator++(int) {auto ret(*this); Increasing?value++:value--; return ret;}
-  std::iterator<std::random_access_iterator_tag,T>& operator--(void) {Increasing?value--:value++; return *this;}
-  std::iterator<std::random_access_iterator_tag,T> operator--(int) {auto ret(*this); Increasing?value--:value++; return ret;}
-  std::iterator<std::random_access_iterator_tag,T>& operator+=(const T &i) {Increasing?value+=i:value-=i; return *this;}
-  std::iterator<std::random_access_iterator_tag,T>& operator-=(const T &i) {Increasing?value-=i:value+=i; return *this;}
+  base_iterator& operator++(void) {Increasing?value++:value--; return *this;}
+  base_iterator operator++(int) {auto ret(*this); Increasing?value++:value--; return ret;}
+  base_iterator& operator--(void) {Increasing?value--:value++; return *this;}
+  base_iterator operator--(int) {auto ret(*this); Increasing?value--:value++; return ret;}
+  base_iterator& operator+=(const T &i) {Increasing?value+=i:value-=i; return *this;}
+  base_iterator& operator-=(const T &i) {Increasing?value-=i:value+=i; return *this;}
   constexpr bool operator<(const SelfIterator other) const {return Increasing?value < other.value:other.value<value;}
   constexpr bool operator>(const SelfIterator other) const {return Increasing?value > other.value:other.value>value;}
   constexpr bool operator<=(const SelfIterator other) const {return !(Increasing?value > other.value:other.value > value);}

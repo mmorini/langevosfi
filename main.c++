@@ -30,13 +30,18 @@ template<> int Enum<agentid>::n = 0;
 // as a number m between 0 and 1 (perfect mismatch -> perfect match).
 // The signalling agent records a success w.p m^2; a failure w.p. (1-m)^2 and does nothing otherwise
 // (Other rules are available, but I like this one)
+
+typedef Enumvector::Enumvector<Agent::Agent<Agentbase>,
+			       Experience::Experience<Meme::Meme<Memebase>,
+						      Lex::Lexeme<Lexbase>>> Counts_t;
+
 template<ModelType model>
-Enumvector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> communicate_model(const Agents &agents,
+Counts_t communicate_model(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
  	         const Population<typename chooselang<model>::Language> &population,
 	         const int n, const int b1, const int b2, const int b3, const int b4) {
-  Enumvector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> retval;
+  Counts_t retval;
   for (auto rounds: SelfIterator::range(n)) {
     (void)rounds;
     const auto &a1(agents.generate(r));
@@ -287,7 +292,7 @@ int runModel(const program_options& po) {
     std::cout << population;
   }
 
-  Enumvector::Enumvector<Agent::Agent<Agentbase>,Experience::Experience<Meme::Meme<Memebase>,Lex::Lexeme<Lexbase>>> counts;
+  Counts_t counts;
   if (model!=B) {
     // Initialize everybodies counts and write out summary.
     // A is default! model==B below is false, but need to mask compiler

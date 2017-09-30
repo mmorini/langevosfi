@@ -244,7 +244,7 @@ public:
   static Language langinit(const int uniform, const double lambda,
 				const Memes& memes, std::mt19937& r) {
     return uniform > 0?Language(memes):
-      uniform < 0?Language(memes,unitlang((Language*)nullptr)):
+      uniform < 0?Language(memes,unitlang(static_cast<Language*>(nullptr))): // Koenig lookup needs cast
       Language(memes,r);
   }
 };
@@ -254,7 +254,7 @@ public:
   static Language langinit(const int uniform, const double lambda,
 				const Memes& memes, std::mt19937& r) {
     return uniform > 0?Language(lambda, memes):
-      uniform < 0?Language(lambda, memes,unitlang((Language*)nullptr)):
+      uniform < 0?Language(lambda, memes,unitlang(static_cast<Language*>(nullptr))): // Koenig lookup needs cast
       Language(lambda, memes,r); // DIFFERENT: The type of all the languages differs wrt model A, and so does population
   }
 };
