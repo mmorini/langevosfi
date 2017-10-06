@@ -108,6 +108,7 @@ public:
 		   {return f(&x);});
     return r;
   }
+  virtual ~Enumvector() = default;
 };
 
 template<typename E, typename T>

@@ -10,7 +10,7 @@ static const char SELFITERATOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)selfit
 
 // Stupid C++ does not allow one to iterate over integers
 // Here is a set of classes to allow that
-template<typename T, bool Increasing> class SelfIterator:
+template<typename T, bool Increasing> class SelfIterator final:
   public std::iterator<std::random_access_iterator_tag,T> {
   T value;
 public:
@@ -34,7 +34,7 @@ public:
   constexpr bool operator!=(const SelfIterator other) const {return value != other.value;}
 };
 
-template<typename T, bool Increasing> class Range {
+template<typename T, bool Increasing> class Range final {
   T start, beyond;
 public:
   constexpr Range(const T &s, const T &b): start(s), beyond(b) {}

@@ -34,7 +34,7 @@ template <typename Meme, typename Lexeme>
 std::ostream& operator<<(std::ostream&, const Experience<Meme,Lexeme>&);
 
 template <typename Meme, typename Lexeme> // It has to be a template cos we don't know what Meme and Lexeme are yet
-class Experience {
+class Experience final {
 
 	using keytype = std::pair<Meme,Lexeme>;
 	std::map<keytype, double> association;
