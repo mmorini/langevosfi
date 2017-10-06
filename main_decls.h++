@@ -102,7 +102,8 @@ public:
   BitstringMemes(): Memes(Network(Probvector(-1),bitset_adjacency())) {}
   BitstringMemes(const base_Enumvector& e): Memes(Network(e,bitset_adjacency())) {}
   BitstringMemes(base_Enumvector&& e): Memes(Network(std::forward<decltype(e)>(e),bitset_adjacency())) {}
-  BitstringMemes(std::mt19937&r, const int m=-1): Memes(Network(Probvector(r,m),bitset_adjacency())) {}
+  BitstringMemes(std::mt19937&r, const int m): Memes(Network(Probvector(r,m),bitset_adjacency())) {}
+  BitstringMemes(std::mt19937&r): BitstringMemes(r,-1) {}
   // If slicing is an issue, define the virtual = operators
 	
 	// ... and overload the virtual functions
