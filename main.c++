@@ -86,7 +86,7 @@ Counts_t communicate_model(const Agents &agents,
   return retval;
 }
 
-class program_options {
+class program_options final {
   std::ifstream instream_f;
   std::ofstream outstream_f;
   static void invalidusage(void) {

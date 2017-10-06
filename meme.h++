@@ -10,9 +10,9 @@ class Meme: public Memebase {
 public:
   using Memebase::Memebase;
   
-  virtual ~Meme(){}
+  virtual ~Meme() override = default;
   constexpr Meme(const Memebase& m):Memebase(m){}
-  constexpr Meme() {}
+  constexpr Meme() = default;
 };
 
 }

@@ -150,7 +150,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     extractmarginal();
     return *this;
   }
-  virtual ~Language(void) {/*deleteCache();*/}
+  // virtual ~Language(void) override = default; // {/*deleteCache();*/}
   virtual Meme memegen(mgenerator &r) const {
     return marginal.generate(r);
   }

@@ -16,7 +16,7 @@ public:
   class badsize: public std::exception {
     const std::string msg;
   public:
-    virtual const char *what() const noexcept {return msg.c_str();}
+    virtual const char *what() const noexcept override {return msg.c_str();}
     badsize(const std::string &s): msg(s) {}
     badsize(std::string &&s): msg(std::forward<std::string>(s)) {}
     constexpr badsize() = delete;
@@ -48,7 +48,7 @@ public:
 		    + std::string("> not set"));
   }
 protected:
-  virtual ~Enum(void) = default;
+  virtual ~Enum(void) = default; // virtual to force derived classes to have virtual destructors
 private:
   int val;
   Enum(void):val(-1){

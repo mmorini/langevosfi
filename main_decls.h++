@@ -60,7 +60,7 @@ extern const char agentid[];
 // empty extension.
 class Memebase: public Enum::Enum<Enum::memeid> {
 public:
-  virtual ~Memebase() = default;
+  // virtual ~Memebase() override = default;
   using Enum::Enum;
   Memebase(const Enum &n): Enum(n) {}
 };
@@ -130,7 +130,7 @@ public:
 // This is essentially a repeat of what we did above for Meme.
 class Lexbase: public Enum::Enum<Enum::lexid> {
 public:
-  virtual ~Lexbase() = default;
+  // virtual ~Lexbase() override = default;
   using Enum::Enum;
   Lexbase(const Enum &n): Enum(n) {}
 };
@@ -151,7 +151,7 @@ public:
 // This is essentially a repeat of what we did above for Meme.
 class Agentbase: public Enum::Enum<Enum::agentid> {
 public:
-  virtual ~Agentbase(){}
+  // virtual ~Agentbase() override {}
   using Enum::Enum;
   Agentbase(const Enum &n): Enum(n) {}
 };
@@ -167,11 +167,11 @@ public:
 class AgentLanguage: public Language::Language<Memes,Lexemes> {
 public:
   using base_Enumvector=AgentLanguage::Enumvector;
-  AgentLanguage(){}
+  AgentLanguage() = default;
   using Language::Language;
   AgentLanguage(const Language& l):Language(l) {}
   AgentLanguage(Language && l): Language(std::forward<decltype(l)>(l)) {}
-  ~AgentLanguage() = default;
+  // virtual ~AgentLanguage() override = default;
 };
 
 /**
@@ -181,7 +181,7 @@ public:
 class ReinforcementLearnerLanguage: public Language::Language<BitstringMemes,Lexemes> {
    double lambda;
 public:
-  ReinforcementLearnerLanguage() {} // default constructor needed for i/o library istream_iterator implementation
+  ReinforcementLearnerLanguage() = default; // default constructor needed for i/o library istream_iterator implementation
 	ReinforcementLearnerLanguage(double lambda) : lambda(lambda) { }
 	ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const int mask=-1):  Language(m,mask), lambda(lambda) {}
 	ReinforcementLearnerLanguage(double lambda, const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask), lambda(lambda) {}
@@ -198,6 +198,7 @@ public:
 		}
 		deleteCache();
   }
+  // virtual ~ReinforcementLearnerLanguage () override = default;
 };
 
 // I would like instead of this for any subclass of AgentLanguage to be stored in the Enumvector
@@ -207,10 +208,10 @@ template<typename AgentLanguage>
 class Population: public Enumvector::Enumvector<Agent::Agent<Agentbase>,AgentLanguage> {
 public:
   using base_Enumvector=typename Population::Enumvector;
-  constexpr Population(){}
-  constexpr Population(const AgentLanguage &l): base_Enumvector(l) {}
-  constexpr Population(const base_Enumvector& e): base_Enumvector(e) {}
-  constexpr Population(base_Enumvector&& e): base_Enumvector(std::forward<decltype(e)>(e)) {}
+  Population() = default;
+  Population(const AgentLanguage &l): base_Enumvector(l) {}
+  Population(const base_Enumvector& e): base_Enumvector(e) {}
+  Population(base_Enumvector&& e): base_Enumvector(std::forward<decltype(e)>(e)) {}
 };
 
 template<typename AgentLanguage>
@@ -237,7 +238,7 @@ std::istream& operator>>(std::istream &i, ModelType &m) {
 }
 
 
-template<enum ModelType m> class chooselang{
+template<enum ModelType m> class chooselang final{
   // Make this the default
   // template<> class chooselang<A>{
 public:
@@ -249,7 +250,7 @@ public:
       Language(memes,r);
   }
 };
-template<> class chooselang<B>{
+template<> class chooselang<B> final{
 public:
   typedef ReinforcementLearnerLanguage Language;
   static Language langinit(const int uniform, const double lambda,

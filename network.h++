@@ -162,7 +162,7 @@ public:
     return *this;
   }
 
-  virtual ~Network(void) {}
+  virtual ~Network(void) override = default;
 
   virtual Agent neighbor(const Agent& a,typename probvector::Generator &r) const {
     return adjacency_is_diag?a:adjacency[a].generate(r);

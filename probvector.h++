@@ -20,7 +20,7 @@ public:
   using Generator = generator;
   using Index = E;
   using base_Enumvector = typename Probvector::Enumvector;
-  virtual ~Probvector(void) {}
+  // virtual ~Probvector(void) override = default;
   Probvector(const int mask=-1, double norm=1.0):
     base_Enumvector(mask>0?1:0), weight(norm) {
     if(mask>0)
