@@ -1,6 +1,10 @@
+model = A
 nummemes  = 3, numlexes  = 2, numagents = 4
 mutrate = 1, penalty = 100
 inner = 1000, outer = 1000, printinterval = 1000
+ Blocking: level 1 = 1           level 2 = 1           level 3 = 1           level 4 = 1
+Loop structure:
+	1000x {1000 agents x[1memes x(1lexes x<1agents x1communications>)]}
 Random number generator seeded with 1 19 
 Comprehension 0.2862
 Comprehension 0.275
