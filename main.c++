@@ -371,6 +371,8 @@ int runModel(const program_options& po) {
   if(po.output_to_file){
     if (po.outstream_is_hdf5)
       ; // Incomplete
+    // const hsize_t current_dims[]= {H5S_UNLIMITED};
+    // H5Screate_simple(1, current_dims, nullptr)
     else
       //write initial lang to file
       po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
