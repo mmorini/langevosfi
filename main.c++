@@ -45,7 +45,8 @@ Counts_t communicate_model(const Agents &agents,
 		 const Lexemes &lexemes,
 		 const Memes &memes,
  	         const Population<typename chooselang<model>::Language> &population,
-	         const int n, const int b1, const int b2, const int b3, const int b4) {
+		 const int n, const int b1, const int b2, const int b3, const int b4,
+		 const int al) {
   Counts_t retval;
   for (auto rounds: SelfIterator::range(n)) {
     (void)rounds;
@@ -58,15 +59,18 @@ Counts_t communicate_model(const Agents &agents,
       &aupdate=[&a2,&a1,&agents]()->void{a2 = agents.neighbor(a1,r);},
       &mupdate=[&m1,&a1,&population]()->void{m1 = population[a1].memegen(r);},
       &lupdate=[&l1,&a1,&m1,&population]()->void{l1 = population[a1].lexgen(m1,r);};
+    const auto& update1(al==1?aupdate:mupdate),
+      update2(al==2?aupdate:al==1?mupdate:lupdate),
+      update3(al==3?aupdate:lupdate);
     for (auto partners: SelfIterator::range(b1)) {
       (void) partners;
-      aupdate();
+      update1();
       for (auto comms: SelfIterator::range(b2)) {
 	(void) comms;
-	mupdate();
+	update2();
 	for (auto lexes: SelfIterator::range(b3)) {
 	  (void) lexes;
-	  lupdate();
+	  update3();
 	  for (auto trans: SelfIterator::range(b4)) {
 	    (void) trans;
 	    const auto &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
@@ -234,25 +238,37 @@ int runModel(const program_options& po) {
     3*Agent::Agent<Agentbase>::getn()*Lex::Lexeme<Lexbase>::getn()*
     Meme::Meme<Memebase>::getn()*Meme::Meme<Memebase>::getn() << " " <<
     1 << ")" << std::endl;
-  const auto inner=*std::istream_iterator<int>(std::cin),
-             outer=*std::istream_iterator<int>(std::cin),
-             printinterval = *std::istream_iterator<int>(std::cin);
+  const auto inner=util::clamplow(*std::istream_iterator<int>(std::cin),1),
+             outer=util::clamplow(*std::istream_iterator<int>(std::cin),1),
+             printinterval = util::clamplow(*std::istream_iterator<int>(std::cin),1);
   std::cout <<   "inner = " << inner
             << ", outer = " << outer
 	    << ", printinterval = " << printinterval
 	    << std::endl;
   std::getline(std::cin,ignore);
 
-  std::cerr << "Provide blocking parameters: agents, pairs, memes, lexes (e.g., 1 1 1 1)" << std::endl;
-  const auto b1 = *std::istream_iterator<int>(std::cin),
-             b2 = *std::istream_iterator<int>(std::cin),
-             b3 = *std::istream_iterator<int>(std::cin),
-             b4 = *std::istream_iterator<int>(std::cin);
-  std::cout << " Blocking: agents = " << b1
-	    << "           pairs  = " << b2
-	    << "           memes  = " << b3
-            << "           lexes  = " << b4 << std::endl;
+  std::cerr << "Provide blocking parameters for levels 1-4 (e.g., 1 1 1 1)" << std::endl;
+  const auto b1 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
+             b2 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
+             b3 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
+             b4 = util::clamplow(*std::istream_iterator<int>(std::cin),1);
+  std::cout << " Blocking: level 1 = " << b1
+	    << "           level 2 = " << b2
+	    << "           level 3 = " << b3
+            << "           level 4 = " << b4 << std::endl;
   std::getline(std::cin,ignore);
+
+  std::cerr << "Provide level of agent (1, 2, or 3)" << std::endl;
+  const auto al = util::clamp(*std::istream_iterator<int>(std::cin),1,3);
+  std::getline(std::cin,ignore);
+
+  std::cout<<"Loop structure:"<<std::endl;
+  std::cout<<"\t"<<outer<<"x {"<<inner<<" agents x[";
+  std::cout<<b1<<(al==1?"agents":"memes")<<" x(";
+  std::cout<<b2<<(al==2?"agents":al==1?"memes":"lexes")<<" x<";
+  std::cout<<b3<<(al==3?"agents":"lexes")<<" x";
+  std::cout<<b1<<"communications>)]}"<<std::endl;
+  
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
@@ -310,7 +326,7 @@ int runModel(const program_options& po) {
     // Initialize everybodies counts and write out summary.
     // A is default! model==B below is false, but need to mask compiler
     // trying to compile call to A in a dead branch
-    counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4);
+    counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al);
     summarize(counts);
   }
 
@@ -342,7 +358,7 @@ int runModel(const program_options& po) {
       // DIFFERENT: In model B we don't need to keep track of the old language
       
       // Generate new counts and write out summary.
-      auto counts=communicate_model<model>(agents,lexemes,memes,population,inner,b1,b2,b3,b4); summarize(counts);
+      auto counts=communicate_model<model>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
       
       if(po.output_to_file)
 	po.outstream << rounds << population
@@ -377,7 +393,7 @@ int runModel(const program_options& po) {
       // A is default, catching P
       // The model==B test is necessary to stop compiler trying to 
       // compile the wrong thing even in a dead branch
-      counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4); summarize(counts);
+      counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
       
       // Look at each agent's language
       for(auto a: SelfIterator::indices(counts)) {
