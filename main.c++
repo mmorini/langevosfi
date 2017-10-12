@@ -3,6 +3,7 @@
 #include <exception>
 #include <sstream>
 #include <vector>
+#include <functional>
 
 namespace Enum { // extend
   // This is used by Enum template in prints
@@ -49,16 +50,23 @@ Counts_t communicate_model(const Agents &agents,
   for (auto rounds: SelfIterator::range(n)) {
     (void)rounds;
     const auto &a1(agents.generate(r));
+    // These should be uninitialized, but interface requires initialization.
+    Agent::Agent<Agentbase> a2(0);
+    Meme::Meme<Memebase> m1(0);
+    Lex::Lexeme<Lexbase> l1(0);
+    const std::function<void(void)>
+      &aupdate=[&a2,&a1,&agents]()->void{a2 = agents.neighbor(a1,r);},
+      &mupdate=[&m1,&a1,&population]()->void{m1 = population[a1].memegen(r);},
+      &lupdate=[&l1,&a1,&m1,&population]()->void{l1 = population[a1].lexgen(m1,r);};
     for (auto partners: SelfIterator::range(b1)) {
       (void) partners;
-      auto a2(a1);
+      aupdate();
       for (auto comms: SelfIterator::range(b2)) {
 	(void) comms;
-	const auto &m1(population[a1].memegen(r));
+	mupdate();
 	for (auto lexes: SelfIterator::range(b3)) {
 	  (void) lexes;
-	  const auto &l1(population[a1].lexgen(m1,r));
-	  if (comms == 0 && lexes == 0) a2 = agents.neighbor(a1,r);
+	  lupdate();
 	  for (auto trans: SelfIterator::range(b4)) {
 	    (void) trans;
 	    const auto &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
