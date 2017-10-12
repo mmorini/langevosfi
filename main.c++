@@ -1,9 +1,11 @@
 #include "main.h++"
+#include <H5Cpp.h>
 #include <fstream>
 #include <exception>
 #include <sstream>
 #include <vector>
 #include <functional>
+#include <regex>
 
 namespace Enum { // extend
   // This is used by Enum template in prints
@@ -106,34 +108,52 @@ class program_options final {
     usage();
     throw std::runtime_error("Invalid usage");
   }
+  std::regex h5match;
 public:
-  bool input_from_file, input_all_from_file, output_to_file;
+  bool input_from_file, input_all_from_file, output_to_file,
+    instream_is_hdf5, outstream_is_hdf5;
   ModelType model;
   std::istream &instream;
   std::ostream &outstream;
+  H5::H5File h5infile, h5outfile;
   program_options(const int argc, const char *const *const argv):
-    input_from_file(false), input_all_from_file(false), output_to_file(false), model(A),
-    instream(instream_f), outstream(outstream_f)
+    h5match(".*\\.h5"),
+    input_from_file(false), input_all_from_file(false), output_to_file(false),
+    instream_is_hdf5(false), outstream_is_hdf5(false),
+    model(A), instream(instream_f), outstream(outstream_f)
   {
     for (int i=1; i<argc; i++)
       if (argv[i] == std::string("-i"))
 	if (!input_from_file && !input_all_from_file && ++i < argc) {
 	  input_from_file = true;
-	  // instream_f = std::ifstream(argv[i]);
-	  instream_f.open(argv[i]);
+	  if (std::regex_match(argv[i],h5match)) {
+	    instream_is_hdf5 = true;
+	    h5infile.openFile(argv[i],H5F_ACC_RDONLY);
+	  } else {
+	    instream_f.open(argv[i]);
+	  }
 	} else
 	  invalidusage();
       else if (argv[i] == std::string("-I"))
 	if (!input_from_file && !input_all_from_file && ++i < argc) {
 	  input_from_file = input_all_from_file = true;
-	  // instream_f = std::ifstream(argv[i]);
-	  instream_f.open(argv[i]);
+	  if (std::regex_match(argv[i],h5match)) {
+	    instream_is_hdf5 = true;
+	    h5infile.openFile(argv[i],H5F_ACC_RDONLY);
+	  } else {
+	    instream_f.open(argv[i]);
+	  }
 	} else
 	  invalidusage();
       else if (argv[i] == std::string("-o"))
 	if (!output_to_file && ++i < argc) {
 	  output_to_file = true;
-	  outstream_f.open(argv[i]);
+	  if (std::regex_match(argv[i],h5match)) {
+	    outstream_is_hdf5 = true;
+	    h5outfile.openFile(argv[i],H5F_ACC_EXCL);
+	  } else {
+	    outstream_f.open(argv[i]);
+	  }
 	} else
 	  invalidusage();
       else if (argv[i] == std::string("-m"))
@@ -143,10 +163,28 @@ public:
 	  invalidusage();
       else
 	invalidusage();
+    if (instream_is_hdf5) {
+      std::cerr<<"Input hdf5 not yet supported"<<std::endl;
+      invalidusage();
+    }
+    if (outstream_is_hdf5) {
+      std::cerr<<"Output hdf5 not yet supported"<<std::endl;
+      std::cerr<<"No output will be produced"<<std::endl;
+    }
   }
   ~program_options() {
-    if(input_from_file) instream_f.close();
-    if(output_to_file) outstream_f.close();
+    if(input_from_file) {
+      if(instream_is_hdf5)
+	h5infile.close();
+      else
+	instream_f.close();
+    }
+    if(output_to_file) {
+      if(outstream_is_hdf5)
+	h5outfile.close();
+      else
+	outstream_f.close();
+    }
   }
   static void usage(void) {
     std::cerr << "Usage: <progname> [options]" <<std::endl
@@ -331,15 +369,18 @@ int runModel(const program_options& po) {
   }
 
   if(po.output_to_file){
-    //write initial lang to file
-    po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
-		 << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
-		 << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
-                 << "Memes" << std::endl << memes
-                 << "Lexemes" << std::endl << lexemes
-                 << "Agents" << std::endl << agents
-		 << "Initial" << std::endl << population
-                 << "Counts" << std::endl << "\t" << counts;
+    if (po.outstream_is_hdf5)
+      ; // Incomplete
+    else
+      //write initial lang to file
+      po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
+		   << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
+		   << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
+		   << "Memes" << std::endl << memes
+		   << "Lexemes" << std::endl << lexemes
+		   << "Agents" << std::endl << agents
+		   << "Initial" << std::endl << population
+		   << "Counts" << std::endl << "\t" << counts;
   }
 
   // Model A: For the number of outer loops, store the oldlanguage in a
@@ -360,9 +401,13 @@ int runModel(const program_options& po) {
       // Generate new counts and write out summary.
       auto counts=communicate_model<model>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
       
-      if(po.output_to_file)
-	po.outstream << rounds << population
-		     << "Counts" << std::endl << "\t" << counts;
+      if(po.output_to_file) {
+	if (po.outstream_is_hdf5)
+	  ; // Incomplete
+	else
+	  po.outstream << rounds << population
+		       << "Counts" << std::endl << "\t" << counts;
+      }
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
 		  << population
@@ -374,9 +419,13 @@ int runModel(const program_options& po) {
     }
       // A is default, catches P
     default: {
-      if(po.output_to_file)
-	po.outstream << rounds << population
-		     << "Counts" << std::endl << "\t" << counts;
+      if(po.output_to_file) {
+	if (po.outstream_is_hdf5)
+	  ; // Incomplete
+	else
+	  po.outstream << rounds << population
+		       << "Counts" << std::endl << "\t" << counts;
+      }
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
 		  << population
@@ -415,8 +464,12 @@ int runModel(const program_options& po) {
     }
   }
   std::cout <<  population;
-  if(po.output_to_file)
-    po.outstream << "final" << std::endl << population;
+  if(po.output_to_file) {
+    if (po.outstream_is_hdf5)
+      ; // Incomplete
+    else
+      po.outstream << "final" << std::endl << population;
+  }
   return 0;
 }
 

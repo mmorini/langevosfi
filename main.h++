@@ -12,6 +12,7 @@
 #include "selfiterator.h++"
 #include "io.h++"
 #include "experience.h++"
+#include <H5Cpp.h>
 #include <cmath>
 #include <iostream>
 #include <iterator>

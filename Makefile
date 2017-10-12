@@ -1,7 +1,8 @@
 #"@(#)Makefile $Id$"
 # CXXFLAGS += -std=c++14
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++11 
 CXXFLAGS += -O4 -pedantic -Wall
+LDFLAGS += -lhdf5_cpp -lhdf5
 ETAGS = 'etags'
 GIT = 'git'
 
