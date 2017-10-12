@@ -51,13 +51,14 @@ Counts_t communicate_model(const Agents &agents,
     const auto &a1(agents.generate(r));
     for (auto partners: SelfIterator::range(b1)) {
       (void) partners;
-      const auto &a2(agents.neighbor(a1,r));
+      auto a2(a1);
       for (auto comms: SelfIterator::range(b2)) {
 	(void) comms;
 	const auto &m1(population[a1].memegen(r));
 	for (auto lexes: SelfIterator::range(b3)) {
 	  (void) lexes;
 	  const auto &l1(population[a1].lexgen(m1,r));
+	  if (comms == 0 && lexes == 0) a2 = agents.neighbor(a1,r);
 	  for (auto trans: SelfIterator::range(b4)) {
 	    (void) trans;
 	    const auto &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
