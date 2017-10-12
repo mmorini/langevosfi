@@ -18,7 +18,7 @@ inline double invprobit(const double probit) {
     1/(1+std::exp(-probit));
 }
 template<typename generator>
-double BoxMueller(const double mu, const double sigma, generator &r)
+double inline BoxMueller(const double mu, const double sigma, generator &r)
 {
 // Box Mueller transform in polar form
   const double epsilon = std::pow(2.,-20);
@@ -47,7 +47,7 @@ double BoxMueller(const double mu, const double sigma, generator &r)
 }
 
 template<class RandomIt, class UniformRandomBitGenerator>
-void myshuffle(RandomIt first, RandomIt last,
+void inline myshuffle(RandomIt first, RandomIt last,
 	       UniformRandomBitGenerator& g)
 {
   const auto n = last - first;
@@ -73,7 +73,7 @@ unsigned common_bits(int b1, int b2, int n) {
 
 */
 
-constexpr unsigned common_bits (const int b1, const int b2, const int n) {
+constexpr inline unsigned common_bits (const int b1, const int b2, const int n) {
   return b2?common_bits(~(b1^b2),0,n):
     b1&((1U<<n)-1)? common_bits(b1&(b1-1),0,n)+1: 0;
 }
@@ -89,7 +89,7 @@ unsigned count_bits(int n) {
 }
 */
 
-constexpr unsigned count_bits(const int n) {
+constexpr inline unsigned count_bits(const int n) {
   // parentheses around n-1 to silence compiler warning
   return n<=1?count_bits(((n-1)>>1)+1)+1:0;
 }
@@ -108,6 +108,22 @@ static Template<Param...> get_base_template(Template<Param...>&&);
 
 template<template<typename...> class Template, typename ...Param>
 static const Template<Param...> get_base_template(const Template<Param...>&);
+
+template<typename T>
+constexpr inline T clamplow(const T val, const T low) {
+  return val<low?low:val;
+}
+
+template<typename T>
+constexpr inline T clamphigh(const T val, const T high) {
+  return val>high?high:val;
+}
+
+template<typename T>
+constexpr inline T clamp(const T val, const T low, const T high) {
+  return clamplow(clamphigh(val,high),low);
+}
+
 
 }
 
