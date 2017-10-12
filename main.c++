@@ -39,20 +39,21 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
   Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> retval;
   for (auto rounds: range(n)) {
     (void)rounds;
-    const Agent<Agentbase> &a1(agents.generate(r));
+    const Agent<Agentbase> a1(agents.generate(r));
     for (auto partners: range(b1)) {
       (void) partners;
-      const Agent<Agentbase> &a2(agents.neighbor(a1,r));
+      Agent<Agentbase> a2(a1);
       for (auto comms: range(b2)) {
 	(void) comms;
-	const Meme<Memebase> &m1(population[a1].memegen(r));
+	const Meme<Memebase> m1(population[a1].memegen(r));
 	for (auto lexes: range(b3)) {
 	  (void) lexes;
-	  const Lexeme<Lexbase> &l1(population[a1].lexgen(m1,r));
+	  const Lexeme<Lexbase> l1(population[a1].lexgen(m1,r));
+	  if (lexes == 0) a2 = agents.neighbor(a1,r);
 	  for (auto trans: range(b4)) {
 	    (void) trans;
-	    const Lexeme<Lexbase> &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
-	    const Meme<Memebase> &m2(population[a2].memegen(l2,r));
+	    const Lexeme<Lexbase> l2(population[a1].transmit(lexemes,l1,r,population[a2]));
+	    const Meme<Memebase> m2(population[a2].memegen(l2,r));
 	    switch(model) {
 	    case B: {
 	      const auto ran = std::generate_canonical<double, 20>(r);
