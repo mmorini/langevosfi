@@ -49,7 +49,7 @@ Enumvector<Agent<Agentbase>,Experience<Meme<Memebase>,Lexeme<Lexbase>>> communic
 	for (auto lexes: range(b3)) {
 	  (void) lexes;
 	  const Lexeme<Lexbase> l1(population[a1].lexgen(m1,r));
-	  if (lexes == 0) a2 = agents.neighbor(a1,r);
+	  if (comms == 0 && lexes == 0) a2 = agents.neighbor(a1,r);
 	  for (auto trans: range(b4)) {
 	    (void) trans;
 	    const Lexeme<Lexbase> l2(population[a1].transmit(lexemes,l1,r,population[a2]));
