@@ -105,8 +105,10 @@ std::istream& operator>>(std::istream& i, Enumvector::Enumvector<E,T>& ee) { // 
   return i;
 }
 
+  /*
 template<typename E, typename G>
 Probvector<E,G> probbase(const Probvector<E,G>&);
+  */
 
 }
 
