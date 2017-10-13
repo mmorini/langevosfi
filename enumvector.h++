@@ -5,6 +5,8 @@
 #include <utility>
 #include <algorithm>
 #include <iterator>
+#include <H5Cpp.h>
+#include "h5util.h++"
 #include "selfiterator.h++"
 #include "myutil.h++"
 
@@ -109,6 +111,10 @@ public:
     return r;
   }
   virtual ~Enumvector() = default;
+  static const H5::DataType& H5DataType(void) {
+    static const H5::ArrayType retval(H5Util::H5DataType<T>(),1,E::getn());
+    return retval;
+  } 
 };
 
 template<typename E, typename T>

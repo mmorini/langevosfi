@@ -174,6 +174,22 @@ public:
   constexpr bool isdiag() const {
     return adjacency_is_diag;
   }
+  static const H5::DataType& H5DataType(void) {
+    static H5::CompType retval;
+    static bool inited(false);
+    // H5std_string seems like a macro
+    static H5std_string Base("Probvector"), Adjacency("AdjacencyMatrix"), Diag("IsDiag");
+    if (!inited) {
+      retval.insertMember(Diag,0,H5Util::H5DataType<decltype(adjacency_is_diag)>());
+      retval.insertMember(Adjacency,H5Util::H5DataType<decltype(adjacency_is_diag)>().getSize(),
+			  H5Util::H5DataType<AdjacencyMatrix>());
+      retval.insertMember(Base,H5Util::H5DataType<decltype(adjacency_is_diag)>().getSize() +
+			  H5Util::H5DataType<AdjacencyMatrix>().getSize(),
+			  H5Util::H5DataType<Probvector>());
+      inited = true;
+    }
+    return retval;
+  } 
 protected:
   void declarediag(bool state=true) {
     adjacency_is_diag = state;
