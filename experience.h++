@@ -84,6 +84,41 @@ public:
   	constexpr typename decltype(association)::const_iterator end() const  {
   		return association.end();
   	}
+  static const H5::DataType& DataType(void) {
+    static H5::CompType retval;
+    static bool inited(false);
+    if (!inited) {
+      const H5std_string s("successes"), t("tries"), c("comprehension"), a("association_array");
+      const H5::DataType& stype(H5Util::DataType<decltype(success)>());
+      const H5::DataType& ttype(H5Util::DataType<decltype(tries)>());
+      const H5::DataType& ctype(H5Util::DataType<decltype(success/tries)>());
+      /*
+	Guessing I got how to deal with VarLenType as part of a CompoundType.
+      */
+      const H5::DataType& mtype(H5Util::DataType<decltype(association.begin()->first.first)>());
+      const H5::DataType& ltype(H5Util::DataType<decltype(association.begin()->first.second)>());
+      const H5::DataType& vtype(H5Util::DataType<decltype(association.begin()->second)>());
+      const H5std_string m("meme"), l("lexeme"), v("association");
+      size_t offset(vtype.getSize()+ltype.getSize()+mtype.getSize());
+      H5::CompType assoctype(offset);
+      assoctype.insertMember(v,offset-vtype.getSize(),vtype);
+      assoctype.insertMember(l,offset-ltype.getSize(),ltype);
+      assoctype.insertMember(m,offset-mtype.getSize(),mtype);
+      const H5::VarLenType atype(assoctype);
+
+      offset = stype.getSize()+ttype.getSize()+ctype.getSize()+atype.getSize();
+      // atype.getSize() == sizeof(H5::hvl_t)?
+      retval = H5::CompType(offset);
+      retval.insertMember(c,offset-=atype.getSize(),atype);
+      retval.insertMember(c,offset-=ctype.getSize(),ctype);
+      retval.insertMember(t,offset-=ttype.getSize(),ttype);
+      retval.insertMember(s,offset-=stype.getSize(),stype);
+      inited = true;
+    }
+    return retval;
+  } 
+      
+			      
   	  
 };
 

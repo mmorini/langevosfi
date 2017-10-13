@@ -174,18 +174,20 @@ public:
   constexpr bool isdiag() const {
     return adjacency_is_diag;
   }
-  static const H5::DataType& H5DataType(void) {
+  static const H5::DataType& DataType(void) {
     static H5::CompType retval;
     static bool inited(false);
-    // H5std_string seems like a macro
-    static H5std_string Base("Probvector"), Adjacency("AdjacencyMatrix"), Diag("IsDiag");
     if (!inited) {
-      retval.insertMember(Diag,0,H5Util::H5DataType<decltype(adjacency_is_diag)>());
-      retval.insertMember(Adjacency,H5Util::H5DataType<decltype(adjacency_is_diag)>().getSize(),
-			  H5Util::H5DataType<AdjacencyMatrix>());
-      retval.insertMember(Base,H5Util::H5DataType<decltype(adjacency_is_diag)>().getSize() +
-			  H5Util::H5DataType<AdjacencyMatrix>().getSize(),
-			  H5Util::H5DataType<Probvector>());
+      // H5std_string seems like a macro
+      const H5std_string Base("Probvector"), Adjacency("AdjacencyMatrix"), Diag("IsDiag");
+      const H5::DataType& d(H5Util::DataType<decltype(adjacency_is_diag)>());
+      const H5::DataType& a(H5Util::DataType<decltype(adjacency)>());
+      const H5::DataType& p(H5Util::DataType<Probvector>());
+      size_t offset(p.getSize()+a.getSize()+d.getSize());
+      retval = H5::CompType(offset);
+      retval.insertMember(Base,offset-=p.getSize(),p);
+      retval.insertMember(Adjacency,offset-=a.getSize(),a);
+      retval.insertMember(Diag,offset-=d.getSize(),d);
       inited = true;
     }
     return retval;

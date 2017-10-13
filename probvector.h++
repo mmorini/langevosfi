@@ -137,15 +137,18 @@ public:
     if(weighted) retval *= weight;
     return retval;
   }
-  static const H5::DataType& H5DataType(void) {
+  static const H5::DataType& DataType(void) {
     static H5::CompType retval;
     static bool inited(false);
-    // H5std_string seems like a macro
-    static H5std_string Base("base_Enumvector"), Weight("weight");
     if (!inited) {
-      retval.insertMember(Weight,0,H5Util::H5DataType<decltype(weight)>());
-      retval.insertMember(Base,H5Util::H5DataType<decltype(weight)>().getSize(),
-			  H5Util::H5DataType<base_Enumvector>());
+      // H5std_string seems like a macro
+      const H5std_string Base("base_Enumvector"), Weight("weight");
+      const H5::DataType& WeightType(H5Util::DataType<decltype(weight)>());
+      const H5::DataType& BaseType(H5Util::DataType<base_Enumvector>());
+      size_t offset(WeightType.getSize()+BaseType.getSize());
+      retval = H5::CompType(offset);
+      retval.insertMember(Base,offset-=BaseType.getSize(),BaseType);
+      retval.insertMember(Weight,offset-=WeightType.getSize(),WeightType);
       inited = true;
     }
     return retval;

@@ -49,7 +49,7 @@ public:
       throw badsize(std::string("Size of Enum<")+std::string(id)
 		    + std::string("> not set"));
   }
-  static const H5::DataType& H5DataType(void) {
+  static const H5::DataType& DataType(void) {
     static H5::EnumType retval(H5::PredType::NATIVE_UINT);
     static bool inited(false);
     if (!inited) {

@@ -111,10 +111,12 @@ public:
     return r;
   }
   virtual ~Enumvector() = default;
-  static const H5::DataType& H5DataType(void) {
-    static const H5::ArrayType retval(H5Util::H5DataType<T>(),1,E::getn());
+  static const H5::DataType& DataType(void) {
+    // hsize_t is in global from H5, namespace pollution
+    const hsize_t dims[] = {E::getn()};
+    static const H5::ArrayType retval(H5Util::DataType<T>(),1,dims);
     return retval;
-  } 
+  }
 };
 
 template<typename E, typename T>
