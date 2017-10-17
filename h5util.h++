@@ -38,7 +38,7 @@ static const char H5UTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)h5util.h++: 
     return H5::PredType::NATIVE_INT;
   }
   template<> inline const H5::DataType& DataType(const bool&) {
-    static_assert(sizeof(bool)==sizeof(char),"Code assumes bool is an int");
+    static_assert(sizeof(bool)==sizeof(char),"Code assumes bool is a char");
     return H5::PredType::NATIVE_CHAR;
   }
   template<> inline  const H5::DataType& DataType(const unsigned int&) {
