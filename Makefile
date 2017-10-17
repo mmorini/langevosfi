@@ -8,7 +8,8 @@ GIT = 'git'
 
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
-	probvector.h++ counts.h++ main.h++ main_decls.h++ experience.h++
+	probvector.h++ counts.h++ main.h++ main_decls.h++ experience.h++ \
+	h5util.h++
 CFILES = main.c++
 MFILES = Makefile
 
@@ -23,13 +24,14 @@ main.o: $(CFILES) $(HFILES)
 .SUFFIXES: .h++.gch
 %.h++.gch: %.h++
 	$(COMPILE.cc) '$<'
-probvector.h++.gch: probvector.h++ enumvector.h++ myutil.h++
+enumvector.h++: h5util.h++
+probvector.h++.gch: probvector.h++ enumvector.h++ myutil.h++ h5util.h++
 network.h++.gch: network.h++ probvector.h++
 language.h++.gch: language.h++ enumvector.h++ probvector.h++ counts.h++
 counts.h++.gch: counts.h++ enumvector.h++
 main.h++.gch: main.h++ network.h++ probvector.h++ enumvector.h++ myutil.h++ \
               enum.h++ meme.h++ lex.h++ agent.h++ language.h++ counts.h++ \
-              selfiterator.h++ main_decls.h++ experience.h++
+              selfiterator.h++ main_decls.h++ experience.h++ h5util.h++
 
 TAGS: $(MFILES) $(CFILES) $(HFILES)
 	$(ETAGS) $(^:%='%')
