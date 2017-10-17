@@ -62,5 +62,10 @@ static const char H5UTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)h5util.h++: 
     return H5::PredType::NATIVE_LDOUBLE;
   }
 
+  inline H5::DataSpace seqspace(void) {
+    // H5S_UNLIMITED is a macro; namespace pollution
+    const hsize_t zero[] = {0}, infinity[] = {H5S_UNLIMITED};
+    return H5::DataSpace(1,zero,infinity);
+  }
 }
 #endif
