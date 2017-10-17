@@ -37,6 +37,10 @@ static const char H5UTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)h5util.h++: 
   template<> inline  const H5::DataType& DataType(const int&) {
     return H5::PredType::NATIVE_INT;
   }
+  template<> inline const H5::DataType& DataType(const bool&) {
+    static_assert(sizeof(bool)==sizeof(int),"Code assumes bool is an int");
+    return H5::PredType::NATIVE_INT;
+  }
   template<> inline  const H5::DataType& DataType(const unsigned int&) {
     return H5::PredType::NATIVE_UINT;
   }
@@ -62,10 +66,15 @@ static const char H5UTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)h5util.h++: 
     return H5::PredType::NATIVE_LDOUBLE;
   }
 
-  inline H5::DataSpace seqspace(void) {
+  inline const H5::DataSpace& seqspace(void) {
     // H5S_UNLIMITED is a macro; namespace pollution
-    const hsize_t zero[] = {0}, infinity[] = {H5S_UNLIMITED};
-    return H5::DataSpace(1,zero,infinity);
+    static const hsize_t zero[] = {0}, infinity[] = {H5S_UNLIMITED};
+    static const H5::DataSpace retval(1,zero,infinity);
+    return retval;
+  }
+  inline const H5::DataSpace& scalarspace(void) {
+    static const H5::DataSpace retval(H5S_SCALAR);
+    return retval;
   }
 }
 #endif
