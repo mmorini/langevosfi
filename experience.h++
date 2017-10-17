@@ -100,11 +100,11 @@ public:
       const H5::DataType& vtype(H5Util::DataType<decltype(association.begin()->second)>());
       const H5std_string m("meme"), l("lexeme"), v("association");
       size_t offset(vtype.getSize()+ltype.getSize()+mtype.getSize());
-      H5::CompType assoctype(offset);
+      static H5::CompType assoctype(offset);
       assoctype.insertMember(v,offset-vtype.getSize(),vtype);
       assoctype.insertMember(l,offset-ltype.getSize(),ltype);
       assoctype.insertMember(m,offset-mtype.getSize(),mtype);
-      const H5::VarLenType atype(assoctype);
+      const H5::VarLenType atype(&assoctype);
 
       offset = stype.getSize()+ttype.getSize()+ctype.getSize()+atype.getSize();
       // atype.getSize() == sizeof(H5::hvl_t)?
