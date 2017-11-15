@@ -75,12 +75,12 @@ template<typename E, typename T, typename std::enable_if<decltype(util::has_base
 std::ostream& operator<< (std::ostream& o, const Enumvector::Enumvector<E,T>& e) { // partial specialization
   constexpr const int newprec = 2;
   auto oldprec = o.precision(newprec);
-  o<<"\t\t";
+  o<<"[matrix]\t\t\t";
   for (const auto &a: indices(e.front())) o<<a<<"\t";
   o<<std::endl;
   // The casts is to make sure that we are talking about the probvector base of T and not for example the whole T
   // which may be a network or some such thing!
-  for (const auto& a: indices(e)) o << a << "\t" << static_cast<typename std::add_lvalue_reference<decltype(util::get_base_template<Probvector>(e[a]))>::type>(e[a]);
+  for (const auto& a: indices(e)) o << "[matrix]\t" << a << "\t" << static_cast<typename std::add_lvalue_reference<decltype(util::get_base_template<Probvector>(e[a]))>::type>(e[a]);
   o.precision(oldprec);
   return o;
 }

@@ -97,14 +97,14 @@ void summarize(const Enumvector::Enumvector<T,Experience> &experiences) {
 		success += e.success;
 		tries += e.tries;
 	}
-	std::cout << "Comprehension " << (success/tries) << std::endl;
+	std::cout << "[comprehension]\t" << (success/tries) << std::endl;
 }
 
 template <typename Meme, typename Lexeme>
 std::ostream& operator<<(std::ostream& o, const Experience<Meme,Lexeme>& e) {
-  o << e.success << "/" << e.tries << std::endl;
+  o << "[counts]\t\t" <<e.success << "/" << e.tries << std::endl;
   for (auto cit: e.association)
-    o << " " << cit.first.first << " " << cit.first.second << " " << cit.second << std::endl;
+    o << "[counts]\t" << cit.first.first << " " << cit.first.second << " " << cit.second << std::endl;
   return o;
 }
 

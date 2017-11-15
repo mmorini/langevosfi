@@ -339,7 +339,7 @@ int runModel(const program_options& po) {
                  << "Lexemes" << std::endl << lexemes
                  << "Agents" << std::endl << agents
 		 << "Initial" << std::endl << population
-                 << "Counts" << std::endl << "\t" << counts;
+                 << "Counts" << std::endl << counts;
   }
 
   // Model A: For the number of outer loops, store the oldlanguage in a
@@ -362,11 +362,11 @@ int runModel(const program_options& po) {
       
       if(po.output_to_file)
 	po.outstream << rounds << population
-		     << "Counts" << std::endl << "\t" << counts;
+		     << "Counts" << std::endl << counts;
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
 		  << population
-		  << "Counts" << std::endl << "\t" << counts;
+		  << "Counts" << std::endl << counts;
 
       // DIFFERENT: In model B we always mutate the lexicon
       for (auto a: indices(counts)) population[a].lexmutate(0.0,r,counts[a]); // SIGMA unused here, but we could make it more random...
@@ -376,11 +376,11 @@ int runModel(const program_options& po) {
     default: {
       if(po.output_to_file)
 	po.outstream << rounds << population
-		     << "Counts" << std::endl << "\t" << counts;
+		     << "Counts" << std::endl << counts;
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
 		  << population
-		  << "Counts" << std::endl << "\t" << counts;
+		  << "Counts" << std::endl << counts;
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
       auto oldpop = population;
