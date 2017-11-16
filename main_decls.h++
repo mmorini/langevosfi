@@ -8,6 +8,7 @@
 #include <istream>
 #include <iterator>
 #include <cctype>
+#include "sccs.h++"
 
 // Language is the heart of the code. It defines a number of virtual
 // functions that can be overriden:
@@ -40,7 +41,7 @@
 // selfiterator uses C++14 magic to be able to iterate over indices
 // of a vector, ranges of integers, etc.
 
-static const char MAIN_DECLS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)main_decls.h++: $Id$";
+static const SCCS::sccs_id MAIN_DECLS_HPP_SCCS_ID __attribute__((used)) = "@(#)main_decls.h++: $Id$";
 
 // Everything below uses r as the random number generator.  If we
 // change the type of the generator, then Language and Network (and

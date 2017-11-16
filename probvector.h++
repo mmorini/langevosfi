@@ -5,6 +5,7 @@
 #include "myutil.h++"
 #include "selfiterator.h++"
 #include "h5util.h++"
+#include "sccs.h++"
 #include <H5Cpp.h>
 #include <utility>
 #include <random>
@@ -14,7 +15,7 @@
 
 namespace Probvector {
 
-static const char PROBVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)probvector.h++: $Id$";
+static const SCCS::sccs_id PROBVECTOR_HPP_SCCS_ID __attribute__((used)) = "@(#)probvector.h++: $Id$";
 
 template<typename E,typename generator=std::mt19937> class Probvector:
   public Enumvector::Enumvector<E,double> {

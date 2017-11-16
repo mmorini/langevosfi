@@ -4,10 +4,11 @@
 #include <cmath>
 #include <random>
 #include <utility>
+#include "sccs.h++"
 
 namespace util {
 
-static const char MYUTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)myutil.h++: $Id$";
+static const SCCS::sccs_id MYUTIL_HPP_SCCS_ID __attribute__((used)) = "@(#)myutil.h++: $Id$";
 
 constexpr double infinity=1.e100;
 inline double probit(const double p) {

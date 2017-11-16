@@ -1,6 +1,7 @@
 #ifndef H5UTIL_HPP
 #define H5UTIL_HPP
 
+#include "sccs.h++"
 #include <H5Cpp.h>
 #include <type_traits>
 #include <utility>
@@ -8,7 +9,7 @@
 
 namespace H5Util {
 
-static const char H5UTIL_HPP_SCCS_ID[] __attribute__((used)) = "@(#)h5util.h++: $Id$";
+static const SCCS::sccs_id H5UTIL_HPP_SCCS_ID __attribute__((used)) = "@(#)h5util.h++: $Id$";
 
   template<typename T, typename std::enable_if<std::is_constructible<const H5::DataType&,decltype(T::DataType())>::value,int>::type = 0> 
   inline  const H5::DataType& DataType(const T& =std::declval<T>()) {

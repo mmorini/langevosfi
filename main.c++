@@ -7,6 +7,8 @@
 #include <functional>
 #include <regex>
 
+std::vector<const char*> *SCCS::sccs_id::allids = 0;
+
 namespace Enum { // extend
   // This is used by Enum template in prints
   extern const char memeid [] = "M";
@@ -20,7 +22,7 @@ namespace Enum { // extend
 
 #include "main_decls.h++"
 
-static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$";
+static const SCCS::sccs_id MAIN_CPP_SCCS_ID __attribute__((used)) = "@(#)main.c++: $Id$";
 
 // All the classes used are defined in main_decls.h++ (which is included via main.h++)
 
@@ -153,6 +155,8 @@ public:
 	    h5outfile.openFile(argv[i],H5F_ACC_EXCL);
 	  } else {
 	    outstream_f.open(argv[i]);
+	    outstream << "Program compiled from sccs_ids:" <<std::endl
+	              << SCCS::sccs_id::getallids() << std::endl;
 	  }
 	} else
 	  invalidusage();
@@ -477,6 +481,8 @@ int runModel(const program_options& po) {
 
 
 int main(int argc, char* argv[]) {
+  std::cerr << "Running program compiled from sccs_ids: " << std::endl <<
+  	SCCS::sccs_id::getallids() << std::endl;
   const program_options po(argc,argv);
   
   if (!po.input_from_file)

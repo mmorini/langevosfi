@@ -2,11 +2,12 @@
 #define COUNTS_HPP
 
 #include "enumvector.h++"
+#include "sccs.h++"
 #include <iostream>
 
 namespace Counts {
 
-static const char COUNTS_HPP_SCCS_ID[] __attribute__((used)) = "@(#)counts.h++: $Id$";
+static const SCCS::sccs_id COUNTS_HPP_SCCS_ID __attribute__((used)) = "@(#)counts.h++: $Id$";
 
 struct Counts {
   double success=0; int tries=0;

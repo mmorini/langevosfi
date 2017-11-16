@@ -4,12 +4,13 @@
 #include "enumvector.h++"
 #include "probvector.h++"
 #include "experience.h++"
+#include "sccs.h++"
 #include <utility>
 #include <memory>
 
 namespace Language {
 
-static const char LANGUAGE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)language.h++: $Id$";
+static const SCCS::sccs_id LANGUAGE_HPP_SCCS_ID __attribute__((used)) = "@(#)language.h++: $Id$";
 
 template<typename mprobvector, typename lprobvector>
 class Language: public Enumvector::Enumvector<typename mprobvector::Index,typename lprobvector::Probvector> {

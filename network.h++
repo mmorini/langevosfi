@@ -6,6 +6,7 @@
 
 #include "probvector.h++"
 #include "myutil.h++"
+#include "sccs.h++"
 #include <random>
 #include <functional>
 #include <utility>
@@ -16,7 +17,7 @@
 
 namespace Network {
 
-static const char NETWORK_HPP_SCCS_ID[] __attribute__((used)) = "@(#)network.h++: $Id$";
+static const SCCS::sccs_id NETWORK_HPP_SCCS_ID __attribute__((used)) = "@(#)network.h++: $Id$";
 
 // Forward declaration to allow friend declaration
 template<typename A, typename P> class Network;

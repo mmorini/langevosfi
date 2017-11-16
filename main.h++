@@ -13,6 +13,7 @@
 #include "io.h++"
 #include "experience.h++"
 #include "h5util.h++"
+#include "sccs.h++"
 #include <H5Cpp.h>
 #include <cmath>
 #include <iostream>
@@ -20,6 +21,6 @@
 #include <random>
 #include <fstream>
 
-static const char MAIN_HPP_SCCS_ID[] __attribute__((used)) = "@(#)main.h++: $Id$";
+static const SCCS::sccs_id MAIN_HPP_SCCS_ID __attribute__((used)) = "@(#)main.h++: $Id$";
 
 #endif

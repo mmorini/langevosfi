@@ -5,6 +5,7 @@
 #include "probvector.h++"
 #include "language.h++"
 #include "network.h++"
+#include "sccs.h++"
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -35,7 +36,7 @@ static const Probvector<E,G> get_Probvector_base(const Probvector<E,G>&);
 
 namespace IO {
 
-static const char IO_HPP_SCCS_ID[] __attribute__((used)) = "@(#)io.h++: $Id$";
+static const SCCS::sccs_id IO_HPP_SCCS_ID __attribute__((used)) = "@(#)io.h++: $Id$";
 
 }
 

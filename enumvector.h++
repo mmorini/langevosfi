@@ -9,10 +9,11 @@
 #include "h5util.h++"
 #include "selfiterator.h++"
 #include "myutil.h++"
+#include "sccs.h++"
 
 namespace Enumvector {
 
-static const char ENUMVECTOR_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enumvector.h++: $Id$";
+static const SCCS::sccs_id ENUMVECTOR_HPP_SCCS_ID __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 
 template<typename E,typename T> class Enumvector: std::vector<T> {
 private:

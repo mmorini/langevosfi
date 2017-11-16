@@ -9,7 +9,7 @@ GIT = 'git'
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
 	probvector.h++ counts.h++ main.h++ main_decls.h++ experience.h++ \
-	h5util.h++
+	h5util.h++ sccs.h++
 CFILES = main.c++
 MFILES = Makefile
 
@@ -22,7 +22,7 @@ main.o: $(CFILES) $(HFILES)
 	$(LINK.cc) -o '$@' $(^:%='%')
 
 .SUFFIXES: .h++.gch
-%.h++.gch: %.h++
+%.h++.gch: %.h++ sccs.h++
 	$(COMPILE.cc) '$<'
 enumvector.h++: h5util.h++
 probvector.h++.gch: probvector.h++ enumvector.h++ myutil.h++ h5util.h++

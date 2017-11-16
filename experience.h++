@@ -5,6 +5,7 @@
 #include <map>
 
 #include "enumvector.h++"
+#include "sccs.h++"
 #include <iostream>
 
 /**
@@ -21,7 +22,7 @@
 namespace Experience {
 
 // Not sure what this is; whoever does can replace it with the appropriate analog
-static const char EXPERIENCE_HPP_SCCS_ID[] __attribute__((used)) = "@(#)experience.h++: $Id$";
+static const SCCS::sccs_id EXPERIENCE_HPP_SCCS_ID __attribute__((used)) = "@(#)experience.h++: $Id$";
 
 // The forward declaration of operator<< template is needed syntactically for 
 // the friend declaration.  We can avoid the friend declaration with a public

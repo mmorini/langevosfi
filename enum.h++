@@ -6,10 +6,11 @@
 #include <sstream>
 #include <exception>
 #include <H5Cpp.h>
+#include "sccs.h++"
 
 namespace Enum {
 
-static const char ENUM_HPP_SCCS_ID[] __attribute__((used)) = "@(#)enum.h++: $Id$";
+static const SCCS::sccs_id ENUM_HPP_SCCS_ID __attribute__((used)) = "@(#)enum.h++: $Id$";
 
 template<const char *id>
 class Enum {
