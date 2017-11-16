@@ -7,8 +7,6 @@
 #include <functional>
 #include <regex>
 
-std::vector<const char*> *SCCS::sccs_id::allids = 0;
-
 namespace Enum { // extend
   // This is used by Enum template in prints
   extern const char memeid [] = "M";
