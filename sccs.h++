@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <cstring>
 
 namespace SCCS {
 
@@ -24,6 +25,15 @@ namespace SCCS {
     sccs_id(const char *id): id(idstore(id?id:"")) {}
     operator const char* () const {return id;}
     static const char* getallids() {return idstore();}
+    static const H5::DataType& DataType(void) {
+      static H5::DataType retval;
+      static bool inited(false);
+      if (!inited) {
+	retval = H5::StrType(H5::PredType::NATIVE_CHAR,std::strlen(getallids())+1);
+	inited = true;
+      }
+      return retval;
+    }
   };
 
   static const sccs_id SCCS_HPP_SCCS_ID __attribute__((used)) = "@(#)sccs.h++: $Id$";
