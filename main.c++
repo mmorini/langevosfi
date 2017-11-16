@@ -374,15 +374,15 @@ int runModel(const program_options& po) {
     // const hsize_t current_dims[]= {H5S_UNLIMITED};
     // H5Screate_simple(1, current_dims, nullptr)
     else
-      //write initial lang to file
-      po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
-		   << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
-		   << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
-		   << "Memes" << std::endl << memes
-		   << "Lexemes" << std::endl << lexemes
-		   << "Agents" << std::endl << agents
-		   << "Initial" << std::endl << population
-		   << "Counts" << std::endl << "\t" << counts;
+    //write initial lang to file
+    po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
+		 << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
+		 << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
+                 << "Memes" << std::endl << memes
+                 << "Lexemes" << std::endl << lexemes
+                 << "Agents" << std::endl << agents
+		 << "Initial" << std::endl << population
+                 << "Counts" << std::endl << counts;
   }
 
   // Model A: For the number of outer loops, store the oldlanguage in a
@@ -408,12 +408,12 @@ int runModel(const program_options& po) {
 	  ; // Incomplete
 	else
 	  po.outstream << rounds << population
-		       << "Counts" << std::endl << "\t" << counts;
+		       << "Counts" << std::endl << counts;
       }
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
 		  << population
-		  << "Counts" << std::endl << "\t" << counts;
+		  << "Counts" << std::endl << counts;
 
       // DIFFERENT: In model B we always mutate the lexicon
       for (auto a: indices(counts)) population[a].lexmutate(0.0,r,counts[a]); // SIGMA unused here, but we could make it more random...
@@ -426,12 +426,12 @@ int runModel(const program_options& po) {
 	  ; // Incomplete
 	else
 	  po.outstream << rounds << population
-		       << "Counts" << std::endl << "\t" << counts;
+		       << "Counts" << std::endl << counts;
       }
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
 	std::cout << "Round number " << rounds << std::endl
 		  << population
-		  << "Counts" << std::endl << "\t" << counts;
+		  << "Counts" << std::endl << counts;
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
       auto oldpop = population;

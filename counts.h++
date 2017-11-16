@@ -21,14 +21,14 @@ struct Counts {
 
 inline
 std::ostream& operator<< (std::ostream& o, const Counts c) {
-  return o << c.success << "/" << c.tries << " ";
+  return o << "[counts]\t" << c.success << "/" << c.tries << " ";
 }
 
 template<typename T>
 void summarize(const Enumvector::Enumvector<T,Counts> &counts) {
   Counts totcounts;
   for (Counts c: counts) totcounts += c;
-  std::cout << "Comprehension " << totcounts.mean() << std::endl;
+  std::cout << "[comprehension]\t" << totcounts.mean() << std::endl;
 }
 
 }
