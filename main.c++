@@ -150,10 +150,10 @@ public:
 	  output_to_file = true;
 	  if (std::regex_match(argv[i],h5match)) {
 	    outstream_is_hdf5 = true;
-	    h5outfile.openFile(argv[i],H5F_ACC_EXCL);
-	    h5outfile.createDataSet("sccs_ids",
-				    SCCS::sccs_id::DataType(),
-				    H5Util::scalarspace()).
+	    (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
+	      createDataSet("sccs_ids",
+			    SCCS::sccs_id::DataType(),
+			    H5Util::scalarspace()).
 	      write(SCCS::sccs_id::getallids(),
 		    SCCS::sccs_id::DataType());
 	  } else {
