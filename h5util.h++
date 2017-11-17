@@ -1,15 +1,13 @@
 #ifndef H5UTIL_HPP
 #define H5UTIL_HPP
 
-#include "sccs.h++"
 #include <H5Cpp.h>
 #include <type_traits>
 #include <utility>
 #include <exception>
+#include <cstring>
 
 namespace H5Util {
-
-static const SCCS::sccs_id H5UTIL_HPP_SCCS_ID __attribute__((used)) = "@(#)h5util.h++: $Id$";
 
   template<typename T, typename std::enable_if<std::is_constructible<const H5::DataType&,decltype(T::DataType())>::value,int>::type = 0> 
   inline  const H5::DataType& DataType(const T& =std::declval<T>()) {
@@ -66,6 +64,11 @@ static const SCCS::sccs_id H5UTIL_HPP_SCCS_ID __attribute__((used)) = "@(#)h5uti
   template<> inline  const H5::DataType& DataType(const long double&) {
     return H5::PredType::NATIVE_LDOUBLE;
   }
+  inline H5::DataType DataType(const char *s) {
+    // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
+    return H5::StrType(0,std::strlen(s)+1);
+  }
+    
 
   inline const H5::DataSpace& seqspace(void) {
     // H5S_UNLIMITED is a macro; namespace pollution
@@ -78,4 +81,13 @@ static const SCCS::sccs_id H5UTIL_HPP_SCCS_ID __attribute__((used)) = "@(#)h5uti
     return retval;
   }
 }
+
+// Needs to be done after H5Util::DataType(const char*) is defined
+#include "sccs.h++"
+namespace H5Util { // extend
+
+  static const SCCS::sccs_id H5UTIL_HPP_SCCS_ID __attribute__((used)) = "@(#)h5util.h++: $Id$";
+
+}
+
 #endif

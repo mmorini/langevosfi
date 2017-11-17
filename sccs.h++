@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <cstring>
+#include "h5util.h++"
 
 namespace SCCS {
 
@@ -29,8 +30,7 @@ namespace SCCS {
       static H5::DataType retval;
       static bool inited(false);
       if (!inited) {
-	// 0 is Dummy for H5::StrType() or H5::PredType::C_S1
-	retval = H5::StrType(0,std::strlen(getallids())+1);
+	retval = H5Util::DataType(getallids());
 	inited = true;
       }
       return retval;

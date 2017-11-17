@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 #include <regex>
+#include <ctime>
 
 namespace Enum { // extend
   // This is used by Enum template in prints
@@ -151,11 +152,17 @@ public:
 	  if (std::regex_match(argv[i],h5match)) {
 	    outstream_is_hdf5 = true;
 	    (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
-	      createDataSet("sccs_ids",
+	      createDataSet("SCCS IDs",
 			    SCCS::sccs_id::DataType(),
 			    H5Util::scalarspace()).
 	      write(SCCS::sccs_id::getallids(),
 		    SCCS::sccs_id::DataType());
+	    const auto now(std::time(nullptr));
+	    const auto timestr(std::asctime(std::gmtime(&now)));
+	    const auto timetype(H5Util::DataType(timestr));
+	    h5outfile.createDataSet("Run at UTC",timetype,
+				    H5Util::scalarspace()).
+	      write(timestr,timetype);
 	  } else {
 	    outstream_f.open(argv[i]);
 	    outstream << "Program compiled from sccs_ids:" <<std::endl
