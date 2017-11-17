@@ -29,7 +29,8 @@ namespace SCCS {
       static H5::DataType retval;
       static bool inited(false);
       if (!inited) {
-	retval = H5::StrType(H5::PredType::NATIVE_CHAR,std::strlen(getallids())+1);
+	// 0 is Dummy for H5::StrType() or H5::PredType::C_S1
+	retval = H5::StrType(0,std::strlen(getallids())+1);
 	inited = true;
       }
       return retval;
