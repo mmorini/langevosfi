@@ -10,24 +10,19 @@
 namespace SCCS {
 
   class sccs_id {
-    static const char* idstore(const char*id=0) {
+    static std::vector<const char*>& idstore(const char*id=0) {
       static std::vector<const char*> allids;
-      if (!id)  {
-	std::string retval;
-	for (const auto x: allids) retval += x + std::string("\n");
-	return retval.c_str();
-      } else {
+      if (id)
 	allids.push_back(id);
-	return id;
-      }
+      return allids;
     }
     const char *id=0;
   public:
-    sccs_id(const char *id): id(idstore(id?id:"")) {}
+    sccs_id(const char *id): id(idstore(id?id:"").back()) {}
     operator const char* () const {return id;}
-    static const char* getallids() {return idstore();}
+    static std::vector<const char*> getallids() {return idstore();}
     static const H5::DataType& DataType(void) {
-      return H5Util::DataType(std::string(getallids()));
+      return H5Util::DataType(std::string());
     }
   };
 

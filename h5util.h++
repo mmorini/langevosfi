@@ -6,6 +6,7 @@
 #include <utility>
 #include <exception>
 #include <cstring>
+#include <algorithm>
 
 namespace H5Util {
 
@@ -64,10 +65,14 @@ namespace H5Util {
   template<> inline  const H5::DataType& DataType(const long double&) {
     return H5::PredType::NATIVE_LDOUBLE;
   }
-  inline const H5::DataType& DataType(const std::string&) {
+  inline const H5::DataType& DataType(const H5std_string&) {
     // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
     static auto retval(H5::StrType(0,H5T_VARIABLE));
     return retval;
+  }
+  template<typename T>
+  inline H5::DataType DataType(const std::vector<T>& v) {
+    return DataType(T());
   }
   inline H5::DataType DataType(const char *s) {
     // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
@@ -84,6 +89,28 @@ namespace H5Util {
   inline const H5::DataSpace& scalarspace(void) {
     static const H5::DataSpace retval(H5S_SCALAR);
     return retval;
+  }
+  template<typename T>
+  inline const H5::DataSpace vectorspace(const std::vector<T>&v) {
+    const hsize_t sz[] = {v.size()};
+    return H5::DataSpace(1,sz,sz);
+  }
+
+  template<typename T,typename U=T>
+  inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v) {
+    hsize_t m(0);
+    const auto space = d.getSpace();
+    const auto mspace = space;
+    std::for_each(v.begin(), v.end(),
+		  [&d,&mspace,&space,&m](const U &s) {
+		    const hsize_t count[] = {1};
+		    space.selectHyperslab(H5S_SELECT_SET,count, &m);
+		    d.write(s,DataType(s),scalarspace(),space);
+		    m++;});
+  }
+  template<typename T,typename U>
+  inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v, const U&) {
+    vectorwrite<T,U>(d,v);
   }
 }
 

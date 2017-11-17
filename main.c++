@@ -124,6 +124,9 @@ public:
     instream_is_hdf5(false), outstream_is_hdf5(false),
     model(A), instream(instream_f), outstream(outstream_f)
   {
+    std::vector<H5std_string> cmdline;
+    for(int i=0; i<argc; i++)
+      cmdline.push_back(argv[i]);
     for (int i=1; i<argc; i++)
       if (argv[i] == std::string("-i"))
 	if (!input_from_file && !input_all_from_file && ++i < argc) {
@@ -155,21 +158,26 @@ public:
 	    header = (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
 	      createGroup("Header");
 	    data = h5outfile.createGroup("Data");
-	    header.createDataSet("SCCS IDs",
-				 SCCS::sccs_id::DataType(),
-				 H5Util::scalarspace()).
-	      write(std::string(SCCS::sccs_id::getallids()),
-		    SCCS::sccs_id::DataType());
+	    H5Util::vectorwrite(header.createDataSet("Command Line",
+						     H5Util::DataType(cmdline.front()),
+						     H5Util::vectorspace(cmdline)),
+				cmdline);
+	    H5Util::vectorwrite(header.createDataSet("SCCS IDs",
+						     SCCS::sccs_id::DataType(),
+						     H5Util::vectorspace(SCCS::sccs_id::getallids())),
+				SCCS::sccs_id::getallids(),
+				H5std_string());
 	    const auto now(std::time(nullptr));
-	    const std::string timestr(std::asctime(std::gmtime(&now)));
+	    const H5std_string timestr(std::asctime(std::gmtime(&now)));
 	    const auto timetype(H5Util::DataType(timestr));
 	    header.createDataSet("Run at UTC",timetype,
 				    H5Util::scalarspace()).
 	      write(timestr,timetype);
 	  } else {
 	    outstream_f.open(argv[i]);
-	    outstream << "Program compiled from sccs_ids:" <<std::endl
-	              << SCCS::sccs_id::getallids() << std::endl;
+	    outstream << "Program compiled from sccs_ids:" <<std::endl;
+	    for(const auto v: SCCS::sccs_id::getallids())
+	      outstream << v << std::endl;
 	  }
 	} else
 	  invalidusage();
@@ -226,6 +234,11 @@ public:
 template<ModelType model>
 int runModel(const program_options& po) {
 
+  std::cout << "model = " << po.model << std::endl;
+
+  if (!po.input_from_file)
+    std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
+  
   const auto nummemes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
              numlexes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
              numagents = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin);
@@ -233,13 +246,13 @@ int runModel(const program_options& po) {
   Meme::Meme<Memebase>::setn(nummemes); 
   Lex::Lexeme<Lexbase>::setn(numlexes); 
   Agent::Agent<Agentbase>::setn(numagents);
-  std::string allinputs;
+  std::vector<H5std_string> allinputs;
   std::ostringstream compose;
   compose <<   "nummemes  = " << Meme::Meme<Memebase>::getn()
 	  << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
 	  << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl;
   std::cout << compose.str();
-  allinputs += compose.str();
+  allinputs.push_back(compose.str());
   compose.str("");
 
   std::string ignore;
@@ -269,7 +282,7 @@ int runModel(const program_options& po) {
   }
   if (!po.input_all_from_file) {
     std::cout << compose.str();
-    allinputs += compose.str();
+    allinputs.push_back(compose.str());
     compose.str("");
   }
 
@@ -283,7 +296,7 @@ int runModel(const program_options& po) {
     std::cerr << "Provide reinforcement learning rate (e.g., 0.01)" << std::endl;
     lambda = *std::istream_iterator<double>(std::cin); /* 0.01 */
     compose <<   "lambda = " << lambda << std::endl;
-    std::cout << compose.str(); allinputs += compose.str(); compose.str("");
+    std::cout << compose.str(); allinputs.push_back(compose.str()); compose.str("");
     break;
   default:
     // case A is default to catch case P as well.
@@ -293,7 +306,7 @@ int runModel(const program_options& po) {
     penalty = *std::istream_iterator<double>(std::cin); /* 100 */
     compose <<   "mutrate = " << mutrate
 	    << ", penalty = " << penalty << std::endl;
-    std::cout << compose.str(); allinputs += compose.str(); compose.str("");
+    std::cout << compose.str(); allinputs.push_back(compose.str()); compose.str("");
     break;
   }
   std::getline(std::cin,ignore);
@@ -312,7 +325,7 @@ int runModel(const program_options& po) {
 	  << ", outer = " << outer
 	  << ", printinterval = " << printinterval
 	  << std::endl;
-  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
+  std::cout << compose.str(); allinputs.push_back(compose.str()); compose.str("");
   std::getline(std::cin,ignore);
 
   std::cerr << "Provide blocking parameters for levels 1-4 (e.g., 1 1 1 1)" << std::endl;
@@ -324,7 +337,7 @@ int runModel(const program_options& po) {
 	  << "           level 2 = " << b2
 	  << "           level 3 = " << b3
 	  << "           level 4 = " << b4 << std::endl;
-  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
+  std::cout << compose.str(); allinputs.push_back(compose.str()); compose.str("");
   std::getline(std::cin,ignore);
 
   std::cerr << "Provide level of agent (1, 2, or 3)" << std::endl;
@@ -337,7 +350,7 @@ int runModel(const program_options& po) {
   compose<<b2<<(al==2?"agents":al==1?"memes":"lexes")<<" x<";
   compose<<b3<<(al==3?"agents":"lexes")<<" x";
   compose<<b1<<"communications>)]}"<<std::endl;
-  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
+  std::cout << compose.str(); allinputs.push_back(compose.str()); compose.str("");
   
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
@@ -351,7 +364,7 @@ int runModel(const program_options& po) {
   // std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
   for (const auto s: seed_vector) compose << s << " ";
   compose << std::endl;
-  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
+  std::cout << compose.str(); allinputs.push_back(compose.str()); compose.str("");
   
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
@@ -404,8 +417,8 @@ int runModel(const program_options& po) {
   if(po.output_to_file){
     if (po.outstream_is_hdf5) {
       const auto strtype(H5Util::DataType(allinputs));
-      po.header.createDataSet("Input parameters",strtype,H5Util::scalarspace()).
-	write(allinputs,strtype);
+      H5Util::vectorwrite(po.header.createDataSet("Input parameters",strtype,H5Util::vectorspace(allinputs)),
+			  allinputs);
       // Incomplete
     }
     // const hsize_t current_dims[]= {H5S_UNLIMITED};
@@ -514,15 +527,11 @@ int runModel(const program_options& po) {
 
 
 int main(int argc, char* argv[]) {
-  std::cerr << "Running program compiled from sccs_ids: " << std::endl <<
-  	SCCS::sccs_id::getallids() << std::endl;
+  std::cerr << "Running program compiled from sccs_ids: " << std::endl;
+  for(const auto v: SCCS::sccs_id::getallids())
+    std::cerr << v << std::endl;
   const program_options po(argc,argv);
   
-  if (!po.input_from_file)
-    std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  
-  std::cout << "model = " << po.model << std::endl;
-
   // Need constexpr for template choice
   return (po.model==B?runModel<B>:runModel<A>)(po);
 }
