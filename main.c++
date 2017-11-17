@@ -151,16 +151,17 @@ public:
 	  output_to_file = true;
 	  if (std::regex_match(argv[i],h5match)) {
 	    outstream_is_hdf5 = true;
-	    (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
-	      createDataSet("SCCS IDs",
-			    SCCS::sccs_id::DataType(),
-			    H5Util::scalarspace()).
+	    auto header = (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
+	      createGroup("Header");
+	    header.createDataSet("SCCS IDs",
+				 SCCS::sccs_id::DataType(),
+				 H5Util::scalarspace()).
 	      write(SCCS::sccs_id::getallids(),
 		    SCCS::sccs_id::DataType());
 	    const auto now(std::time(nullptr));
 	    const auto timestr(std::asctime(std::gmtime(&now)));
 	    const auto timetype(H5Util::DataType(timestr));
-	    h5outfile.createDataSet("Run at UTC",timetype,
+	    header.createDataSet("Run at UTC",timetype,
 				    H5Util::scalarspace()).
 	      write(timestr,timetype);
 	  } else {
