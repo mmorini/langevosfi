@@ -64,6 +64,11 @@ namespace H5Util {
   template<> inline  const H5::DataType& DataType(const long double&) {
     return H5::PredType::NATIVE_LDOUBLE;
   }
+  inline const H5::DataType& DataType(const std::string&) {
+    // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
+    static auto retval(H5::StrType(0,H5T_VARIABLE));
+    return retval;
+  }
   inline H5::DataType DataType(const char *s) {
     // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
     return H5::StrType(0,std::strlen(s)+1);

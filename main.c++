@@ -117,6 +117,7 @@ public:
   std::istream &instream;
   std::ostream &outstream;
   H5::H5File h5infile, h5outfile;
+  H5::Group header, data;
   program_options(const int argc, const char *const *const argv):
     h5match(".*\\.h5"),
     input_from_file(false), input_all_from_file(false), output_to_file(false),
@@ -151,15 +152,16 @@ public:
 	  output_to_file = true;
 	  if (std::regex_match(argv[i],h5match)) {
 	    outstream_is_hdf5 = true;
-	    auto header = (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
+	    header = (h5outfile = H5::H5File(argv[i],H5F_ACC_EXCL)).
 	      createGroup("Header");
+	    data = h5outfile.createGroup("Data");
 	    header.createDataSet("SCCS IDs",
 				 SCCS::sccs_id::DataType(),
 				 H5Util::scalarspace()).
-	      write(SCCS::sccs_id::getallids(),
+	      write(std::string(SCCS::sccs_id::getallids()),
 		    SCCS::sccs_id::DataType());
 	    const auto now(std::time(nullptr));
-	    const auto timestr(std::asctime(std::gmtime(&now)));
+	    const std::string timestr(std::asctime(std::gmtime(&now)));
 	    const auto timetype(H5Util::DataType(timestr));
 	    header.createDataSet("Run at UTC",timetype,
 				    H5Util::scalarspace()).
@@ -208,7 +210,8 @@ public:
               << "\t-I <inputallfile>" << std::endl
               << "\t-o <outputlanguagefile>" << std::endl
               << "\t-m A|B" << std::endl
-              << "No option may be repeated. -i and -I cannot be used together" << std::endl;
+              << "No option may be repeated. -i and -I cannot be used together" << std::endl
+	      << "Assumes files ending in .h5 are HDF5 files" << std::endl;
   }
 }; 
 
@@ -229,11 +232,15 @@ int runModel(const program_options& po) {
 
   Meme::Meme<Memebase>::setn(nummemes); 
   Lex::Lexeme<Lexbase>::setn(numlexes); 
-  Agent::Agent<Agentbase>::setn(numagents); 
-  std::cout <<   "nummemes  = " << Meme::Meme<Memebase>::getn()
-            << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
-            << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl;
-  
+  Agent::Agent<Agentbase>::setn(numagents);
+  std::string allinputs;
+  std::ostringstream compose;
+  compose <<   "nummemes  = " << Meme::Meme<Memebase>::getn()
+	  << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
+	  << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl;
+  std::cout << compose.str();
+  allinputs += compose.str();
+  compose.str("");
 
   std::string ignore;
 
@@ -253,12 +260,17 @@ int runModel(const program_options& po) {
   const auto uniform = po.input_all_from_file?0:*std::istream_iterator<int>(std::cin);
   const auto syncstart = po.input_from_file?0:*std::istream_iterator<int>(std::cin);
   if (!po.input_all_from_file)
-    std::cout << "uniform = " << uniform << " ";
+    compose << "uniform = " << uniform << " ";
   if (!po.input_from_file)
-    std::cout << " syncstart = " << syncstart;
+    compose << " syncstart = " << syncstart;
   if (!po.input_all_from_file) {
-    std::cout << std::endl;
+    compose << std::endl;
     std::getline(std::cin,ignore);
+  }
+  if (!po.input_all_from_file) {
+    std::cout << compose.str();
+    allinputs += compose.str();
+    compose.str("");
   }
 
   double mutrate=0, penalty=0, lambda=0; // Not quite right! Two problems: first these should be
@@ -270,7 +282,8 @@ int runModel(const program_options& po) {
     
     std::cerr << "Provide reinforcement learning rate (e.g., 0.01)" << std::endl;
     lambda = *std::istream_iterator<double>(std::cin); /* 0.01 */
-    std::cout <<   "lambda = " << lambda << std::endl;
+    compose <<   "lambda = " << lambda << std::endl;
+    std::cout << compose.str(); allinputs += compose.str(); compose.str("");
     break;
   default:
     // case A is default to catch case P as well.
@@ -278,8 +291,9 @@ int runModel(const program_options& po) {
     std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
     mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
     penalty = *std::istream_iterator<double>(std::cin); /* 100 */
-    std::cout <<   "mutrate = " << mutrate
-	      << ", penalty = " << penalty << std::endl;
+    compose <<   "mutrate = " << mutrate
+	    << ", penalty = " << penalty << std::endl;
+    std::cout << compose.str(); allinputs += compose.str(); compose.str("");
     break;
   }
   std::getline(std::cin,ignore);
@@ -294,10 +308,11 @@ int runModel(const program_options& po) {
   const auto inner=util::clamplow(*std::istream_iterator<int>(std::cin),1),
              outer=util::clamplow(*std::istream_iterator<int>(std::cin),1),
              printinterval = util::clamplow(*std::istream_iterator<int>(std::cin),1);
-  std::cout <<   "inner = " << inner
-            << ", outer = " << outer
-	    << ", printinterval = " << printinterval
-	    << std::endl;
+  compose <<   "inner = " << inner
+	  << ", outer = " << outer
+	  << ", printinterval = " << printinterval
+	  << std::endl;
+  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
   std::getline(std::cin,ignore);
 
   std::cerr << "Provide blocking parameters for levels 1-4 (e.g., 1 1 1 1)" << std::endl;
@@ -305,22 +320,24 @@ int runModel(const program_options& po) {
              b2 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
              b3 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
              b4 = util::clamplow(*std::istream_iterator<int>(std::cin),1);
-  std::cout << " Blocking: level 1 = " << b1
-	    << "           level 2 = " << b2
-	    << "           level 3 = " << b3
-            << "           level 4 = " << b4 << std::endl;
+  compose << " Blocking: level 1 = " << b1
+	  << "           level 2 = " << b2
+	  << "           level 3 = " << b3
+	  << "           level 4 = " << b4 << std::endl;
+  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
   std::getline(std::cin,ignore);
 
   std::cerr << "Provide level of agent (1, 2, or 3)" << std::endl;
   const auto al = util::clamp(*std::istream_iterator<int>(std::cin),1,3);
   std::getline(std::cin,ignore);
 
-  std::cout<<"Loop structure:"<<std::endl;
-  std::cout<<"\t"<<outer<<"x {"<<inner<<" agents x[";
-  std::cout<<b1<<(al==1?"agents":"memes")<<" x(";
-  std::cout<<b2<<(al==2?"agents":al==1?"memes":"lexes")<<" x<";
-  std::cout<<b3<<(al==3?"agents":"lexes")<<" x";
-  std::cout<<b1<<"communications>)]}"<<std::endl;
+  compose<<"Loop structure:"<<std::endl;
+  compose<<"\t"<<outer<<"x {"<<inner<<" agents x[";
+  compose<<b1<<(al==1?"agents":"memes")<<" x(";
+  compose<<b2<<(al==2?"agents":al==1?"memes":"lexes")<<" x<";
+  compose<<b3<<(al==3?"agents":"lexes")<<" x";
+  compose<<b1<<"communications>)]}"<<std::endl;
+  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
   
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
@@ -330,10 +347,11 @@ int runModel(const program_options& po) {
 					      std::istream_iterator<unsigned int>());
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
-  std::cout << "Random number generator seeded with ";
+  compose << "Random number generator seeded with ";
   // std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
-  for (const auto s: seed_vector) std::cout << s << " ";
-  std::cout << std::endl;
+  for (const auto s: seed_vector) compose << s << " ";
+  compose << std::endl;
+  std::cout << compose.str(); allinputs += compose.str(); compose.str("");
   
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
@@ -384,8 +402,12 @@ int runModel(const program_options& po) {
   }
 
   if(po.output_to_file){
-    if (po.outstream_is_hdf5)
-      ; // Incomplete
+    if (po.outstream_is_hdf5) {
+      const auto strtype(H5Util::DataType(allinputs));
+      po.header.createDataSet("Input parameters",strtype,H5Util::scalarspace()).
+	write(allinputs,strtype);
+      // Incomplete
+    }
     // const hsize_t current_dims[]= {H5S_UNLIMITED};
     // H5Screate_simple(1, current_dims, nullptr)
     else

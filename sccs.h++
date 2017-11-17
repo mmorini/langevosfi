@@ -27,13 +27,7 @@ namespace SCCS {
     operator const char* () const {return id;}
     static const char* getallids() {return idstore();}
     static const H5::DataType& DataType(void) {
-      static H5::DataType retval;
-      static bool inited(false);
-      if (!inited) {
-	retval = H5Util::DataType(getallids());
-	inited = true;
-      }
-      return retval;
+      return H5Util::DataType(std::string(getallids()));
     }
   };
 
