@@ -15,7 +15,8 @@ namespace Enumvector {
 
 static const SCCS::sccs_id ENUMVECTOR_HPP_SCCS_ID __attribute__((used)) = "@(#)enumvector.h++: $Id$";
 
-template<typename E,typename T> class Enumvector: std::vector<T> {
+  //std::vector<T> should be private, but h5condense needs it
+template<typename E,typename T> class Enumvector: public std::vector<T> {
 private:
   template<typename D, typename P, typename R>
   static constexpr bool checktype(const std::iterator<std::input_iterator_tag,T,D,P,R> &i);
@@ -114,18 +115,35 @@ public:
   virtual ~Enumvector() = default;
   static const H5::DataType& DataType(void) {
     // hsize_t is in global from H5, namespace pollution
-    const hsize_t dims[] = {E::getn()};
-    static const H5::ArrayType retval(H5Util::DataType<T>(),1,dims);
+    const std::vector<hsize_t> dims(getdims(Enumvector()));
+    static const H5::ArrayType retval(H5Util::DataType<T>(),dims.size(),dims.data());
     return retval;
   }
+  typedef decltype(h5condense(std::declval<Enumvector>()).data()) H5PackedData;
+  H5PackedData h5pack() const {
+    return h5condense(Enumvector()).data();
+  }
+
 };
 
-template<typename E, typename T>
-inline const Enumvector<E,T> unitvec() {
-  Enumvector<E,T> res;
-  res[static_cast<E>(0)] = 1;
-  return res;
-}
+  template<typename T, typename std::enable_if<decltype(util::has_base_template<std::vector>(std::declval<T*>()))::value,int>::type=0>
+  inline std::vector<hsize_t> getdims(const std::vector<T>& v) {
+    std::vector<hsize_t> r(getdims(v));
+    r.insert(r.begin(),r.size());
+    return r;
+  }
+  template<typename T, typename std::enable_if<!decltype(util::has_base_template<std::vector>(std::declval<T*>()))::value,int>::type=0>
+  inline std::vector<hsize_t> getdims(const std::vector<T>& v) {
+    static std::vector<hsize_t> r(1,1);
+    return r;
+  }
+
+  template<typename E, typename T>
+  inline const Enumvector<E,T> unitvec() {
+    Enumvector<E,T> res;
+    res[static_cast<E>(0)] = 1;
+    return res;
+  }
 
   template<typename E, typename T>
   inline
@@ -139,6 +157,22 @@ inline const Enumvector<E,T> unitvec() {
   constexpr auto indices(const size_t s, const Enumvector<E,T> &o)
     ->decltype(SelfIterator::indices(s,o)) {
     return SelfIterator::indices(s,o);
+  }
+
+  template<typename T, typename std::enable_if<decltype(util::has_base_template<std::vector>(std::declval<T*>()))::value,int>::type=0>
+  inline decltype(h5condense(std::declval<T>())) h5condense(const std::vector<T>& v) {
+    static std::vector<decltype(*h5condense(v.front()))> r;
+    r.clear();
+    for(const auto &a: v) {
+      const auto w(h5condense(a));
+      r.insert(r.end(),w.begin(),w.end());
+    }
+  }
+
+  template<typename T, typename std::enable_if<!decltype(util::has_base_template<std::vector>(std::declval<T*>()))::value,int>::type=0>
+  inline
+    std::vector<T> h5condense(const std::vector<T>& v) {
+    return v;
   }
 
 }

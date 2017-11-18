@@ -153,7 +153,15 @@ public:
       inited = true;
     }
     return retval;
-  } 
+  }
+  struct H5PackedData {
+    const decltype(Probvector::weight) weight;
+    const typename Probvector::base_Enumvector::H5PackedData base_Enumvector;
+  };
+  H5PackedData h5pack() const {
+    return H5PackedData(weight,base_Enumvector::h5pack());
+  }
+
 private:
   double weight = 1.0;
   mutable bool setupdone = false;
