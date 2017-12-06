@@ -9,7 +9,7 @@ GIT = 'git'
 HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
 	probvector.h++ counts.h++ main.h++ main_decls.h++ experience.h++ \
-	h5util.h++ sccs.h++
+	h5_datatype.h++ h5_dataspace.h++ h5util.h++ sccs.h++
 CFILES = main.c++
 MFILES = Makefile
 
