@@ -35,7 +35,7 @@ io.h++: enumvector.h++ probvector.h++ language.h++ network.h++ sccs.h++ \
 language.h++: enumvector.h++ probvector.h++ experience.h++ sccs.h++
 lex.h++: sccs.h++
 main.c++: main.h++ main_decls.h++
-main.h++: network.h++enum.h++ meme.h++ lex.h++ agent.h++ language.h++ \
+main.h++: network.h++ enum.h++ meme.h++ lex.h++ agent.h++ language.h++ \
           enumvector.h++ counts.h++ selfiterator.h++ io.h++ \
           experience.h++ h5util.h++ sccs.h++
 main_decls.h++: main.h++ sccs.h++
