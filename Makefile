@@ -24,14 +24,27 @@ main.o: $(CFILES) $(HFILES)
 .SUFFIXES: .h++.gch
 %.h++.gch: %.h++ sccs.h++
 	$(COMPILE.cc) '$<'
-enumvector.h++: h5util.h++
-probvector.h++.gch: probvector.h++ enumvector.h++ myutil.h++ h5util.h++
-network.h++.gch: network.h++ probvector.h++
-language.h++.gch: language.h++ enumvector.h++ probvector.h++ counts.h++
-counts.h++.gch: counts.h++ enumvector.h++
-main.h++.gch: main.h++ network.h++ probvector.h++ enumvector.h++ myutil.h++ \
-              enum.h++ meme.h++ lex.h++ agent.h++ language.h++ counts.h++ \
-              selfiterator.h++ main_decls.h++ experience.h++ h5util.h++
+agent.h++: sccs.h++
+counts.h++: enumvector.h++ sccs.h++
+enumvector.h++: h5util.h++ selfiterator.h++ myutil.h++ sccs.h++
+h5_dataspace.h++: h5_datatype.h++ sccs.h++
+h5_datatype.h++: sccs.h++
+h5util.h++: sccs.h++
+io.h++: enumvector.h++ probvector.h++ language.h++ network.h++ sccs.h++ \
+        myutil.h++ main.h++
+language.h++: enumvector.h++ probvector.h++ experience.h++ sccs.h++
+lex.h++: sccs.h++
+main.c++: main.h++ main_decls.h++
+main.h++: network.h++enum.h++ meme.h++ lex.h++ agent.h++ language.h++ \
+          enumvector.h++ counts.h++ selfiterator.h++ io.h++ \
+          experience.h++ h5util.h++ sccs.h++
+main_decls.h++: main.h++ sccs.h++
+meme.h++: sccs.h++
+myutil.h++: sccs.h++
+network.h++: probvector.h++ myutil.h++ sccs.h++
+probvectorh++: enumvector.h++ myutil.h++ selfiterator.h++ h5util.h++ sccs.h++
+sccs.h++: h5util.h++
+selfiterator.h++: sccs.h++
 
 TAGS: $(MFILES) $(CFILES) $(HFILES)
 	$(ETAGS) $(^:%='%')
