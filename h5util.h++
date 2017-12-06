@@ -21,9 +21,19 @@ namespace H5Util { // extend
 
 namespace H5Util {
   template<typename T>
+  struct h5iospec {
+    H5::DataType fDataType, mDataType;
+    H5::DataSpace fDataSpace, mDataSpace;
+    decltype(h5pack(declval<const T>())) Data;
+    template<typename T>
+    h5iospec(const T& d): fDataType(DataType(d)), mDataType(memDataType(d)), fDataSpace(choosespace(h5dims(d))), mDataSpace(fdataspace),
+			    Data(h5pack(d)) {fDataType.pack();}
+  };
 
-  template<typename T,typename U=T>
-  inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v) {
+
+  // write a 1-d vector with type conversion
+  template<typename T,typename U>
+  inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v, const U&) {
     hsize_t m(0);
     const auto space = d.getSpace();
     const auto mspace = space;
@@ -34,12 +44,28 @@ namespace H5Util {
 		    d.write(s,DataType(s),scalarspace(),space);
 		    m++;});
   }
-  template<typename T,typename U>
-  inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v, const U&) {
-    vectorwrite<T,U>(d,v);
+
+  // general write function
+  template<typename T>
+  inline void vectorwrite(const H5::Dataset &d, const std::vector<T> &v) {
+    const auto space(d.getSpace());
+    const std::vector<hsize_t> sz(1,v.size());
+    const auto mspace(choosespace(sz));
+    const auto dtype(DataType(v));
+    d.write(v.data(),dtype,mspace,space);
   }
 
-
+  template<typename T, 
+	   typename U=typename decltype(h5pack(declval<typename T::value_type>()))::value_type,
+	   typename std::enable_if<!is_object<decltype(declval<T>().h5pack())>::value,int>::type = 0>
+  inline std::vector<U> h5pack(const T& o) {
+    std::vector<U> retval;
+    for(const auto &e: o) {
+      const auto ev(h5pack(e));
+      retval.insert(retval.end(),ev.begin(),ev.end());
+    }
+    return retval; 
+  }
 
 }
 

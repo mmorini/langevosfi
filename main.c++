@@ -417,7 +417,7 @@ int runModel(const program_options& po) {
   if(po.output_to_file){
     if (po.outstream_is_hdf5) {
       const auto strtype(H5Util::DataType(allinputs));
-      H5Util::vectorwrite(po.header.createDataSet("Input parameters",strtype,H5Util::vectorspace(allinputs)),
+      H5Util::vectorwrite(po.header.createDataSet("Input parameters",strtype,H5Util::choosespace(allinputs)),
 			  allinputs);
       // Incomplete
     }
