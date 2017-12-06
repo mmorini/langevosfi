@@ -160,11 +160,11 @@ public:
 	    data = h5outfile.createGroup("Data");
 	    H5Util::vectorwrite(header.createDataSet("Command Line",
 						     H5Util::DataType(cmdline.front()),
-						     H5Util::vectorspace(cmdline)),
+						     H5Util::choosespace(cmdline)),
 				cmdline);
 	    H5Util::vectorwrite(header.createDataSet("SCCS IDs",
 						     SCCS::sccs_id::DataType(),
-						     H5Util::vectorspace(SCCS::sccs_id::getallids())),
+						     H5Util::choosespace(SCCS::sccs_id::getallids())),
 				SCCS::sccs_id::getallids(),
 				H5std_string());
 	    const auto now(std::time(nullptr));
