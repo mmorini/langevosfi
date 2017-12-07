@@ -130,8 +130,9 @@ constexpr inline T clamp(const T val, const T low, const T high) {
 
 #define declare_member_check(n,m)			\
   template<typename T>							\
-  static std::true_type n(const volatile T*, std::add_pointer<decltype(std::declval<T>::m)>=nullptr); \
-  template<typename T>							\
+  static std::true_type n(const volatile T*,				\
+			  typename std::add_pointer<decltype(std::declval<T>().m)>::type=nullptr); \
+  template<typename T=void>							\
   static std::false_type n(const volatile void *);
 
 #endif

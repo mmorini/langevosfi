@@ -160,11 +160,11 @@ public:
 	    data = h5outfile.createGroup("Data");
 	    H5Util::vectorwrite(header.createDataSet("Command Line",
 						     H5Util::DataType(cmdline.front()),
-						     H5Util::choosespace(cmdline)),
+						     H5Util::choosespace(H5Util::h5dims(cmdline))),
 				cmdline);
 	    H5Util::vectorwrite(header.createDataSet("SCCS IDs",
 						     SCCS::sccs_id::DataType(),
-						     H5Util::choosespace(SCCS::sccs_id::getallids())),
+						     H5Util::choosespace(H5Util::h5dims(SCCS::sccs_id::getallids()))),
 				SCCS::sccs_id::getallids(),
 				H5std_string());
 	    const auto now(std::time(nullptr));
@@ -417,7 +417,7 @@ int runModel(const program_options& po) {
   if(po.output_to_file){
     if (po.outstream_is_hdf5) {
       const auto strtype(H5Util::DataType(allinputs));
-      H5Util::vectorwrite(po.header.createDataSet("Input parameters",strtype,H5Util::choosespace(allinputs)),
+      H5Util::vectorwrite(po.header.createDataSet("Input parameters",strtype,H5Util::choosespace(H5Util::h5dims(allinputs))),
 			  allinputs);
       // Incomplete
     }

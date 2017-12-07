@@ -4,6 +4,7 @@
 #include <H5Cpp.h>
 #include <type_traits>
 #include <cstring>
+#include <cassert>
 #include "sccs.h++"
 #include "myutil.h++"
 
@@ -22,11 +23,12 @@ namespace H5Util {
     return retval;
   }
 
+
   declare_member_check(has_h5dims,h5dims)
 
   template<typename T,
-	   typename std::enable_if<decltype(has_h5dims(std::declval<T*>())):value,int>::type=0>
-  inline decltype(declval<T>.h5dims()) h5dims(const T& v) {
+	   typename std::enable_if<decltype(has_h5dims(std::declval<T*>()))::value,int>::type=0>
+  inline decltype(std::declval<T>().h5dims()) h5dims(const T& v) {
     return v.h5dims();
   }
   
@@ -40,16 +42,21 @@ namespace H5Util {
   }
   
   template<typename T, typename std::enable_if<!decltype(util::has_base_template<std::vector>(std::declval<T*>()))::value &&
-					       !decltype(has_h5dims(std::declval<T*>))::value,int>::type=0>
+					       !decltype(has_h5dims(std::declval<T*>()))::value,int>::type=0>
   inline std::vector<hsize_t> h5dims(const std::vector<T>& v) {
     static std::vector<hsize_t> r(1,1);
     return r;
   }
 
+
+  /*
+  template<typename T>
+  std::vector<hsize_t> h5dims(const T &v);
+  */
+  
   inline H5::DataSpace choosespace(const std::vector<hsize_t>& s) {
-    assert(s.back()==1);
-    s.pop_back();
-    return s.empty()?scalarsapce():H5::DataSpace(s.size(),s,s);
+    assert(!s.empty() && s.back()==1);
+    return s.size()==1?scalarspace():H5::DataSpace(s.size()-1,s.data(),s.data());
   }
 
 }

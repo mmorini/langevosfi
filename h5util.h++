@@ -25,14 +25,14 @@ namespace H5Util {
   declare_member_check(has_memDataType,memDataType)
 
   template<typename T,
-	   typename std::enable_if<decltype(has_memDataType(std::declval<T*>())):value,int>::type=0>
+	   typename std::enable_if<decltype(has_memDataType(std::declval<T*>()))::value,int>::type=0>
   inline decltype(std::declval<T>().memDataType()) memDataType(const T& v) {
     return v.memDataType();
   }
   
   template<typename T,
 	   typename std::enable_if<!decltype(has_memDataType(std::declval<T*>()))::value,int>::type=0>
-  inline declType(DataType(std::declval<const T&>())) DataType memDataType(const T& v) {
+  inline decltype(DataType(std::declval<const T&>())) memDataType(const T& v) {
     return DataType(v);
   }
   
@@ -41,10 +41,12 @@ namespace H5Util {
   struct h5iospec {
     H5::DataType fDataType, mDataType;
     H5::DataSpace fDataSpace, mDataSpace;
-    decltype(h5pack(declval<const T>())) Data;
-    template<typename T>
-    h5iospec(const T& d): fDataType(DataType(d)), mDataType(memDataType(d)), fDataSpace(choosespace(h5dims(d))), mDataSpace(fdataspace),
-			    Data(h5pack(d)) {fDataType.pack();}
+    decltype(h5pack(std::declval<const T>())) Data;
+    h5iospec(const T& d): fDataType(DataType(d)), mDataType(memDataType(d)),
+			  fDataSpace(choosespace(h5dims(d))),
+			  mDataSpace(fDataSpace),
+			  Data(h5pack(d)) {/* can't do it here, only compType has 
+					      pack; fDataType.pack(); */}
   };
 
 
@@ -64,7 +66,7 @@ namespace H5Util {
 
   // general write function
   template<typename T>
-  inline void vectorwrite(const H5::Dataset &d, const std::vector<T> &v) {
+  inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v) {
     const auto space(d.getSpace());
     const std::vector<hsize_t> sz(1,v.size());
     const auto mspace(choosespace(sz));
@@ -73,8 +75,8 @@ namespace H5Util {
   }
 
   template<typename T, 
-	   typename U=typename decltype(h5pack(declval<typename T::value_type>()))::value_type,
-	   typename std::enable_if<!is_object<decltype(declval<T>().h5pack())>::value,int>::type = 0>
+	   typename U=typename decltype(h5pack(std::declval<typename T::value_type>()))::value_type,
+	   typename std::enable_if<!std::is_object<decltype(std::declval<T>().h5pack())>::value,int>::type = 0>
   inline std::vector<U> h5pack(const T& o) {
     std::vector<U> retval;
     for(const auto &e: o) {
