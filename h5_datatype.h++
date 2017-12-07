@@ -75,21 +75,6 @@ namespace H5Util {
     return H5::StrType(0,std::strlen(s)+1);
   }
 
-  declare_member_check(has_memDataType,memDataType)
-
-  template<typename T,
-	   typename std::enable_if<decltype(has_memDataType(std::declval<T*>())):value,int>::type=0>
-  inline decltype(std::declval<T>().memDataType()) memDataType(const T& v) {
-    return v.memDataType();
-  }
-  
-  template<typename T,
-	   typename std::enable_if<!decltype(has_memDataType(std::declval<T*>()))::value,int>::type=0>
-  inline declType(DataType(std::declval<const T&>())) DataType memDataType(const T& v) {
-    return DataType(v);
-  }
-  
-
 }
 // Needs to be done after H5Util::DataType(const char*) is defined
 #include "sccs.h++"

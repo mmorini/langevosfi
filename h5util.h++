@@ -7,6 +7,7 @@
 #include <exception>
 #include <cstring>
 #include <algorithm>
+#include "myutil.h++"
 
 #include "h5_datatype.h++"
 // Needs to be done after H5Util::DataType(const char*) is defined
@@ -20,6 +21,22 @@ namespace H5Util { // extend
 #include "h5_dataspace.h++"
 
 namespace H5Util {
+
+  declare_member_check(has_memDataType,memDataType)
+
+  template<typename T,
+	   typename std::enable_if<decltype(has_memDataType(std::declval<T*>())):value,int>::type=0>
+  inline decltype(std::declval<T>().memDataType()) memDataType(const T& v) {
+    return v.memDataType();
+  }
+  
+  template<typename T,
+	   typename std::enable_if<!decltype(has_memDataType(std::declval<T*>()))::value,int>::type=0>
+  inline declType(DataType(std::declval<const T&>())) DataType memDataType(const T& v) {
+    return DataType(v);
+  }
+  
+
   template<typename T>
   struct h5iospec {
     H5::DataType fDataType, mDataType;
