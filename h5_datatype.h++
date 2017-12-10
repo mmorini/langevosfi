@@ -11,7 +11,8 @@ namespace H5Util {
   inline  const H5::DataType& DataType(const T& =std::declval<T>()) {
     return T::DataType();
   }
-  template<typename T, typename std::enable_if<std::is_fundamental<T>::value,int>::type = 0>
+  template<typename T, typename std::enable_if<std::is_fundamental<T>::value &&
+					       !std::is_pointer<T>::value,int>::type = 0>
   inline  const H5::DataType& DataType(const T& =std::declval<T>()) {
     return H5::PredType::NATIVE_OPAQUE;
   }
@@ -66,15 +67,16 @@ namespace H5Util {
     static auto retval(H5::StrType(0,H5T_VARIABLE));
     return retval;
   }
+  inline H5::DataType& DataType(const char *) {
+    // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
+    // return H5::StrType(0,std::strlen(s)+1);
+    static auto retval(H5::StrType(0,H5T_VARIABLE));
+    return retval;
+  }
   template<typename T>
   inline H5::DataType DataType(const std::vector<T>& v) {
     return DataType(T());
   }
-  inline H5::DataType DataType(const char *s) {
-    // 0 is Dummy for H5::StrType() or H5::PredType::C_S1
-    return H5::StrType(0,std::strlen(s)+1);
-  }
-
 }
 // Needs to be done after H5Util::DataType(const char*) is defined
 #include "sccs.h++"
