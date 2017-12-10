@@ -28,13 +28,9 @@ namespace H5Util { // extend
 
 #include "h5_dataspace.h++"
 
-namespace H5Util {
+#include "h5util_t.h++"
 
-  template<bool b,typename T = void>
-  struct ConvertedType {
-    inline operator bool() const {return b;}
-    typedef T type;
-  };
+namespace H5Util { // extend
 
   declare_member_check(has_DirectType,DirectType)
 
