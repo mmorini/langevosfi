@@ -1,8 +1,11 @@
 #"@(#)Makefile $Id$"
-# CXXFLAGS += -std=c++14
-CXXFLAGS += -std=c++11 
-CXXFLAGS += -O4 -pedantic -Wall
-LDFLAGS += -lhdf5_cpp -lhdf5
+ifeq ($(origin CXX), default)
+ CXX = 'h5c++'
+endif
+# LDFLAGS += '-lhdf5_cpp' '-lhdf5'
+CXXFLAGS += '-std=c++11'
+# CXXFLAGS += '-std=c++14'
+CXXFLAGS += '-O4' '-pedantic' '-Wall'
 ETAGS = 'etags'
 GIT = 'git'
 
@@ -10,13 +13,13 @@ HFILES = selfiterator.h++ enum.h++ enumvector.h++ myutil.h++ \
 	meme.h++ lex.h++ language.h++ agent.h++ network.h++ \
 	probvector.h++ counts.h++ main.h++ main_decls.h++ experience.h++ \
 	h5_datatype.h++ h5_dataspace.h++ h5util.h++ sccs.h++
-CFILES = main.c++
+CFILES = main.cc
 MFILES = Makefile
 
 main: main.o
-# main.o: main.c++ main.h++.gch
+# main.o: main.cc main.h++.gch
 main.o: $(CFILES) $(HFILES)
-%.o: %.c++
+%.o: %.cc
 	$(COMPILE.cc) '$<'
 %: %.o
 	$(LINK.cc) -o '$@' $(^:%='%')
@@ -34,7 +37,7 @@ io.h++: enumvector.h++ probvector.h++ language.h++ network.h++ sccs.h++ \
         myutil.h++ main.h++
 language.h++: enumvector.h++ probvector.h++ experience.h++ sccs.h++
 lex.h++: sccs.h++
-main.c++: main.h++ main_decls.h++
+main.cc: main.h++ main_decls.h++
 main.h++: network.h++ enum.h++ meme.h++ lex.h++ agent.h++ language.h++ \
           enumvector.h++ counts.h++ selfiterator.h++ io.h++ \
           experience.h++ h5util.h++ sccs.h++
