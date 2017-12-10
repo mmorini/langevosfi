@@ -21,7 +21,7 @@ namespace Enum { // extend
 
 #include "main_decls.h++"
 
-static const SCCS::sccs_id MAIN_CPP_SCCS_ID __attribute__((used)) = "@(#)main.c++: $Id$";
+static const SCCS::sccs_id MAIN_CPP_SCCS_ID __attribute__((used)) = "@(#)main.cc: $Id: 635915fa5d6a2e3a0fe0735bec99355cdc4edb8b $";
 
 // All the classes used are defined in main_decls.h++ (which is included via main.h++)
 
@@ -344,7 +344,7 @@ int runModel(const program_options& po) {
   const auto al = util::clamp(*std::istream_iterator<int>(std::cin),1,3);
   std::getline(std::cin,ignore);
 
-  compose<<"Loop structure:"<<std::endl;
+  compose<<"Loop structure ("<<al<<"):"<<std::endl;
   compose<<"\t"<<outer<<"x {"<<inner<<" agents x[";
   compose<<b1<<(al==1?"agents":"memes")<<" x(";
   compose<<b2<<(al==2?"agents":al==1?"memes":"lexes")<<" x<";
