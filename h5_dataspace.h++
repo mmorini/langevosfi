@@ -35,7 +35,7 @@ namespace H5Util {
   template<typename T, typename std::enable_if<!decltype(util::has_base_template<std::vector>(std::declval<T*>()))::value &&
 					       !decltype(has_h5dims(std::declval<T*>()))::value,int>::type=0>
   inline std::vector<hsize_t> h5dims(const T& v) {
-    static std::vector<hsize_t> r(1,1);
+    static const std::vector<hsize_t> r(1,1);
     return r;
   }
 
