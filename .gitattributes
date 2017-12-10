@@ -1,4 +1,5 @@
 [attr]binary	-text -diff -merge
 TAGS	binary
 *.[ch]++ text ident
+*.cc	 text ident
 Makefile text ident
