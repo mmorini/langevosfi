@@ -22,16 +22,38 @@ namespace H5Util { // extend
 
 namespace H5Util {
 
+  template<bool b,typename T = void>
+  struct ConvertedType {
+    inline operator bool() const {return b;}
+    typedef T type;
+  };
+
+  declare_member_check(has_DirectType,DirectType)
+
+  template<typename T>
+  ConvertedType<false> DirectType(const volatile T* =nullptr) {return ConvertedType<false>();}
+  ConvertedType<false,H5std_string> DirectType(const H5std_string& =H5std_string()) {return  ConvertedType<false,H5std_string>();}
+  ConvertedType<false,H5std_string> DirectType(const char * =nullptr) {return ConvertedType<false,H5std_string>();}
+  template<typename T, typename std::enable_if<decltype(has_DirectType(static_cast<T*>(nullptr)))::value,int>::type = 0> 
+  decltype(T::DirectType()) DirectType(const T& =std::declval<T>()) {return T::DirectType();}
+  template<typename T, typename std::enable_if<std::is_fundamental<T>::value &&
+					       !std::is_pointer<T>::value,int>::type = 0>
+  ConvertedType<true> DirectType(const T& =std::declval<T>()) {return ConvertedType<true>();}
+  template<typename T, typename std::enable_if<!decltype(has_DirectType(static_cast<T*>(nullptr)))::value &&
+					       decltype(util::has_base_template<std::vector>(static_cast<T*>(nullptr)))::value,int>::type = 0>
+  decltype(DirectType(std::declval<typename T::value_type>())) DirectType(const T& = std::declval<T>()) {return DirectType(typename T::value_type());}
+
+
   declare_member_check(has_memDataType,memDataType)
 
   template<typename T,
-	   typename std::enable_if<decltype(has_memDataType(std::declval<T*>()))::value,int>::type=0>
+	   typename std::enable_if<decltype(has_memDataType(static_cast<T*>(nullptr)))::value,int>::type=0>
   inline decltype(std::declval<T>().memDataType()) memDataType(const T& v) {
     return v.memDataType();
   }
   
   template<typename T,
-	   typename std::enable_if<!decltype(has_memDataType(std::declval<T*>()))::value,int>::type=0>
+	   typename std::enable_if<!decltype(has_memDataType(static_cast<T*>(nullptr)))::value,int>::type=0>
   inline decltype(DataType(std::declval<const T&>())) memDataType(const T& v) {
     return DataType(v);
   }
@@ -67,11 +89,13 @@ namespace H5Util {
   // general write function
   template<typename T>
   inline void vectorwrite(const H5::DataSet &d, const std::vector<T> &v) {
-    const auto space(d.getSpace());
-    const std::vector<hsize_t> sz(1,v.size());
-    const auto mspace(choosespace(sz));
     const auto dtype(DataType(v));
-    d.write(v.data(),dtype,mspace,space);
+    const auto dostream(H5Util::DirectType(v));
+    if (dostream) {
+      d.write(v.data(),dtype); // d.write(v.data(),dtype,mspace,space);
+    } else {
+      vectorwrite(d,v,typename decltype(dostream)::type());
+    }
   }
 
   template<typename T, 

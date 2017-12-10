@@ -165,8 +165,7 @@ public:
 	    H5Util::vectorwrite(header.createDataSet("SCCS IDs",
 						     SCCS::sccs_id::DataType(),
 						     H5Util::choosespace(H5Util::h5dims(SCCS::sccs_id::getallids()))),
-				SCCS::sccs_id::getallids(),
-				H5std_string());
+				SCCS::sccs_id::getallids());
 	    const auto now(std::time(nullptr));
 	    const H5std_string timestr(std::asctime(std::gmtime(&now)));
 	    const auto timetype(H5Util::DataType(timestr));
