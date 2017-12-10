@@ -21,7 +21,7 @@ namespace Enum { // extend
 
 #include "main_decls.h++"
 
-static const SCCS::sccs_id MAIN_CPP_SCCS_ID __attribute__((used)) = "@(#)main.cc: $Id: 635915fa5d6a2e3a0fe0735bec99355cdc4edb8b $";
+static const SCCS::sccs_id MAIN_CPP_SCCS_ID __attribute__((used)) = "@(#)main.cc: $Id$";
 
 // All the classes used are defined in main_decls.h++ (which is included via main.h++)
 
