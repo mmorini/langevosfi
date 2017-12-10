@@ -5,7 +5,9 @@ endif
 # LDFLAGS += '-lhdf5_cpp' '-lhdf5'
 CXXFLAGS += '-std=c++11'
 # CXXFLAGS += '-std=c++14'
-CXXFLAGS += '-O4' '-pedantic' '-Wall'
+CXXFLAGS += '-O4'
+# CXXFLAGS += '-g'
+CXXFLAGS += '-pedantic' '-Wall'
 ETAGS = 'etags'
 GIT = 'git'
 
