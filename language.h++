@@ -245,7 +245,7 @@ private:
 public:
   // Return the probability that communication with a speaker with language 'other'
   // will be successful
-  double expected_success(const Language& other) {
+  double expected_success(const Language& other) const {
     // We need to sum over all memes and lexes the probability p(m,l) that this language
     // (used to send) generates the <m,l> pair multiplied by the probability p(m,l) that
     // the other language reconstructs m from l
@@ -255,11 +255,12 @@ public:
     //  -- Language::operator[m][l] gives us the conditional probability l|m
     //  -- Language::Cachelookup(l)[m] gives us the conditional probability m|l
 
-    double retval;
+    double retval = 0.0;
     for(auto m: indices(*this)) {
       double inner = 0.0; // sum_l p_send(l|m) p_receive(m|l)
       for(auto l: indices((*this)[m])) {
-        inner += (*this)[m][l] * other.Cachelookup(l)[m];
+        const Mprobvector& mpv = other.Cachelookup(l);
+        inner += (*this)[m][l] * mpv[m]; // Subscripting only works on const Mprobvector; not sure if there is a nicer way to add constness
       }
       retval += marginal[m] * inner;
     }

@@ -105,9 +105,9 @@ public:
   BitstringMemes(std::mt19937&r, const int m): Memes(Network(Probvector(r,m),bitset_adjacency())) {}
   BitstringMemes(std::mt19937&r): BitstringMemes(r,-1) {}
   // If slicing is an issue, define the virtual = operators
-	
+
 	// ... and overload the virtual functions
-	
+
 	// Neighbor: we randomly tweak a bit
   Meme neighbor(const Meme& m, std::mt19937& r) const override {
 		std::uniform_int_distribution<> bit_twiddler(0, bits-1);
@@ -118,7 +118,7 @@ public:
 		} while(is >= Meme::getn());
 		return Meme(is);
 	}
-	
+
 	// Match: we ask how many bits are in common, and return as a fraction 0 to 1
 	double match(const Meme& a, const Meme& b) const override {
 // 		std::cout << "BitstringMemes::match" << std::endl;
@@ -187,7 +187,7 @@ public:
 	ReinforcementLearnerLanguage(double lambda, const Memes &m,std::mt19937& r, const int mask=-1):Language(m,r,mask), lambda(lambda) {}
     ReinforcementLearnerLanguage(double lambda, const BitstringMemes &m, const Language &l):Language(m,l), lambda(lambda) {}
 
-	
+
   virtual void lexmutate(const double sigma, Lexemes::Generator &r,
 			 const Experience::Experience<Language::Meme,Language::Lexeme> &experience = Experience::Experience<Language::Meme,Language::Lexeme>()) override {
 		// Go through each association and boost/suppress by the relevant amount
@@ -204,7 +204,7 @@ public:
 // I would like instead of this for any subclass of AgentLanguage to be stored in the Enumvector
 // without object slicing so that virtual functions are called properly, but I am not sure if
 // this can be done.
-template<typename AgentLanguage> 
+template<typename AgentLanguage>
 class Population: public Enumvector::Enumvector<Agent::Agent<Agentbase>,AgentLanguage> {
 public:
   using base_Enumvector=typename Population::Enumvector;
@@ -223,23 +223,23 @@ inline std::ostream& operator<< (std::ostream& o, const Population<AgentLanguage
 template<typename AgentLanguage>
 Enumvector::Enumvector<Agent::Agent<Agentbase>,Counts::Counts> communicate(const Agents &, const Lexemes &, const Memes &,
 									   const Population<AgentLanguage> &, int=1, int=1, int=1, int=1, int=1);
-enum ModelType {A, B, P};
+enum ModelType {A, B, C, P};
 inline
 std::ostream& operator<<(std::ostream &o, const ModelType m) {
-  return o << (m==A?"A":m==B?"B":m==P?"P":"Invalid");
+  return o << (m==A?"A":m==B?"B":m==C?"C":m==P?"P":"Invalid");
 }
 inline
 std::istream& operator>>(std::istream &i, ModelType &m) {
   char model;
   i >> model;
   model = std::toupper(model);
-  m = model == 'B'?B: model == 'P'?P: A;
+  m = model == 'B'?B: model == 'C'?C: model == 'P'?P: A;
   return i;
 }
 
 
 template<enum ModelType m> class chooselang final{
-  // Make this the default
+  // Make this the default (A, C, P)
   // template<> class chooselang<A>{
 public:
   typedef AgentLanguage Language;

@@ -37,68 +37,81 @@ static const char MAIN_CPP_SCCS_ID[] __attribute__((used)) = "@(#)main.c++: $Id$
 // (Other rules are available, but I like this one)
 
 typedef Enumvector::Enumvector<Agent::Agent<Agentbase>,
-			       Experience::Experience<Meme::Meme<Memebase>,
-						      Lex::Lexeme<Lexbase>>> Counts_t;
+             Experience::Experience<Meme::Meme<Memebase>,
+                  Lex::Lexeme<Lexbase>>> Counts_t;
 
 template<ModelType model>
 Counts_t communicate_model(const Agents &agents,
-		 const Lexemes &lexemes,
-		 const Memes &memes,
- 	         const Population<typename chooselang<model>::Language> &population,
-		 const int n, const int b1, const int b2, const int b3, const int b4,
-		 const int al) {
-  Counts_t retval;
-  for (auto rounds: SelfIterator::range(n)) {
-    (void)rounds;
-    const auto &a1(agents.generate(r));
-    // These should be uninitialized, but interface requires initialization.
-    Agent::Agent<Agentbase> a2(0);
-    Meme::Meme<Memebase> m1(0);
-    Lex::Lexeme<Lexbase> l1(0);
-    const std::function<void(void)>
-      &aupdate=[&a2,&a1,&agents]()->void{a2 = agents.neighbor(a1,r);},
-      &mupdate=[&m1,&a1,&population]()->void{m1 = population[a1].memegen(r);},
-      &lupdate=[&l1,&a1,&m1,&population]()->void{l1 = population[a1].lexgen(m1,r);};
-    const auto& update1(al==1?aupdate:mupdate),
-      update2(al==2?aupdate:al==1?mupdate:lupdate),
-      update3(al==3?aupdate:lupdate);
-    for (auto partners: SelfIterator::range(b1)) {
-      (void) partners;
-      update1();
-      // TODO: create a version that replaces the stochastic increase_association with a deterministic set_association
-      // I think a Model C is the way to go
-      for (auto comms: SelfIterator::range(b2)) {
-	(void) comms;
-	update2();
-	for (auto lexes: SelfIterator::range(b3)) {
-	  (void) lexes;
-	  update3();
-	  for (auto trans: SelfIterator::range(b4)) {
-	    (void) trans;
-	    const auto &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
-	    const auto &m2(population[a2].memegen(l2,r));
-	    switch(model) {
-	    case B: {
-	      const auto ran = std::generate_canonical<double, 20>(r);
-	      const auto match = population[a1].match(memes,m1,m2,population[a2]);
-	      // std::cout << "::communicate_modelB match->" << match << std::endl;
-	      if(ran < match*match)
-		retval[a1].increase_association( m1, l1, 1.0 );
-	      else if( ran < 1.0 - 2.0 * match * (1.0 - match) )
-		retval[a1].increase_association( m1, l1, -1.0 );
-	      break;
-	    }
-	      // Make case A the default to catch case P
-	    default:
-	      retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
-	      break;
-	    }
-	  }
-	}
-      }
-    }
-  }
-  return retval;
+    const Lexemes &lexemes,
+    const Memes &memes,
+    const Population<typename chooselang<model>::Language> &population,
+    const int n, const int b1, const int b2, const int b3, const int b4,
+    const int al) {
+      Counts_t retval;
+      for (auto rounds: SelfIterator::range(n)) {
+        (void)rounds;
+        const auto &a1(agents.generate(r));
+
+        if(model == C) {
+          // Model C is a lot simpler, and only has one loop
+          // RAB is trusting that the compiler optimizes away the if test and the else
+          // branch when instantiating this function for model B...
+          for(auto partners: SelfIterator::range(b1)) {
+            (void) partners;
+            const auto& a2 = agents.neighbor(a1,r);
+            // Notionally this performs b2 trials with the expected success rate given
+            // the state of the two languages. If we use the same b2 value throughout the simulation,
+            // then it doesn't actually matter what this is (as long as it is not zero)
+            retval[a1].set_by_mindreading(b2, population[a1].expected_success(population[a2]));
+          }
+
+        } else {
+          // These should be uninitialized, but interface requires initialization.
+          Agent::Agent<Agentbase> a2(0);
+          Meme::Meme<Memebase> m1(0);
+          Lex::Lexeme<Lexbase> l1(0);
+
+          const std::function<void(void)>
+            &aupdate=[&a2,&a1,&agents]()->void{a2 = agents.neighbor(a1,r);},
+            &mupdate=[&m1,&a1,&population]()->void{m1 = population[a1].memegen(r);},
+            &lupdate=[&l1,&a1,&m1,&population]()->void{l1 = population[a1].lexgen(m1,r);};
+          const auto& update1(al==1?aupdate:mupdate),
+            update2(al==2?aupdate:al==1?mupdate:lupdate),
+            update3(al==3?aupdate:lupdate);
+          for (auto partners: SelfIterator::range(b1)) {
+            (void) partners;
+            update1();
+            for (auto comms: SelfIterator::range(b2)) {
+              (void) comms;
+              update2();
+              for (auto lexes: SelfIterator::range(b3)) {
+                (void) lexes;
+                update3();
+                for (auto trans: SelfIterator::range(b4)) {
+                  (void) trans;
+                  const auto &l2(population[a1].transmit(lexemes,l1,r,population[a2]));
+                  const auto &m2(population[a2].memegen(l2,r));
+                  switch(model) {
+                    case B: {
+                      const auto ran = std::generate_canonical<double, 20>(r);
+                      const auto match = population[a1].match(memes,m1,m2,population[a2]);
+                      // std::cout << "::communicate_modelB match->" << match << std::endl;
+                      if(ran < match*match) retval[a1].increase_association( m1, l1, 1.0 );
+                      else if( ran < 1.0 - 2.0 * match * (1.0 - match) ) retval[a1].increase_association( m1, l1, -1.0 );
+                      break;
+                    }
+                    // Make case A the default to catch case P
+                    default:
+                      retval[a1].increase_association( m1, l1, population[a1].match(memes,m1,m2,population[a2]) );
+                    break;
+                  } // ends model switch
+                } // ends b4 loop
+              } // ends b3 loop
+            } // ends b2 loop
+          } // ends b1 loop
+        } // ends model A, B, P branch
+      } // ends rounds loop
+      return retval;
 }
 
 class program_options final {
@@ -119,32 +132,32 @@ public:
   {
     for (int i=1; i<argc; i++)
       if (argv[i] == std::string("-i"))
-	if (!input_from_file && !input_all_from_file && ++i < argc) {
-	  input_from_file = true;
-	  // instream_f = std::ifstream(argv[i]);
-	  instream_f.open(argv[i]);
-	} else
-	  invalidusage();
+  if (!input_from_file && !input_all_from_file && ++i < argc) {
+    input_from_file = true;
+    // instream_f = std::ifstream(argv[i]);
+    instream_f.open(argv[i]);
+  } else
+    invalidusage();
       else if (argv[i] == std::string("-I"))
-	if (!input_from_file && !input_all_from_file && ++i < argc) {
-	  input_from_file = input_all_from_file = true;
-	  // instream_f = std::ifstream(argv[i]);
-	  instream_f.open(argv[i]);
-	} else
-	  invalidusage();
+  if (!input_from_file && !input_all_from_file && ++i < argc) {
+    input_from_file = input_all_from_file = true;
+    // instream_f = std::ifstream(argv[i]);
+    instream_f.open(argv[i]);
+  } else
+    invalidusage();
       else if (argv[i] == std::string("-o"))
-	if (!output_to_file && ++i < argc) {
-	  output_to_file = true;
-	  outstream_f.open(argv[i]);
-	} else
-	  invalidusage();
+  if (!output_to_file && ++i < argc) {
+    output_to_file = true;
+    outstream_f.open(argv[i]);
+  } else
+    invalidusage();
       else if (argv[i] == std::string("-m"))
-	if (++i < argc)
-	  std::istringstream(argv[i]) >> model;
-	else
-	  invalidusage();
+  if (++i < argc)
+    std::istringstream(argv[i]) >> model;
+  else
+    invalidusage();
       else
-	invalidusage();
+  invalidusage();
   }
   ~program_options() {
     if(input_from_file) instream_f.close();
@@ -156,7 +169,7 @@ public:
               << "\t-i <inputlanguagefile>" << std::endl
               << "\t-I <inputallfile>" << std::endl
               << "\t-o <outputlanguagefile>" << std::endl
-              << "\t-m A|B" << std::endl
+              << "\t-m A|B|C|P" << std::endl
               << "No option may be repeated. -i and -I cannot be used together" << std::endl;
   }
 };
@@ -211,8 +224,8 @@ int runModel(const program_options& po) {
   }
 
   double mutrate=0, penalty=0, lambda=0; // Not quite right! Two problems: first these should be
-		                         // declared const, and secondly they should be in a union
-				         // which depends on model.
+                             // declared const, and secondly they should be in a union
+                 // which depends on model.
   switch (model) {
   case B:
     // Reinforcement learning parameter -- DIFFERENT
@@ -222,13 +235,13 @@ int runModel(const program_options& po) {
     std::cout <<   "lambda = " << lambda << std::endl;
     break;
   default:
-    // case A is default to catch case P as well.
+    // case A is default to catch cases P and C as well.
     // The following two parameters are effectively in the exponent, so careful
     std::cerr << "Provide mutrate and penalty (e.g., 1 100)" << std::endl;
     mutrate = *std::istream_iterator<double>(std::cin); /* 1 */
     penalty = *std::istream_iterator<double>(std::cin); /* 100 */
     std::cout <<   "mutrate = " << mutrate
-	      << ", penalty = " << penalty << std::endl;
+        << ", penalty = " << penalty << std::endl;
     break;
   }
   std::getline(std::cin,ignore);
@@ -245,22 +258,28 @@ int runModel(const program_options& po) {
              printinterval = util::clamplow(*std::istream_iterator<int>(std::cin),1);
   std::cout <<   "inner = " << inner
             << ", outer = " << outer
-	    << ", printinterval = " << printinterval
-	    << std::endl;
+      << ", printinterval = " << printinterval
+      << std::endl;
   std::getline(std::cin,ignore);
 
   std::cerr << "Provide blocking parameters for levels 1-4 (e.g., 1 1 1 1)" << std::endl;
+  if(model == C) {
+    std::cerr << "  (NB: levels 3&4 are ignored in Model C)" << std::endl;
+  }
   const auto b1 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
              b2 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
              b3 = util::clamplow(*std::istream_iterator<int>(std::cin),1),
              b4 = util::clamplow(*std::istream_iterator<int>(std::cin),1);
   std::cout << " Blocking: level 1 = " << b1
-	    << "           level 2 = " << b2
-	    << "           level 3 = " << b3
+      << "           level 2 = " << b2
+      << "           level 3 = " << b3
             << "           level 4 = " << b4 << std::endl;
   std::getline(std::cin,ignore);
 
   std::cerr << "Provide level of agent (1, 2, or 3)" << std::endl;
+  if(model == C) {
+    std::cerr << "  (NB: this has no effect in Model C)" << std::endl;
+  }
   const auto al = util::clamp(*std::istream_iterator<int>(std::cin),1,3);
   std::getline(std::cin,ignore);
 
@@ -276,7 +295,7 @@ int runModel(const program_options& po) {
   // to generate a seed.
   std::cerr << "Provide unsigned integers and end file to seed random number generator (e.g. 1 19)" << std::endl;
   const std::vector<unsigned int> seed_vector((std::istream_iterator<unsigned int>(std::cin)),
-					      std::istream_iterator<unsigned int>());
+                std::istream_iterator<unsigned int>());
   std::seed_seq seeds(seed_vector.begin(), seed_vector.end());
   r.seed(seeds);
   std::cout << "Random number generator seeded with ";
@@ -288,38 +307,38 @@ int runModel(const program_options& po) {
   // OK, this generates a random probabilities for the network of memes.
   // Don't use random numbers in the wrong branch
   Memes pmemes(model != B?
-	       po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
-	       model==P?
-	       uniform != 0?Memes(Memes::Network(Memes::bitset_adjacency())):Memes(Memes::Network(Memes::Probvector(r),Memes::bitset_adjacency())):
-	       uniform != 0?Memes():Memes(r):
-	       Memes());
+         po.input_all_from_file?Memes(*std::istream_iterator<Memes::Network>(po.instream)):
+         model==P?
+         uniform != 0?Memes(Memes::Network(Memes::bitset_adjacency())):Memes(Memes::Network(Memes::Probvector(r),Memes::bitset_adjacency())):
+         uniform != 0?Memes():Memes(r):
+         Memes());
   BitstringMemes bmemes(model == B?
-			po.input_all_from_file?BitstringMemes(*std::istream_iterator<BitstringMemes::Network>(po.instream)):
-			uniform != 0?BitstringMemes():BitstringMemes(r):
-			BitstringMemes()); // DIFFERENT: The type of memes is different in ModelA
+      po.input_all_from_file?BitstringMemes(*std::istream_iterator<BitstringMemes::Network>(po.instream)):
+      uniform != 0?BitstringMemes():BitstringMemes(r):
+      BitstringMemes()); // DIFFERENT: The type of memes is different in ModelA
   // model A is default, catches model P
   Memes &memes(model==B?bmemes:pmemes);
   Lexemes lexemes(po.input_all_from_file?Lexemes(*std::istream_iterator<Lexemes::Network>(po.instream)):
-		  uniform != 0?Lexemes():Lexemes(r));
+      uniform != 0?Lexemes():Lexemes(r));
   Agents agents(po.input_all_from_file?Agents(*std::istream_iterator<Agents::Network>(po.instream)):
-		uniform != 0?Agents():Agents(r));
+    uniform != 0?Agents():Agents(r));
   // Generate an entire population; write it out.
 
   // The memes currently can be defaulted in the first two cases below, but trying
   // to keep it general.  Speed at initialization is unlikely to be an issue
   Population<typename chooselang<model>::Language> population(po.input_from_file?
-							      Population<typename chooselang<model>::Language>
-							      (std::istream_iterator<typename chooselang<model>::Language>(po.instream)):
-							      Population<typename chooselang<model>::Language>
-							      (chooselang<model>::langinit(uniform,lambda,memes,r)));
+                    Population<typename chooselang<model>::Language>
+                    (std::istream_iterator<typename chooselang<model>::Language>(po.instream)):
+                    Population<typename chooselang<model>::Language>
+                    (chooselang<model>::langinit(uniform,lambda,memes,r)));
   if (!po.input_from_file) {
     if (syncstart < 0) {
       int c=0;
       for (auto &a: population)
-	a.cshift(c++);
+  a.cshift(c++);
     } else if (syncstart == 0)
       for (auto &a: population)
-	a.permute(r);
+  a.permute(r);
     std::cout << population;
   }
 
@@ -335,12 +354,12 @@ int runModel(const program_options& po) {
   if(po.output_to_file){
     //write initial lang to file
     po.outstream << "nummemes  = " << Meme::Meme<Memebase>::getn()
-		 << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
-		 << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
+     << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
+     << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl
                  << "Memes" << std::endl << memes
                  << "Lexemes" << std::endl << lexemes
                  << "Agents" << std::endl << agents
-		 << "Initial" << std::endl << population
+     << "Initial" << std::endl << population
                  << "Counts" << std::endl << counts;
   }
 
@@ -354,7 +373,7 @@ int runModel(const program_options& po) {
   for (auto rounds: SelfIterator::range(outer)) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
       std::cout << "Round number " << rounds << std::endl
-		<< population;
+    << population;
     switch(model) {
     case B: {
       // DIFFERENT: In model B we don't need to keep track of the old language
@@ -363,12 +382,12 @@ int runModel(const program_options& po) {
       auto counts=communicate_model<model>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
 
       if(po.output_to_file)
-	po.outstream << rounds << population
-		     << "Counts" << std::endl << counts;
+  po.outstream << rounds << population
+         << "Counts" << std::endl << counts;
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
-	std::cout << "Round number " << rounds << std::endl
-		  << population
-		  << "Counts" << std::endl << counts;
+  std::cout << "Round number " << rounds << std::endl
+      << population
+      << "Counts" << std::endl << counts;
 
       // DIFFERENT: In model B we always mutate the lexicon
       for (auto a: indices(counts)) population[a].lexmutate(0.0,r,counts[a]); // SIGMA unused here, but we could make it more random...
@@ -377,12 +396,12 @@ int runModel(const program_options& po) {
       // A is default, catches P
     default: {
       if(po.output_to_file)
-	po.outstream << rounds << population
-		     << "Counts" << std::endl << counts;
+  po.outstream << rounds << population
+         << "Counts" << std::endl << counts;
       if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
-	std::cout << "Round number " << rounds << std::endl
-		  << population
-		  << "Counts" << std::endl << counts;
+  std::cout << "Round number " << rounds << std::endl
+      << population
+      << "Counts" << std::endl << counts;
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
       auto oldpop = population;
@@ -399,19 +418,19 @@ int runModel(const program_options& po) {
 
       // Look at each agent's language
       for(auto a: SelfIterator::indices(counts)) {
-	// Accept new language if it did not get tried, else accept
-	// randomly if it is worse and deterministically if it is better.
-	if(counts[a].tries>0 && oldcounts[a].tries>0) {
-	  auto delta = counts[a].mean() - oldcounts[a].mean();
-	  if (delta < 0 &&
-	      std::generate_canonical<double, 20>(r) >
-	      std::exp(penalty*delta)) {
-	    // std::move promises the oldpop and oldcounts array element
-	    // won't be used any more, so steal whatever data structure you can.
-	    population[a] = std::move(oldpop[a]);
-	    counts[a] = std::move(oldcounts[a]);
-	  }
-	}
+  // Accept new language if it did not get tried, else accept
+  // randomly if it is worse and deterministically if it is better.
+  if(counts[a].tries>0 && oldcounts[a].tries>0) {
+    auto delta = counts[a].mean() - oldcounts[a].mean();
+    if (delta < 0 &&
+        std::generate_canonical<double, 20>(r) >
+        std::exp(penalty*delta)) {
+      // std::move promises the oldpop and oldcounts array element
+      // won't be used any more, so steal whatever data structure you can.
+      population[a] = std::move(oldpop[a]);
+      counts[a] = std::move(oldcounts[a]);
+    }
+  }
       }
       break; }
     }
@@ -432,5 +451,5 @@ int main(int argc, char* argv[]) {
   std::cout << "model = " << po.model << std::endl;
 
   // Need constexpr for template choice
-  return (po.model==B?runModel<B>:runModel<A>)(po);
+  return (po.model==C?runModel<C>:po.model==B?runModel<B>:runModel<A>)(po);
 }

@@ -65,7 +65,8 @@ public:
 	/* Create a linguistic experience without actually exposing the agent to any meme-lex pairs,
 	   but by mindreading the other speaker and using the mean success rate directly.
 		 Since we store the success internally as a double, this will allow us to build up a mean success rate if
-		 we interact more than once in a round.
+		 we interact more than once in a round. nominal_tries allows us to weight the different interactions if we
+		 wish, but most likely we just set it to 1
 	*/
 	void set_by_mindreading(int nominal_tries, double expected_success) {
 		tries += nominal_tries;
