@@ -44,7 +44,7 @@ public:
 
 	/* To maintain compatibility with Counts, we include these public fields... */
 	double success = 0.0;
-	long long tries = 0; // Switched to long long type as in the mind-reading case we might get large integers
+	int tries = 0; // Switched to long long type as in the mind-reading case we might get large integers
 
 	/* ...and this public function */
         constexpr double mean(void) const {return success/tries;}
@@ -63,7 +63,10 @@ public:
 	}
 
 	/* Create a linguistic experience without actually exposing the agent to any meme-lex pairs,
-	   but by mindreading the other speaker and using the mean success rate directly */
+	   but by mindreading the other speaker and using the mean success rate directly.
+		 Since we store the success internally as a double, this will allow us to build up a mean success rate if
+		 we interact more than once in a round.
+	*/
 	void set_by_mindreading(int nominal_tries, double expected_success) {
 		tries += nominal_tries;
 		success += expected_success * nominal_tries;
@@ -99,7 +102,7 @@ public:
 template<typename T, typename Experience>
 void summarize(const Enumvector::Enumvector<T,Experience> &experiences) {
 	double success = 0.0;
-	long long tries = 0;
+	int tries = 0;
 	for (Experience e: experiences) {
 		success += e.success;
 		tries += e.tries;
