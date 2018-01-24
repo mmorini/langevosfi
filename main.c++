@@ -65,6 +65,8 @@ Counts_t communicate_model(const Agents &agents,
     for (auto partners: SelfIterator::range(b1)) {
       (void) partners;
       update1();
+      // TODO: create a version that replaces the stochastic increase_association with a deterministic set_association
+      // I think a Model C is the way to go
       for (auto comms: SelfIterator::range(b2)) {
 	(void) comms;
 	update2();
@@ -82,7 +84,7 @@ Counts_t communicate_model(const Agents &agents,
 	      // std::cout << "::communicate_modelB match->" << match << std::endl;
 	      if(ran < match*match)
 		retval[a1].increase_association( m1, l1, 1.0 );
-	      else if( ran < 1.0 - 2.0 * match * (1.0 - match) ) 
+	      else if( ran < 1.0 - 2.0 * match * (1.0 - match) )
 		retval[a1].increase_association( m1, l1, -1.0 );
 	      break;
 	    }
@@ -157,7 +159,7 @@ public:
               << "\t-m A|B" << std::endl
               << "No option may be repeated. -i and -I cannot be used together" << std::endl;
   }
-}; 
+};
 
 // OK now the main loop
 
@@ -174,13 +176,13 @@ int runModel(const program_options& po) {
              numlexes = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin),
              numagents = *std::istream_iterator<int>(po.input_from_file?po.instream:std::cin);
 
-  Meme::Meme<Memebase>::setn(nummemes); 
-  Lex::Lexeme<Lexbase>::setn(numlexes); 
-  Agent::Agent<Agentbase>::setn(numagents); 
+  Meme::Meme<Memebase>::setn(nummemes);
+  Lex::Lexeme<Lexbase>::setn(numlexes);
+  Agent::Agent<Agentbase>::setn(numagents);
   std::cout <<   "nummemes  = " << Meme::Meme<Memebase>::getn()
             << ", numlexes  = " << Lex::Lexeme<Lexbase>::getn()
             << ", numagents = " << Agent::Agent<Agentbase>::getn() << std::endl;
-  
+
 
   std::string ignore;
 
@@ -214,7 +216,7 @@ int runModel(const program_options& po) {
   switch (model) {
   case B:
     // Reinforcement learning parameter -- DIFFERENT
-    
+
     std::cerr << "Provide reinforcement learning rate (e.g., 0.01)" << std::endl;
     lambda = *std::istream_iterator<double>(std::cin); /* 0.01 */
     std::cout <<   "lambda = " << lambda << std::endl;
@@ -268,7 +270,7 @@ int runModel(const program_options& po) {
   std::cout<<b2<<(al==2?"agents":al==1?"memes":"lexes")<<" x<";
   std::cout<<b3<<(al==3?"agents":"lexes")<<" x";
   std::cout<<b1<<"communications>)]}"<<std::endl;
-  
+
 
   // Seed the random number generator. Needs a sequence of unsigned intergers
   // to generate a seed.
@@ -281,7 +283,7 @@ int runModel(const program_options& po) {
   // std::copy(seed_vector.begin(), seed_vector.end(), std::ostream_iterator<unsigned int>(std::cout));
   for (const auto s: seed_vector) std::cout << s << " ";
   std::cout << std::endl;
-  
+
   //Not needed when lang is imported?
   // OK, this generates a random probabilities for the network of memes.
   // Don't use random numbers in the wrong branch
@@ -348,7 +350,7 @@ int runModel(const program_options& po) {
   // random number.
   // Model B: For the number of outer loops, use the language for a round, and then
   // apply reinforcement learning to the resulting experience
-    
+
   for (auto rounds: SelfIterator::range(outer)) {
     if (rounds > 0 && printinterval > 0 && rounds % printinterval == 0)
       std::cout << "Round number " << rounds << std::endl
@@ -356,10 +358,10 @@ int runModel(const program_options& po) {
     switch(model) {
     case B: {
       // DIFFERENT: In model B we don't need to keep track of the old language
-      
+
       // Generate new counts and write out summary.
       auto counts=communicate_model<model>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
-      
+
       if(po.output_to_file)
 	po.outstream << rounds << population
 		     << "Counts" << std::endl << counts;
@@ -385,16 +387,16 @@ int runModel(const program_options& po) {
       for (auto &a: population) a.decache();
       auto oldpop = population;
       auto oldcounts = counts;
-      
+
       // Mutate each language
       for (auto &a: population) a.lexmutate(mutrate,r);
-      
+
       // Generate new counts and write out summary.
       // A is default, catching P
-      // The model==B test is necessary to stop compiler trying to 
+      // The model==B test is necessary to stop compiler trying to
       // compile the wrong thing even in a dead branch
       counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
-      
+
       // Look at each agent's language
       for(auto a: SelfIterator::indices(counts)) {
 	// Accept new language if it did not get tried, else accept
@@ -423,10 +425,10 @@ int runModel(const program_options& po) {
 
 int main(int argc, char* argv[]) {
   const program_options po(argc,argv);
-  
+
   if (!po.input_from_file)
     std::cerr << "Provide nummemes, numlexes, and numagents (e.g., 10 15 40)" << std::endl;
-  
+
   std::cout << "model = " << po.model << std::endl;
 
   // Need constexpr for template choice
