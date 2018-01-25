@@ -414,7 +414,7 @@ int runModel(const program_options& po) {
       // A is default, catching P
       // The model==B test is necessary to stop compiler trying to
       // compile the wrong thing even in a dead branch
-      counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
+      counts=communicate_model<model==C?C:model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al); summarize(counts);
 
       // Look at each agent's language
       for(auto a: SelfIterator::indices(counts)) {
