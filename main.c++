@@ -347,7 +347,7 @@ int runModel(const program_options& po) {
     // Initialize everybodies counts and write out summary.
     // A is default! model==B below is false, but need to mask compiler
     // trying to compile call to A in a dead branch
-    counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al);
+    counts=communicate_model<model==C?C:model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al);
     summarize(counts);
   }
 
