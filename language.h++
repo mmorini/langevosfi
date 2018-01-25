@@ -264,7 +264,7 @@ public:
       }
       retval += marginal[m] * inner;
     }
-    std::cout << " *(expected_success=" << retval << "\n";
+    // std::cout << "[expected_success] " << retval << "\n";
     return retval;
   }
 };
