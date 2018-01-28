@@ -33,31 +33,31 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
   Language(const Mprobvector &marg, mgenerator &r, const int mask=-1):
     marginal(marg)
       {
-	for(auto &m: *this)
-	  m = Lprobvector(r,mask);
-	newmarginal();
+  for(auto &m: *this)
+    m = Lprobvector(r,mask);
+  newmarginal();
       }
   Language(Mprobvector &&marg, mgenerator &r, const int mask=-1):
     marginal(std::forward<Mprobvector>(marg))
       {
-	for(auto &m: *this)
-	  m = Lprobvector(r,mask);
-	newmarginal();
+  for(auto &m: *this)
+    m = Lprobvector(r,mask);
+  newmarginal();
       }
   Language(const Mprobvector &marg, const int mask=-1):
     marginal(marg)
      {
        if(mask>0)
-	 for(auto &m: *this)
-	   m = Lprobvector(mask);
+   for(auto &m: *this)
+     m = Lprobvector(mask);
        newmarginal();
      }
   Language(Mprobvector &&marg, const int mask=-1):
     marginal(std::forward<Mprobvector>(marg))
      {
        if(mask>0)
-	 for(auto &m: *this)
-	   m = Lprobvector(mask);
+   for(auto &m: *this)
+     m = Lprobvector(mask);
        newmarginal();
      }
   Language(const Mprobvector &marg, const Language &lang):
@@ -80,48 +80,48 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     base_Enumvector(lang),
     marginal(lang.marginal)
       {
-	for (auto a: indices(lang.cache))
-	  cache[a]=lang.cache[a]?std::make_shared<Mprobvector>(*lang.cache[a]):nullptr;
-	cshift(shift);
+  for (auto a: indices(lang.cache))
+    cache[a]=lang.cache[a]?std::make_shared<Mprobvector>(*lang.cache[a]):nullptr;
+  cshift(shift);
       }
   Language(const Language &lang, lgenerator &g):
     base_Enumvector(lang),
     marginal(lang.marginal)
       {
-	permute(g);
+  permute(g);
       }
   Language(Language &&lang, const int shift=0):
     base_Enumvector(std::forward<Language>(lang)),
     marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
     cache(std::forward<decltype(lang.cache)>(lang.cache))
       {
-	cshift(shift);
-	lang.initCache();
+  cshift(shift);
+  lang.initCache();
       }
   Language(Language &&lang, lgenerator &g):
     base_Enumvector(std::forward<Language>(lang)),
     marginal(std::forward<decltype(lang.marginal)>(lang.marginal)),
     cache(std::forward<decltype(lang.cache)>(lang.cache))
       {
-	permute(g);
-	lang.initCache();
+  permute(g);
+  lang.initCache();
       }
   Language& cshift(const int shift=1) {
-	if (shift != 0) {
-	  for (auto &a: *this)
-	    a.cshift(shift);
-	  cache.cshift(shift);
-	}
-	return *this;
+  if (shift != 0) {
+    for (auto &a: *this)
+      a.cshift(shift);
+    cache.cshift(shift);
+  }
+  return *this;
       }
   Language& permute(lgenerator &g) {
     Enumvector::Enumvector<Lexeme,Lexeme> p(static_cast<Lexeme>(0));
-	for (auto a: indices(p)) p[a] = a;
-	p.shuffle(g);
-	for (auto &a: *this)
-	    a.permute(p);
-	cache.permute(p);
-	return *this;
+  for (auto a: indices(p)) p[a] = a;
+  p.shuffle(g);
+  for (auto &a: *this)
+      a.permute(p);
+  cache.permute(p);
+  return *this;
       }
   virtual Language& operator=(const Language & l) {
     base_Enumvector::operator=(l);
@@ -130,7 +130,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     if (l.cachedead) {
       cache = std::move(l.cache);
       l.initCache();
-    } 
+    }
     return *this;
   }
   virtual Language& operator=(Language &&l) {
@@ -156,7 +156,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     return marginal.generate(r);
   }
   virtual Meme randommeme(mgenerator &r,
-			  const Experience::Experience<Meme,Lexeme> &experiences = Experience::Experience<Meme,Lexeme>()) const {
+        const Experience::Experience<Meme,Lexeme> &experiences = Experience::Experience<Meme,Lexeme>()) const {
     return memegen(r);
   }
   virtual Lexeme lexgen(const Meme m, lgenerator &r) const {
@@ -170,7 +170,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     newmarginal();
   }
   virtual void lexmutate(const double sigma, lgenerator &r,
-			 const Experience::Experience<Meme,Lexeme> &experience = Experience::Experience<Meme,Lexeme>()) {
+       const Experience::Experience<Meme,Lexeme> &experience = Experience::Experience<Meme,Lexeme>()) {
     // for (auto& m: *this)
     //     m.mutate(sigma,r);
     (*this)[randommeme(r)].mutate(sigma,r);
@@ -186,12 +186,12 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
   }
   template<typename Network>
   double match(const Network &memes,
-	     const Meme &m1, const Meme &m2, const Language &) const {
+       const Meme &m1, const Meme &m2, const Language &) const {
     return memes.match(m1,m2);
   }
   template<typename Network>
   auto transmit(const Network &lexemes,
-	        const Lexeme &l1, lgenerator &r, const Language &) const
+          const Lexeme &l1, lgenerator &r, const Language &) const
     -> typename std::remove_reference<decltype(lexemes.neighbor(l1,r))>::type {
     return lexemes.neighbor(l1,r);
   }
@@ -204,7 +204,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
   mutable bool cachedead = false;
   // So that cache can be copied, we need shared_ptr, not unique_ptr
   mutable Enumvector::Enumvector<Lexeme,std::shared_ptr<Mprobvector>> cache;
-  
+
   void initCache(void) const {
     for (auto& p: cache)
       p = nullptr;
@@ -216,7 +216,7 @@ class Language: public Enumvector::Enumvector<typename mprobvector::Index,typena
     if (!cache[l]) {
       Enumvector::Enumvector<Meme,double> p;
       for (auto m: indices(p))
-	p[m] = marginal[m]*(*this)[m][l];
+  p[m] = marginal[m]*(*this)[m][l];
       cache[l] = std::make_shared<Mprobvector>(std::move(p));
     }
     return *cache[l];
@@ -242,6 +242,32 @@ private:
     marginal.norm() = 1;
     newmarginal();
   }
+
+public:
+  // Return the probability that communication with a speaker with language 'other'
+  // will be successful
+  double expected_success(const Language& other) const {
+    // We need to sum over all memes and lexes the probability p(m,l) that this language
+    // (used to send) generates the <m,l> pair multiplied by the probability p(m,l) that
+    // the other language reconstructs m from l
+
+    // My assumptions are:
+    //  -- Language::marginal[m] contains the marginal probability that the speaker produces meme m
+    //  -- Language::operator[m][l] gives us the conditional probability l|m
+    //  -- Language::Cachelookup(l)[m] gives us the conditional probability m|l
+
+    double retval = 0.0;
+    for(auto m: indices(*this)) {
+      double inner = 0.0; // sum_l p_send(l|m) p_receive(m|l)
+      for(auto l: indices((*this)[m])) {
+        const Mprobvector& mpv = other.Cachelookup(l);
+        inner += (*this)[m][l] * mpv[m]; // Subscripting only works on const Mprobvector; not sure if there is a nicer way to add constness
+      }
+      retval += marginal[m] * inner;
+    }
+    // std::cout << "[expected_success] " << retval << "\n";
+    return retval;
+  }
 };
 
 template<typename mprobvector, typename lprobvector>
@@ -257,6 +283,8 @@ inline const Language<mprobvector,lprobvector> unitlang(Language<mprobvector,lpr
   retval.decache();
   return r?*r = std::move(retval):retval;
 }
+
+
 
 }
 

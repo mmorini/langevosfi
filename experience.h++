@@ -24,7 +24,7 @@ namespace Experience {
 // Not sure what this is; whoever does can replace it with the appropriate analog
 static const SCCS::sccs_id EXPERIENCE_HPP_SCCS_ID __attribute__((used)) = "@(#)experience.h++: $Id$";
 
-// The forward declaration of operator<< template is needed syntactically for 
+// The forward declaration of operator<< template is needed syntactically for
 // the friend declaration.  We can avoid the friend declaration with a public
 // member function called from the operator template, but this is cleaner.
 // Also, we could put the definition of the operator template here, but it is
@@ -45,7 +45,7 @@ public:
 
 	/* To maintain compatibility with Counts, we include these public fields... */
 	double success = 0.0;
-	int tries = 0;
+	int tries = 0; // Switched to long long type as in the mind-reading case we might get large integers
 
 	/* ...and this public function */
         constexpr double mean(void) const {return success/tries;}
@@ -62,26 +62,37 @@ public:
 		++tries;
 		success+=by;
 	}
-  
+
+	/* Create a linguistic experience without actually exposing the agent to any meme-lex pairs,
+	   but by mindreading the other speaker and using the mean success rate directly.
+		 Since we store the success internally as a double, this will allow us to build up a mean success rate if
+		 we interact more than once in a round. nominal_tries allows us to weight the different interactions if we
+		 wish, but most likely we just set it to 1
+	*/
+	void set_by_mindreading(int nominal_tries, double expected_success) {
+		tries += nominal_tries;
+		success += expected_success * nominal_tries;
+	}
+
 	/* Accessing the underlying experience. We can do this in two ways; either query
 	 * a specific Meme,Lexeme pair... (We do this the Java way with a getter rather than the [] operator which can only take one arg)
 	 */
 	double get_association(const Meme& m, const Lexeme& l) const {
 		auto key = std::make_pair(m,l);
 		return association.count(key) > 0 ? association[key] : 0.0;
-	}   		
-  
-  	/* ... or with an iterator 
+	}
+
+  	/* ... or with an iterator
   	 * for now I do the laziest thing which is to expose the underlying map iterator. We could
   	 * write our own custom iterator to provide a tuple <Meme,Lexeme,double> but time is short.
   	 *
   	 * We access the Meme, Lexeme and association as iterator.first.first, iterator.first.second and iterator.second
-  	 * respectively 
+  	 * respectively
   	 **/
         constexpr typename decltype(association)::const_iterator begin() const {
   		return association.begin();
   	}
-  	
+
   	constexpr typename decltype(association)::const_iterator end() const  {
   		return association.end();
   	}
@@ -138,7 +149,7 @@ void summarize(const Enumvector::Enumvector<T,Experience> &experiences) {
 
 template <typename Meme, typename Lexeme>
 std::ostream& operator<<(std::ostream& o, const Experience<Meme,Lexeme>& e) {
-  o << "[counts]\t\t" <<e.success << "/" << e.tries << std::endl;
+  o << "[counts]\t\t" << e.success << "/" << e.tries << std::endl;
   for (auto cit: e.association)
     o << "[counts]\t" << cit.first.first << " " << cit.first.second << " " << cit.second << std::endl;
   return o;
