@@ -24,7 +24,7 @@ parser.add_argument("--init_meme_prob", type=str, choices=['UNIFORM','RANDOM'],
 parser.add_argument("--mutator_class", type=str, choices=mutatorclassnames, help="Mutation operator", default=mutatorclassnames[0])
 parser.add_argument("--mutation_scale" , type=float, help="Mutation scale", default=0.1)
 parser.add_argument("--temperature", type=float, help="Temperature for acceptance step", default=0)
-parser.add_argument("--report_every", type=int, help="How often to log stats", default=10000)
+parser.add_argument("--report_every", type=int, help="How often to log stats", default=100000)
 parser.add_argument("--logfile", type=str, help="Output file to log to")
 
 args = parser.parse_args()
