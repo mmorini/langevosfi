@@ -51,3 +51,8 @@ TAGS
 *.out
 *.app
 
+# Python stuff
+__pycache__/
+
+# output folder
+output/*
