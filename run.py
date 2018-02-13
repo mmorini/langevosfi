@@ -8,6 +8,7 @@ import time
 import mutators
 import model
 from utils import log
+from datetime import datetime
 from config import git_strings
 git_strings.append("@(#)run.py: $Id$")
 
@@ -45,6 +46,7 @@ if logfile is None:
     print("# logfile not specified, logging only to stdout")
 
 log("# GitHub versions:\n#\t" + "\n#\t".join(git_strings), args.logfile)
+log("# @(#)Run at: " + datetime.utcnow().isoformat() + " UTC", args.logfile)
 log("# %s" % str(args.__dict__), args.logfile)
 
 model.run_simulation(grammars,
