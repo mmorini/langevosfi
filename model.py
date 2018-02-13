@@ -1,9 +1,13 @@
+# Includes the core code to implement the language evolution model
+
 from __future__ import print_function
 import time
 import numpy as np
 from utils import rand_ints
 from utils import log
 from mutators import ProbitVectorGaussian
+
+# ********** Helper functions ***********
 
 # Normalize non-negative matrix to be a joint probability matrix with fixed meme_probs
 def normalize(meme_probs, p):
@@ -42,7 +46,6 @@ def get_comprehension_multiple_speakers(speaker_grammars, listener_grammar):
         comprehension_vals.append( (sg*listener_meme_given_lexe).sum() )
     return comprehension_vals
 
-
 def get_comprehension_matrix(grammars):
     # Calculate matrix of comprehension rates between each pair of agents
     # TODO: Double check that this doesn't just measure comprehension 'one-way' 
@@ -54,7 +57,7 @@ def get_comprehension_matrix(grammars):
     return comprehension_matrix
 
 
-# *********************************************************************************
+# ****************** Main simulation function *********************************
 def run_simulation(grammars,     # List of num_agents numpy arrays, each one having shape [num_memes x num_steps]
                    meme_probs,   # List of meme probabilities, [num_memes] numpy array
                    num_agents,   # Number of agents 
@@ -65,12 +68,13 @@ def run_simulation(grammars,     # List of num_agents numpy arrays, each one hav
                    mutation_scale=None,  # Scale of mutations to be used by mutation operator
                    report_every=10000,   # How often to print stats
                    logfile=None,         # Filename to which to print stats. None for stdout only
-                   temperature=0,        # Temperature (used to decide acceptance)
+                   temperature=0         # Temperature (used to decide acceptance)
                    ):   
     
     
-    
     start_time = time.time()
+
+    return_data = []  # Save stats in here and return from function
 
     # Cache random numbers, so we don't have to call this every time (faster)
     speakers  = rand_ints(num_agents, num_steps)
@@ -86,29 +90,55 @@ def run_simulation(grammars,     # List of num_agents numpy arrays, each one hav
     log("Step Comprehension AcceptanceRate Time", logfile)
 
     mutation_op = mutator_class(mutation_scale=mutation_scale)
+
     for step in range(num_steps):
-        if step % report_every == (report_every-1):
+        if step % report_every == (report_every-1):  # Print logs
             mean_comprehension = get_comprehension_matrix(grammars).mean() 
             mean_acceptance    = acceptedsteps/takensteps
             log('%d %0.8f %0.4f %ds' % (step, mean_comprehension, mean_acceptance, time.time() - start_time), logfile)
+            return_data.append(
+                {'step'          : step, 
+                 'comprehension' : mean_comprehension, 
+                 'acceptance'    : mean_acceptance, 
+                 'time': time.time() - start_time})
             acceptedsteps = 0
             takensteps    = 0
 
         speaker  = speakers[step]
         listener = listeners[step]
-        if speaker == listener:
+        if speaker == listener:   # Skip steps where speaker == listener
             continue
          
-        current_meme = mutatememes[step]
+        current_meme = mutatememes[step]  # Meme to mutate/communicate
+
+        # Note that mutation_op.mutate requires a 2d numpy array, of shape [anything x num_lexes]
+        # In this case, we pass it a [1 x num_lexes] array
         current_meme_lexe_probs = grammars[speaker][[current_meme,],:]
         new_probs = mutation_op.mutate(current_meme_lexe_probs)
 
         # Calculate change in comprehension
         listener_grammar = grammars[listener]
-        listener_meme_given_lexe = (listener_grammar/(listener_grammar.sum(axis=0) + 1e-16))[current_meme,:]
+
+        # Calculate conditional probabilities  of current memes, given all lexes
+        listener_meme_given_lexe = (listener_grammar[current_meme,:]/(listener_grammar.sum(axis=0) + 1e-16))
+        
+        # TODO: double check that this will give correct change in comprehension
         change_in_comprehension = (new_probs - current_meme_lexe_probs).dot(listener_meme_given_lexe)
         
+        # TODO: here is where we can insert model A, by doing something like
+        # np.sum( (new_probs - current_meme_lexe_probs) * (random_interaction_vector) * listener_meme_given_lexe)
+
+        if change_in_comprehension >= 0:
+            accept_move = True
+        elif temperature > 0:
+            accept_move = acceptanceprobs[step] <= np.exp(change_in_comprehension/temperature)
+        else:
+            accept_move = False
+
         takensteps += 1
-        if acceptanceprobs[step] < np.exp(change_in_comprehension/temperature):
+        if accept_move:
             acceptedsteps += 1
             grammars[speaker][current_meme,:] = new_probs
+
+
+    return return_data
