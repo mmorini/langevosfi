@@ -55,4 +55,4 @@ TAGS
 __pycache__/
 
 # output folder
-output/*
+output/run*
