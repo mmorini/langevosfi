@@ -9,7 +9,7 @@ Python3 recommended but not required.
 
 **Output of `run_simulation`**
 Includes several columns:
-* *Step* is iteration number of the model
+* *Step* is iteration number of the simulation
 * *Comprehension* is average comprehension
 * *AcceptanceRate* is proportion of steps accepted in last reporting interval
 * *GrammarVar* is variance of grammars around mean grammar
