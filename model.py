@@ -25,7 +25,7 @@ def init_grammars(meme_probs, num_agents, num_memes, num_lexes):
     # Initialize agents with random grammars
     grammars = []
     for i in range(num_agents):
-        p = np.random.random((num_memes, num_lexes)).astype('float32')
+        p = np.random.random((num_memes, num_lexes))
         p = normalize(meme_probs, p)
         grammars.append( p )
     return grammars
