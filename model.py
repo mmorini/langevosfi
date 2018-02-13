@@ -4,6 +4,8 @@ import numpy as np
 from utils import rand_ints
 from utils import log
 from mutators import ProbitVectorGaussian
+from config import git_strings
+git_strings.append("@(#)model.py: $Id$")
 
 # Normalize non-negative matrix to be a joint probability matrix with fixed meme_probs
 def normalize(meme_probs, p):
