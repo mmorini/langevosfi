@@ -1,5 +1,0 @@
-Provide mutrate and penalty (e.g., 1 100)
-Provide inner and outer iteration count, printinterval (e.g., 64 216 1)
-Provide blocking parameters for levels 1-4 (e.g., 1 1 1 1)
-Provide level of agent (1, 2, or 3)
-Provide unsigned integers and end file to seed random number generator (e.g. 1 19)

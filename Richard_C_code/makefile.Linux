@@ -1,5 +1,0 @@
-CC=gcc
-CFLAGS:=$(shell gsl-config --cflags) -Wall
-LDLIBS:=$(shell gsl-config --libs) 
-
-all: coordinate

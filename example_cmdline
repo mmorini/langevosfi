@@ -1,1 +1,0 @@
-(echo 1 100; echo 1000 1000 1000; echo 1 1 1 1; echo 3; echo 1 19) | ./main -I example_infile -o example_outfile >example_stdout 2>example_stderr
