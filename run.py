@@ -1,5 +1,4 @@
-# Example uses:
-#  python3 run.py --num_steps=10000000 --num_agents=100 --num_memes=50 --num_lexes=50 --report_every=100000 --temperature=0.0001
+# Run model from command line
 
 from __future__ import print_function
 import argparse
@@ -36,11 +35,10 @@ grammars = model.init_grammars(meme_probs,
 
 logfile = args.logfile
 if logfile is None:
-    logfile = "output/run%d" % time.time()
-print("Logging to", logfile)
+    print("# logfile not specified, logging only to stdout")
 
-log("# GitHub version BLAH", logfile)
-log("# %s" % str(args.__dict__), logfile)
+log("# GitHub version BLAH", args.logfile)
+log("# %s" % str(args.__dict__), args.logfile)
 
 model.run_simulation(grammars,
                      meme_probs = meme_probs,
@@ -52,4 +50,4 @@ model.run_simulation(grammars,
                      mutation_scale = args.mutation_scale,
                      temperature = args.temperature,
                      report_every = args.report_every,
-                     logfile=logfile)
+                     logfile=args.logfile)

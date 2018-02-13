@@ -51,3 +51,8 @@ TAGS
 *.out
 *.app
 
+
+*.pyc
+__pycache__/
+
+.ipynb_checkpoints/
