@@ -2,11 +2,10 @@
 Python3 recommended but not required.
 
 **Included files**
-* `run.py` provides a command line interface, try ``python3 run.py --help``  for options.
+* `run.py` provides a command line interface, try `python3 run.py --help`  for options
 * `model.py` includes the main code to run the language dynamics model. `run_simulation` is main function to run the simulation
 * `mutators.py` includes classes for different mutation operators
 * `utils.py` includes miscellaneous utility functions
-
 * `LanguageDemo.ipynb` is a Jupyter Notebook that demonstrates how to run simulations and do some simple plotting
 
 **Output of `run_simulation`**
