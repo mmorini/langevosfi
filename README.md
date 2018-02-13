@@ -7,6 +7,8 @@ Python3 recommended but not required.
 * `mutators.py` includes classes for different mutation operators
 * `utils.py` includes miscellaneous utility functions
 
+* `LanguageDemo.ipynb` is a Jupyter Notebook that demonstrates how to run simulations and do some simple plotting
+
 **Output of `run_simulation`**
 Includes several columns:
 * *Step* is iteration number of the simulation
