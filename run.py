@@ -9,6 +9,8 @@ import time
 import mutators
 import model
 from utils import log
+from config import git_strings
+git_strings.append("@(#)run.py: $Id$")
 
 mutatorclassnames = list(map(lambda x: x.__name__, mutators.VALID_MUTATOR_CLASSES))
 
@@ -39,7 +41,7 @@ if logfile is None:
     logfile = "output/run%d" % time.time()
 print("Logging to", logfile)
 
-log("# GitHub version BLAH", logfile)
+log("# GitHub versions:\n#\t" + "\n#\t".join(git_strings), logfile)
 log("# %s" % str(args.__dict__), logfile)
 
 model.run_simulation(grammars,
