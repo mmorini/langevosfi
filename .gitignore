@@ -52,7 +52,9 @@ TAGS
 *.app
 
 # Python stuff
+*.pyc
 __pycache__/
+.ipynb_checkpoints/
 
 # output folder
 output/run*
