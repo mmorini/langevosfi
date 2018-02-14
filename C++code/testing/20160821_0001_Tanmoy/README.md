@@ -12,31 +12,31 @@ Random number generator seeded with 123
 
 ##main what (*sccs what main*)
 
-  >  main.c++: $Id: 4a4f075c31e2919cfeb8397c643e1ad4415786ae $
+  >  main.c++: $Id$
 
-  >  main.h++: $Id: 1d9439e7ebccf824a71ae333abf29c308ebbe766 $
+  >  main.h++: $Id$
 
-  >  selfiterator.h++: $Id: afa1b371ef4b897bca83eeaa4325f0545bf706fe $
+  >  selfiterator.h++: $Id$
 
-  >  language.h++: $Id: 0d670c2ffc6ef143fc9014f605def80659ede712 $
+  >  language.h++: $Id$
 
-  >  counts.h++: $Id: d508d6f6e3b919105263f15888e050853c2d29fa $
+  >  counts.h++: $Id$
 
-  >  agent.h++: $Id: 54ace7ea8fd8fb8b3f3d6600ec42a376e90cf359 $
+  >  agent.h++: $Id$
 
-  >  lex.h++: $Id: 1f721bb364c5a607665e412a5d9b7b61ceb0e98d $
+  >  lex.h++: $Id$
 
-  >  meme.h++: $Id: 2784b0de8b589f76554adc1bbfd1fb3322f6c300 $
+  >  meme.h++: $Id$
 
-  >  enum.h++: $Id: 0e2d7da0ffba72dbc04251d09447baabdd9b47c9 $
+  >  enum.h++: $Id$
 
-  >  network.h++: $Id: eac51fb06e968170316f54b584aa2b2a1e168f11 $
+  >  network.h++: $Id$
 
-  >  probvector.h++: $Id: 2d35c213256996921aed45e810891f3615620bd3 $
+  >  probvector.h++: $Id$
 
-  >  myutil.h++: $Id: 2edf6d8246de5783d36f7f09a80bf41f9f9b83e1 $
+  >  myutil.h++: $Id$
 
-  >  enumvector.h++: $Id: db63042aff05dc2564392912b3cdcc66c251e032 $
+  >  enumvector.h++: $Id$
 
 ##Command:
 
