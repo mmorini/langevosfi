@@ -3,4 +3,5 @@ TAGS	binary
 *.[ch]++ text ident
 Makefile text ident
 *.py     text ident
+*.ipynb  ident
 README.md text ident
