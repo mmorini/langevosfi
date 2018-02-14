@@ -109,10 +109,12 @@ class program_options final {
 public:
   bool input_from_file, input_all_from_file, output_to_file;
   ModelType model;
+  bool Markov;
   std::istream &instream;
   std::ostream &outstream;
   program_options(const int argc, const char *const *const argv):
     input_from_file(false), input_all_from_file(false), output_to_file(false), model(A),
+    Markov(false),
     instream(instream_f), outstream(outstream_f)
   {
     for (int i=1; i<argc; i++)
@@ -141,6 +143,8 @@ public:
 	  std::istringstream(argv[i]) >> model;
 	else
 	  invalidusage();
+      else if (argv[i] == std::string("-M"))
+	  Markov = !Markov;
       else
 	invalidusage();
   }
@@ -155,6 +159,7 @@ public:
               << "\t-I <inputallfile>" << std::endl
               << "\t-o <outputlanguagefile>" << std::endl
               << "\t-m A|B" << std::endl
+              << "-M enforces strict Markovian evolution" << std::endl
               << "No option may be repeated. -i and -I cannot be used together" << std::endl;
   }
 }; 
@@ -384,6 +389,9 @@ int runModel(const program_options& po) {
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
       auto oldpop = population;
+      // slightly wasteful filling up counts and then oldcounts, but easiest to express.
+      if (po.Markov)
+           summarize(counts=communicate_model<model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al));
       auto oldcounts = counts;
       
       // Mutate each language
