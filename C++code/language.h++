@@ -262,6 +262,7 @@ public:
       for(auto l: indices((*this)[m])) {
         const Mprobvector& mpv = other.Cachelookup(l);
         inner += (*this)[m][l] * mpv[m]; // Subscripting only works on const Mprobvector; not sure if there is a nicer way to add constness
+        // FIXME: correctly, we should do a further sum over m' and multiply by the match function
       }
       retval += marginal[m] * inner;
     }
