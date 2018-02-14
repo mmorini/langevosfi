@@ -129,6 +129,7 @@ public:
   bool input_from_file, input_all_from_file, output_to_file,
     instream_is_hdf5, outstream_is_hdf5;
   ModelType model;
+  bool Markov;
   std::istream &instream;
   std::ostream &outstream;
   H5::H5File h5infile, h5outfile;
@@ -137,7 +138,8 @@ public:
     h5match(".*\\.h5"),
     input_from_file(false), input_all_from_file(false), output_to_file(false),
     instream_is_hdf5(false), outstream_is_hdf5(false),
-    model(A), instream(instream_f), outstream(outstream_f)
+    model(A), Markov(false),
+    instream(instream_f), outstream(outstream_f)
   {
     std::vector<H5std_string> cmdline;
     for(int i=0; i<argc; i++)
@@ -200,6 +202,8 @@ public:
     std::istringstream(argv[i]) >> model;
   else
     invalidusage();
+      else if (argv[i] == std::string("-M"))
+	  Markov = !Markov;
       else
 	invalidusage();
     if (instream_is_hdf5) {
@@ -232,6 +236,7 @@ public:
               << "\t-I <inputallfile>" << std::endl
               << "\t-o <outputlanguagefile>" << std::endl
               << "\t-m A|B|C|P" << std::endl
+              << "\t-M enforces strict Markovian evolution" << std::endl
               << "No option may be repeated. -i and -I cannot be used together" << std::endl
 	      << "Assumes files ending in .h5 are HDF5 files" << std::endl;
   }
@@ -505,6 +510,9 @@ int runModel(const program_options& po) {
       // Mark cache as moving to 'oldpop' in the next statement.
       for (auto &a: population) a.decache();
       auto oldpop = population;
+      // slightly wasteful filling up counts and then oldcounts, but easiest to express.
+      if (po.Markov)
+	summarize(counts=communicate_model<model==C?C:model==B?B:A>(agents,lexemes,memes,population,inner,b1,b2,b3,b4,al));
       auto oldcounts = counts;
 
       // Mutate each language
