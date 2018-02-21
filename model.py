@@ -3,6 +3,7 @@
 from __future__ import print_function
 import time
 import numpy as np
+import matplotlib.pyplot as plt
 from utils import rand_ints
 from utils import log
 from mutators import ProbitVectorGaussian
@@ -31,7 +32,6 @@ def init_grammars(meme_probs, num_agents, num_memes, num_lexes):
         p = normalize(meme_probs, p)
         grammars.append( p )
     return grammars
-
 
 # Functions for measuring comprehension (i.e., 1-probability of error) between 
 # two grammars. Each grammar is an [num_memes X num_lexes] numpy array
@@ -66,6 +66,37 @@ def get_comprehension_matrix(grammars):
         comprehension_matrix[:,i] += get_comprehension_multiple_speakers(grammars, grammars[i])
     return comprehension_matrix
 
+
+# Information theoretic statistics - calculated at the current timepoint and between
+# the current and previous timepoints
+#  TODO change so these stats can be calculated at arbitrary step delay
+def information_moment_ordern(ps, n):
+    # calculate nth moment of information for distribution ps.  Entropy is first moment of information
+    return np.sum((p*((-np.log2(p))**n)) for p in ps if not np.isclose(p, 0))
+
+def nth_moment_information_population(ps, n):
+    # Accept as input a mean (population) grammar. Calculate the nth moment of information of the 
+    # population probability distribution over lexes for each given meme
+    nth_moment_population = np.zeros(ps.shape[0])
+    for i in range(ps.shape[0]):
+        nth_moment_population[i] += information_moment_ordern(ps[i,:],n)
+    return nth_moment_population
+
+def relative_information_pq(ps, qs):
+    # calculate divergence between rows in ps and qs (conditional probabilities for lexes given meme)
+    Z = np.zeros(ps.shape[0])
+    for i in range(ps.shape[0]):
+        a = np.asarray(ps[i,:])
+        b = np.asarray(qs[i,:])
+        Z[i] += np.sum(np.where(a != 0, a * np.log(a / b), 0))
+    return Z
+
+def js_divergence(ps, qs):
+    # calculate symmetrized divergence. sqrt(JSD) is a metric
+    M = 0.5*(ps + qs)
+    return 0.5 * (relative_information_pq(ps, M) + relative_information_pq(qs, M))
+
+
 # Calculate statistics on the population of grammars
 def get_grammars_stats(grammars_tensor, old_grammars_tensor):
     # grammars_tensor is [num_memes, num_lexes, num_agents] np.array for current population
@@ -83,11 +114,27 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor):
           np.linalg.norm(grammars_tensor - old_grammars_tensor)
         stats['MeanGrammarDrift'] = \
           np.linalg.norm(mean_grammar-old_grammars_tensor.mean(axis=2))
+
+        # row normalised population grammars
+        mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
+        mean_old_grammar = old_grammars_tensor.mean(axis=2)
+        mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
+
+        # entropy of each meme for current timepoint p(l | M = mi) 
+        stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
+        stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
+        stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
+
+        stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
+        stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar) 
+
     else:
         stats['AgentGrammarDrift'] = np.nan
         stats['MeanGrammarDrift'] = np.nan
 
+
     return stats
+
 
 
 # ****************** Main simulation function *********************************
@@ -196,6 +243,3 @@ def run_simulation(
         if accept_move:
             acceptedsteps += 1
             grammars[speaker][current_meme,:] = new_probs
-
-
-    return return_data
