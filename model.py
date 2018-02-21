@@ -4,8 +4,8 @@ from __future__ import print_function
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import rand_ints
-from utils import log
+from utils import rand_ints, log
+# from utils import log
 from mutators import ProbitVectorGaussian
 from config import git_strings
 git_strings.append("@(#)model.py: $Id$")
