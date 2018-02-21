@@ -243,3 +243,6 @@ def run_simulation(
         if accept_move:
             acceptedsteps += 1
             grammars[speaker][current_meme,:] = new_probs
+
+    return return_data
+    
