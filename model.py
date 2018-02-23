@@ -4,10 +4,13 @@ from __future__ import print_function
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
+from collections import OrderedDict
+
 from utils import rand_ints, log
-# from utils import log
 from mutators import ProbitVectorGaussian
 from config import git_strings
+from config import get_git_id
 git_strings.append("@(#)model.py: $Id$")
 
 # ********** Helper functions ***********
@@ -98,7 +101,7 @@ def js_divergence(ps, qs):
 
 
 # Calculate statistics on the population of grammars
-def get_grammars_stats(grammars_tensor, old_grammars_tensor):
+def get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level=3):
     # grammars_tensor is [num_memes, num_lexes, num_agents] np.array for current population
     # old_grammars_tensor is same, but for populating during last reporting interval
 
@@ -110,23 +113,25 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor):
     stats['GrammarVar'] = np.linalg.norm(grammars_tensor-mean_grammar[:,:,None])
 
     if old_grammars_tensor is not None:
-        stats['AgentGrammarDrift'] = \
-          np.linalg.norm(grammars_tensor - old_grammars_tensor)
-        stats['MeanGrammarDrift'] = \
-          np.linalg.norm(mean_grammar-old_grammars_tensor.mean(axis=2))
+        if report_level >= 2:
+            stats['AgentGrammarDrift'] = \
+              np.linalg.norm(grammars_tensor - old_grammars_tensor)
+            stats['MeanGrammarDrift'] = \
+              np.linalg.norm(mean_grammar-old_grammars_tensor.mean(axis=2))
 
-        # row normalised population grammars
-        mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
-        mean_old_grammar = old_grammars_tensor.mean(axis=2)
-        mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
+        if report_level >= 3:
+            # row normalised population grammars
+            mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
+            mean_old_grammar = old_grammars_tensor.mean(axis=2)
+            mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
 
-        # entropy of each meme for current timepoint p(l | M = mi) 
-        stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
-        stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
-        stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
+            # entropy of each meme for current timepoint p(l | M = mi) 
+            stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
+            stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
+            stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
 
-        stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
-        stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar) 
+            stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
+            stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar) 
 
     else:
         stats['AgentGrammarDrift'] = np.nan
@@ -138,24 +143,71 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor):
 
 
 # ****************** Main simulation function *********************************
-def run_simulation(
-    grammars,       # List of num_agents numpy arrays, 
-                    #   each having shape [num_memes x num_steps]
-    meme_probs,     # Numpy array with (fixed) meme probabilities
-    num_agents,     # Number of agents 
-    num_memes,      # Number of memes
-    num_lexes,      # Number of lexes
-    num_steps,      # Num_steps
-    mutator_class=ProbitVectorGaussian, # Mutation operator class
-    mutation_scale=None,  # Scale of mutations to be used by mutation operator
-    report_every=10000,   # How often to print stats
-    logfile=None,         # Filename to save stats. None means stdout only
-    temperature=0         # Temperature (used to decide acceptance)
-    ):   
+def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_steps,
+                   mutator_class=ProbitVectorGaussian, mutation_scale=None, temperature=0,
+                   report_every=10000, report_level=3, logfile=None):
+    """
+    Runs language simulation.
+
+    Parameters
+    ----------
+    grammars : list of numpy arrays, each having shape [num_memes x num_steps]
+        The initial grammar for every agent. Should have num_agent list entries
+    meme_probs : [num_memes,] numpy array
+        Fixed meme probabilities
+    num_agents : int
+        Number of agents 
+    num_memes : int
+        Number of memes
+    num_lexes : int
+        Number of lexes
+    num_steps : int
+        Num_steps
+    mutator_class : class
+        Mutation operator class (default is ProbitVectorGaussian)
+    mutation_scale : float
+        Scale of mutations to be used by mutation operator. If None, then mutation
+        operator class default is used
+    temperature : float
+        Temperature (used to decide acceptance)
+    report_every : int
+        Compute and print stats every report_every iterations of the simulation
+    report_level : int 
+        Detail level of stats to compute (lower is faster)
+    logfile : str
+        Filename where to log stats. None means stdout only
+
+    Returns
+    -------
+    stats_data : list 
+        list of dicts, each dict containing stats for a given iteration
+    grammars : list of numpy arrays, each having shape [num_memes x num_steps]
+        The final grammar for every agent. Should have num_agent list entries
+    """ 
+
+    # Log GitHub versions and arguments
+    if logfile is not None:
+        print("# Logging to %s" % logfile)
+    args = OrderedDict(
+        num_agents = num_agents,
+        num_memes  = num_memes,
+        num_lexes  = num_lexes,
+        num_steps  = num_steps,
+        mutator_class  = mutator_class.__name__,
+        mutation_scale = mutation_scale,
+        temperature = temperature,
+        report_every = report_every,
+        report_level = report_level,
+    )
+    argstring = ", ".join(['%s=%s'%(k, str(v)) for k,v in args.items()])
+    #log("# GitHub versions:\n#\t" + "\n#\t".join(git_strings), logfile)
+    log("# GitHub version: %s" % get_git_id(), logfile)
+    log("# @(#)Run at: " + datetime.utcnow().isoformat() + " UTC", logfile)
+    log("# %s" % argstring, logfile)
     
     start_time = time.time()
 
-    return_data = []  # Save stats in here and return from function
+    stats_data = []  # Save stats in here and return from function
 
     # Cache random numbers, so we don't have to call this every time (faster)
     speakers    = rand_ints(num_agents, num_steps)
@@ -197,10 +249,10 @@ def run_simulation(
 
             grammars_tensor = np.stack(grammars, axis=2)
             # Calculate various stats for current grammar population and add to stats dict
-            stats.update(get_grammars_stats(grammars_tensor, old_grammars_tensor))
+            stats.update(get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level))
 
             log(logstring % stats, logfile)
-            return_data.append(stats)
+            stats_data.append(stats)
 
             acceptedsteps = 0
             takensteps    = 0
@@ -244,5 +296,5 @@ def run_simulation(
             acceptedsteps += 1
             grammars[speaker][current_meme,:] = new_probs
 
-    return return_data
+    return stats_data, grammars
     
