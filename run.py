@@ -24,6 +24,7 @@ parser.add_argument("--mutator_class", type=str, choices=mutatorclassnames, help
 parser.add_argument("--mutation_scale" , type=float, help="Mutation scale", default=0.1)
 parser.add_argument("--temperature", type=float, help="Temperature for acceptance step", default=0)
 parser.add_argument("--report_every", type=int, help="How often to log stats", default=100000)
+parser.add_argument("--report_level", type=int, help="Level of detail to include in reports", default=3)
 parser.add_argument("--logfile", type=str, help="Output file to log to")
 
 args = parser.parse_args()
@@ -50,4 +51,5 @@ model.run_simulation(grammars,
                      mutation_scale = args.mutation_scale,
                      temperature = args.temperature,
                      report_every = args.report_every,
+                     report_level = args.report_level,
                      logfile=args.logfile)

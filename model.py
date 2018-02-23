@@ -99,43 +99,53 @@ def js_divergence(ps, qs):
     M = 0.5*(ps + qs)
     return 0.5 * (relative_information_pq(ps, M) + relative_information_pq(qs, M))
 
+def format_stat_val(k, v):
+    if isinstance(v, int):
+        r = '%d'%v
+    elif isinstance(v, float):
+        r = '%0.5f'%v
+    else:
+        r = str(v)
+    if k == 'Time':
+        r += 's'
+    return r
 
 # Calculate statistics on the population of grammars
 def get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level=3):
     # grammars_tensor is [num_memes, num_lexes, num_agents] np.array for current population
     # old_grammars_tensor is same, but for populating during last reporting interval
 
-    stats = {}
+    stats = OrderedDict()
     grammars =[grammars_tensor[:,:,i] for i in range(grammars_tensor.shape[2])]
     stats['Comprehension'] = get_comprehension_matrix(grammars).mean()
 
-    mean_grammar = grammars_tensor.mean(axis=2)
-    stats['GrammarVar'] = np.linalg.norm(grammars_tensor-mean_grammar[:,:,None])
+    if report_level >= 2:
+        mean_grammar = grammars_tensor.mean(axis=2)
+        stats['GrammarVar'] = np.linalg.norm(grammars_tensor-mean_grammar[:,:,None])
 
-    if old_grammars_tensor is not None:
-        if report_level >= 2:
+        if old_grammars_tensor is not None:
+            mean_old_grammar = old_grammars_tensor.mean(axis=2)
             stats['AgentGrammarDrift'] = \
               np.linalg.norm(grammars_tensor - old_grammars_tensor)
             stats['MeanGrammarDrift'] = \
-              np.linalg.norm(mean_grammar-old_grammars_tensor.mean(axis=2))
+              np.linalg.norm(mean_grammar - mean_old_grammar)
 
-        if report_level >= 3:
-            # row normalised population grammars
-            mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
-            mean_old_grammar = old_grammars_tensor.mean(axis=2)
-            mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
+            if report_level >= 3:
+                # row normalised population grammars
+                mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
+                mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
 
-            # entropy of each meme for current timepoint p(l | M = mi) 
-            stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
-            stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
-            stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
+                # entropy of each meme for current timepoint p(l | M = mi) 
+                stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
+                stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
+                stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
 
-            stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
-            stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar) 
+                stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
+                stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar) 
 
-    else:
-        stats['AgentGrammarDrift'] = np.nan
-        stats['MeanGrammarDrift'] = np.nan
+        else:
+            stats['AgentGrammarDrift'] = np.nan
+            stats['MeanGrammarDrift'] = np.nan
 
 
     return stats
@@ -145,7 +155,7 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level=3):
 # ****************** Main simulation function *********************************
 def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_steps,
                    mutator_class=ProbitVectorGaussian, mutation_scale=None, temperature=0,
-                   report_every=10000, report_level=3, logfile=None):
+                   report_every=10000, report_level=2, logfile=None):
     """
     Runs language simulation.
 
@@ -199,7 +209,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         report_every = report_every,
         report_level = report_level,
     )
-    argstring = ", ".join(['%s=%s'%(k, str(v)) for k,v in args.items()])
+    argstring = ", ".join(['%s=%s'%(k, str(v)) for k, v in args.items()])
     #log("# GitHub versions:\n#\t" + "\n#\t".join(git_strings), logfile)
     log("# GitHub version: %s" % get_git_id(), logfile)
     log("# @(#)Run at: " + datetime.utcnow().isoformat() + " UTC", logfile)
@@ -219,10 +229,10 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     acceptedsteps = 0   # num. steps accepted in the last report_every interval
     old_grammars_tensor = None  # Saved grammars from last reporting interval
 
-    log("Step Comprehension AcceptanceRate GrammarVar AgentGrammarDrift MeanGrammarDrift Time", logfile)
-    logstring = "%(Step)d %(Comprehension)0.8f %(AcceptanceRate)0.4f " + \
-                "%(GrammarVar)0.4f %(AgentGrammarDrift)0.4f " + \
-                "%(MeanGrammarDrift)0.4f %(Time)ds"
+    report_columns = ['Step', 'AcceptanceRate', 'Comprehension', 'GrammarVar',
+                      'AgentGrammarDrift', 'MeanGrammarDrift', 'Time']
+    log(" ".join(report_columns), logfile)
+
     # Step is iteration number of the simulation
     # Comprehension is average comprehension
     # AcceptanceRate is proportion of steps accepted in last reporting interval
@@ -241,18 +251,17 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             # function should already be relatively fast
             sanity_check_grammars(meme_probs, grammars)  
 
-            stats = {}  # Dictionary storing current stats
-            stats['Step'] = step
-            stats['Time'] = time.time() - start_time
-            stats['AcceptanceRate'] = acceptedsteps/float(report_every)
-
             grammars_tensor = np.stack(grammars, axis=2)
             # Calculate various stats for current grammar population and add to stats dict
-            stats.update(get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level))
+            stats = OrderedDict()
+            stats['Step'] = step
+            stats['AcceptanceRate'] = acceptedsteps/float(report_every)
+            stats.update( get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level) )
+            stats['Time'] = int(time.time() - start_time)
 
-            log(logstring % stats, logfile)
+            log(" ".join(format_stat_val(k, stats.get(k,'-')) for k in report_columns), logfile)
+
             stats_data.append(stats)
-
             acceptedsteps = 0
             old_grammars_tensor = grammars_tensor
 
