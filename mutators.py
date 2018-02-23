@@ -14,7 +14,7 @@ class Mutator(object):
     def mutate(self, probs):
         # probs is a [_ X num_lexes] numpy array of probabilities to perturb
         saved_sums = probs.sum(axis=1)
-        newprobs = self._mutate(probs)
+        newprobs   = self._mutate(probs)
         new_sums   = newprobs.sum(axis=1)
         return newprobs * (saved_sums / new_sums)
         
