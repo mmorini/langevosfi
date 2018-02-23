@@ -1,4 +1,4 @@
-# Python Implementation of Model.  
+# Python Implementation of Model.  [![Build Status](https://travis-ci.org/mmorini/langevosfi.svg?branch=python)](https://travis-ci.org/mmorini/langevosfi)
 Python3 recommended but not required.
 
 **Included files**
