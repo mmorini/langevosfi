@@ -4,12 +4,14 @@ import subprocess
 git_strings = [];
 git_strings.append("@(#)config.py: $Id$")
 
+# Returns short git commit id
+# To see the state of the code for that commit, go to https://github.com/mmorini/langevosfi/commit/{id}
 def get_git_id():
     def is_git_directory(path = '.'):
         return subprocess.call(['git', '-C', path, 'status'], stderr=subprocess.STDOUT, stdout = open(os.devnull, 'w')) == 0    
 
     def get_repo_sha(repo = '.'):
-        sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo).decode('ascii').strip()
+        sha = subprocess.check_output(['git', 'rev-parse', '--short=4', 'HEAD'], cwd=repo).decode('ascii').strip()
         return sha
 
     if not is_git_directory('.'):
