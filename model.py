@@ -211,13 +211,12 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
 
     # Cache random numbers, so we don't have to call this every time (faster)
     speakers    = rand_ints(num_agents, num_steps)
-    listeners   = rand_ints(num_agents, num_steps)
+    listeners   = (speakers + rand_ints(num_agents-1, num_steps) + 1) % num_agents
+                  # Use a trick to avoid having the listener ever be equal to the speaker
     mutatememes = np.random.choice(num_memes, size=num_steps, p=meme_probs)
     acceptanceprobs = np.random.random(num_steps)
 
     acceptedsteps = 0   # num. steps accepted in the last report_every interval
-    takensteps    = 0   # num. steps taken in the last report_every interval
-                        #  (doesn't count skipped steps w/ speaker == listener)
     old_grammars_tensor = None  # Saved grammars from last reporting interval
 
     log("Step Comprehension AcceptanceRate GrammarVar AgentGrammarDrift MeanGrammarDrift Time", logfile)
@@ -245,7 +244,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             stats = {}  # Dictionary storing current stats
             stats['Step'] = step
             stats['Time'] = time.time() - start_time
-            stats['AcceptanceRate'] = acceptedsteps/float(takensteps)
+            stats['AcceptanceRate'] = acceptedsteps/float(report_every)
 
             grammars_tensor = np.stack(grammars, axis=2)
             # Calculate various stats for current grammar population and add to stats dict
@@ -255,14 +254,13 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             stats_data.append(stats)
 
             acceptedsteps = 0
-            takensteps    = 0
             old_grammars_tensor = grammars_tensor
 
 
         speaker  = speakers[step]
         listener = listeners[step]
-        if speaker == listener:   # Skip steps where speaker == listener
-            continue
+
+        assert(speaker != listener)  # TODO possibly remove
          
         current_meme = mutatememes[step]  # Meme to mutate/communicate
 
@@ -291,7 +289,6 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         else:
             accept_move = False
 
-        takensteps += 1
         if accept_move:
             acceptedsteps += 1
             grammars[speaker][current_meme,:] = new_probs
