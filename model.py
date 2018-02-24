@@ -3,7 +3,6 @@
 from __future__ import print_function
 import time
 import numpy as np
-import matplotlib.pyplot as plt
 from datetime import datetime
 from collections import OrderedDict
 
