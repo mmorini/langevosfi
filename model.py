@@ -284,6 +284,9 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         # Calculate conditional probabilities of current memes, given all lexes
         listener_meme_given_lexe = (listener_grammar[current_meme,:]/(listener_grammar.sum(axis=0) + 1e-16))
         
+        # We compute change in overall comprehension. However, we use a trick here to speed things
+        # up: because we only change the probabilities for a single meme, the change in overall
+        # comprehension should be equal to the change in comprehension for that one perturbed meme.
         # TODO: double check that this gives correct change in comprehension
         change_in_comprehension = (new_probs - current_meme_lexe_probs).dot(listener_meme_given_lexe)
         
