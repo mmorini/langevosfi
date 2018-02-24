@@ -22,7 +22,7 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose pandas
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose
 
 script:
   - nosetests -v
