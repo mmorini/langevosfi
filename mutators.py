@@ -1,8 +1,6 @@
 from __future__ import print_function
 import numpy as np
 from utils import probitperturb, rand_ints
-from config import git_strings
-git_strings.append("@(#)mutators.py: $Id$")
 
 class Mutator(object):
     # Base class for mutation operators

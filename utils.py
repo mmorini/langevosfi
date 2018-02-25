@@ -1,8 +1,6 @@
 # Miscellaneous utility functions
 from __future__ import print_function
 import numpy as np
-from config import git_strings
-git_strings.append("@(#)utils.py: $Id$")
 
 # Draw N random integers from 0 to highval-1 (inclusive)
 def rand_ints(highval, N): 

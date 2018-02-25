@@ -8,9 +8,7 @@ from collections import OrderedDict
 
 from utils import rand_ints, log
 from mutators import ProbitVectorGaussian
-from config import git_strings
 from config import get_git_id
-git_strings.append("@(#)model.py: $Id$")
 
 # ********** Helper functions ***********
 def sanity_check_grammars(meme_probs, grammars):
@@ -209,9 +207,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         report_level = report_level,
     )
     argstring = ", ".join(['%s=%s'%(k, str(v)) for k, v in args.items()])
-    #log("# GitHub versions:\n#\t" + "\n#\t".join(git_strings), logfile)
-    log("# GitHub version: %s" % get_git_id(), logfile)
-    log("# @(#)Run at: " + datetime.utcnow().isoformat() + " UTC", logfile)
+    log("# GitHub version: %s, run at %s UTC" % (get_git_id(), datetime.utcnow().isoformat()), logfile)
     log("# %s" % argstring, logfile)
     
     start_time = time.time()
@@ -220,8 +216,9 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
 
     # Cache random numbers, so we don't have to call this every time (faster)
     speakers    = rand_ints(num_agents, num_steps)
-    listeners   = (speakers + rand_ints(num_agents-1, num_steps) + 1) % num_agents
-                  # Use a trick to avoid having the listener ever be equal to the speaker
+    listeners   = rand_ints(num_agents-1, num_steps)
+    # Use a trick to avoid having the listener ever be equal to the speaker
+    listeners  += (listeners>=speakers).astype('int')
     mutatememes = np.random.choice(num_memes, size=num_steps, p=meme_probs)
     acceptanceprobs = np.random.random(num_steps)
 

@@ -1,9 +1,6 @@
 import os
 import subprocess
 
-git_strings = [];
-git_strings.append("@(#)config.py: $Id$")
-
 # Returns short git commit id
 # To see the state of the code for that commit, go to https://github.com/mmorini/langevosfi/commit/{id}
 def get_git_id():

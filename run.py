@@ -8,8 +8,6 @@ import time
 import mutators
 import model
 from utils import log
-from config import git_strings
-git_strings.append("@(#)run.py: $Id$")
 
 mutatorclassnames = list(map(lambda x: x.__name__, mutators.VALID_MUTATOR_CLASSES))
 
