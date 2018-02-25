@@ -1,5 +1,5 @@
 # Python Implementation of Model.  [![Build Status](https://travis-ci.org/mmorini/langevosfi.svg?branch=python)](https://travis-ci.org/mmorini/langevosfi)
-Python3 recommended but not required.
+Python3 recommended but not required.  To run tests, install `nose` and run `nosetests -v` from the command line.
 
 **Included files**
 * `run.py` provides a command line interface, try `python3 run.py --help`  for options
