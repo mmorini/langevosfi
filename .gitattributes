@@ -8,4 +8,4 @@ README.md text ident
 
 *.ipynb filter=nbstripout
 
-*.ipynb diff=ipynb
+#*.ipynb diff=ipynb
