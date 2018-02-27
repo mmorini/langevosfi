@@ -12,8 +12,8 @@ Python3 recommended but not required.  To run tests, install `nose` and run `nos
 **Output of `run_simulation`**
 Includes several columns:
 * *Step* is iteration number of the simulation
-* *Comprehension* is average comprehension
 * *AcceptanceRate* is proportion of steps accepted in last reporting interval
+* *Comprehension* is average comprehension
 * *GrammarVar* is variance of grammars around mean grammar
 * *AgentGrammarDrift* is L2 norm of ΔGrammar (over report interval),for all agents
 * *MeanGrammarDrift* is L2 norm of Δ\[Mean Grammar\] (over report interval)
