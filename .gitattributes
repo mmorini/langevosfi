@@ -5,7 +5,4 @@ Makefile text ident
 *.py     text ident
 *.ipynb  ident
 README.md text ident
-
 *.ipynb filter=nbstripout
-
-#*.ipynb diff=ipynb

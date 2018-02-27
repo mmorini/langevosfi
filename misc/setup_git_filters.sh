@@ -1,4 +1,3 @@
-#git config filter.stripoutput.clean '$(git rev-parse --show-toplevel)/misc/nbstripout.py'
-git config filter.stripoutput.clean nbstripout
-git config filter.stripoutput.smudge cat
-git config filter.stripoutput.required true
+git config filter.nbstripout.clean '"python" "$(git rev-parse --show-toplevel)/misc/nbstripout.py"'
+git config filter.nbstripout.smudge cat
+git config filter.nbstripout.required true
