@@ -4,6 +4,8 @@ TAGS	binary
 Makefile text ident
 *.py     text ident
 *.ipynb  ident
-*.ipynb diff=ipynb
-*.ipynb filter=stripoutput
 README.md text ident
+
+*.ipynb filter=nbstripout
+
+*.ipynb diff=ipynb
