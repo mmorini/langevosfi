@@ -58,3 +58,7 @@ __pycache__/
 
 # output folder
 output/run*
+
+#archived benchmarks
+*.tar
+*.tar.bz2
