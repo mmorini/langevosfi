@@ -12,3 +12,5 @@
 
 
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mmorini/langevosfi/python?filepath=benchmarks_py%2Fbenchplots_v5.ipynb) `benchplots_v5.ipynb` Set v005, 64<sup>3</sup> world, [0.00-1.00 by .02] - time series average multiple mutation scales; handle with care.
+
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mmorini/langevosfi/python?filepath=benchmarks_py%2Fbenchplots_v5b.ipynb) `benchplots_v5b.ipynb` Set v005, 64<sup>3</sup> world, [0.00-1.00 by .02] - 2D/3D visualizations.
