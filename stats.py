@@ -5,22 +5,22 @@ import numpy as np
 from collections import OrderedDict
 
 
-# Functions for measuring comprehension (i.e., 1-probability of error) between 
+# Functions for measuring comprehension (i.e., 1-probability of error) between
 # two grammars. Each grammar is an [num_memes X num_lexes] numpy array
 def get_comprehension(speaker_grammar, listener_grammar):
     # Takes in two grammar arrays, returns a number indicating comprehension
     listener_meme_given_lexe = listener_grammar/(listener_grammar.sum(axis=0) + 1e-16)
-    
-    # Comprehension is given by 
+
+    # Comprehension is given by
     #    Trace( speaker_grammar.dot(listener_meme_given_lexe^T) )
-    # In fact, this is equal to 
+    # In fact, this is equal to
     #    sum( speaker_grammar * listener_meme_given_lexe )
     # where * is element-wise multiplication.
     # We use this latter expression, its faster
     return (speaker_grammar*listener_meme_given_lexe).sum()
 
 def get_comprehension_multiple_speakers(speaker_grammars, listener_grammar):
-    # Same as calculate_comprehension, but for a list of speaker grammars 
+    # Same as calculate_comprehension, but for a list of speaker grammars
     #  (faster that calling get_comprehension many times, since
     #   listener_meme_given_lexe is only computed once)
     listener_meme_given_lexe = listener_grammar/(listener_grammar.sum(axis=0) + 1e-16)
@@ -47,7 +47,7 @@ def information_moment_ordern(ps, n):
     return np.sum((p*((-np.log2(p))**n)) for p in ps if not np.isclose(p, 0))
 
 def nth_moment_information_population(ps, n):
-    # Accept as input a mean (population) grammar. Calculate the nth moment of information of the 
+    # Accept as input a mean (population) grammar. Calculate the nth moment of information of the
     # population probability distribution over lexes for each given meme
     nth_moment_population = np.zeros(ps.shape[0])
     for i in range(ps.shape[0]):
@@ -94,13 +94,13 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level=3):
                 mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
                 mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
 
-                # entropy of each meme for current timepoint p(l | M = mi) 
+                # entropy of each meme for current timepoint p(l | M = mi)
                 stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
                 stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
                 stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
 
                 stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
-                stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar) 
+                stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar)
 
         else:
             stats['AgentGrammarDrift'] = np.nan

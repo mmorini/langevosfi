@@ -19,7 +19,7 @@ def sanity_check_grammars(meme_probs, grammars):
         assert(np.isclose( g.sum(), 1))
         assert(np.allclose( g.sum(axis=1), meme_probs ))
 
-# Normalize non-negative matrix to be a joint probability matrix with 
+# Normalize non-negative matrix to be a joint probability matrix with
 # fixed marginals meme_probs
 def normalize(meme_probs, p):
     r = p * (meme_probs/p.sum(axis=1))[:,None]
@@ -77,7 +77,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         list of dicts, each dict containing stats for a given iteration
     grammars : list of numpy arrays, each having shape [num_memes x num_steps]
         The final grammar for every agent. Should have num_agent list entries
-    """ 
+    """
 
     # Log GitHub versions and arguments
     if logfile is not None:
@@ -96,7 +96,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     argstring = ", ".join(['%s=%s'%(k, str(v)) for k, v in args.items()])
     log("# GitHub version: %s, run at %s UTC" % (get_git_id(), datetime.utcnow().isoformat()), logfile)
     log("# %s" % argstring, logfile)
-    
+
     start_time = time.time()
 
     stats_data = []  # Save stats in here and return from function
@@ -130,9 +130,9 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     for step in range(num_steps):
         if step % report_every == (report_every-1):  # Print logs
 
-            # TODO: Possibly remove to increase performance. However, this 
+            # TODO: Possibly remove to increase performance. However, this
             # function should already be relatively fast
-            sanity_check_grammars(meme_probs, grammars)  
+            sanity_check_grammars(meme_probs, grammars)
 
             grammars_tensor = np.stack(grammars, axis=2)
             # Calculate various stats for current grammar population and add to stats dict
@@ -153,7 +153,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         listener = listeners[step]
 
         assert(speaker != listener)  # TODO possibly remove
-         
+
         current_meme = mutatememes[step]  # Meme to mutate/communicate
 
         # Note that mutation_op.mutate requires a 2d numpy array, having
@@ -166,15 +166,15 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
 
         # Calculate conditional probabilities of current memes, given all lexes
         listener_meme_given_lexe = (listener_grammar[current_meme,:]/(listener_grammar.sum(axis=0) + 1e-16))
-        
+
         # We compute change in overall comprehension. However, we use a trick here to speed things
         # up: because we only change the probabilities for a single meme, the change in overall
         # comprehension should be equal to the change in comprehension for that one perturbed meme.
         # TODO: double check that this gives correct change in comprehension
         change_in_comprehension = (new_probs - current_meme_lexe_probs).dot(listener_meme_given_lexe)
-        
+
         # TODO: here is where we can insert model A, by doing something like
-        # np.sum( (new_probs - current_meme_lexe_probs) * 
+        # np.sum( (new_probs - current_meme_lexe_probs) *
         #           (random_interaction_vector) * listener_meme_given_lexe)
 
         if change_in_comprehension >= 0:
@@ -189,4 +189,3 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             grammars[speaker][current_meme,:] = new_probs
 
     return stats_data, grammars
-    

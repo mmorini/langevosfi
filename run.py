@@ -16,7 +16,7 @@ parser.add_argument("--num_agents", type=int, help="Number of agents", default=1
 parser.add_argument("--num_memes" , type=int, help="Number of memes", default=10)
 parser.add_argument("--num_lexes" , type=int, help="Number of lexes", default=10)
 parser.add_argument("--num_steps" , type=int, help="Number of steps", default=1000000)
-parser.add_argument("--init_meme_prob", type=str, choices=['UNIFORM','RANDOM'], 
+parser.add_argument("--init_meme_prob", type=str, choices=['UNIFORM','RANDOM'],
                     help="How to initialize meme probabilities", default='UNIFORM')
 parser.add_argument("--mutator_class", type=str, choices=mutatorclassnames, help="Mutation operator", default=mutatorclassnames[0])
 parser.add_argument("--mutation_scale" , type=float, help="Mutation scale", default=0.1)
@@ -34,9 +34,9 @@ elif args.init_meme_prob == 'RANDOM':
   meme_probs = np.random.random(args.num_memes)
   meme_probs /= meme_probs.sum()
 
-grammars = model.init_grammars(meme_probs, 
-                               num_agents = args.num_agents, 
-                               num_memes  = args.num_memes, 
+grammars = model.init_grammars(meme_probs,
+                               num_agents = args.num_agents,
+                               num_memes  = args.num_memes,
                                num_lexes  = args.num_lexes)
 
 model.run_simulation(grammars,
