@@ -3,7 +3,9 @@ import numpy as np
 import scipy.special as spys
 import scipy.stats as scps
 from utils import probitperturb, rand_ints
-from config import git_strings
+#from config import git_strings
+#git_strings.append("@(#)mutators.py: $Id$")
+
 
 class Mutator(object):
     # Base class for mutation operators
