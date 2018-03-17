@@ -60,7 +60,7 @@ def relative_information_pq(ps, qs):
     for i in range(ps.shape[0]):
         a = np.asarray(ps[i,:])
         b = np.asarray(qs[i,:])
-        Z[i] += np.sum(np.where(a != 0, a * np.log(a / b), 0))
+        Z[i] += np.sum(np.where(a != 0, a * np.log(a / (b+1e-16)), 0))
     return Z
 
 def js_divergence(ps, qs):
