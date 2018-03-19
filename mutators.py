@@ -89,13 +89,12 @@ def clip_interval(x):
 class SingleBeta(Mutator):
     # Draw new probability from beta distribution. Set variance to g/1e5 and solve for alpha and beta.
     def _mutate(self, probs):
-        g = self.mutation_scale/1e5
         lexes = rand_ints(probs.shape[1], probs.shape[0])
         pd = probs[:,lexes]
-        alpha = np.abs((1/g)*(pd**2 - pd**3) - pd) + 1e-16
-        beta1 = np.abs((1/g)*(pd**3- 2*(pd**2) + pd) + pd) + 1e-16
+        a = 1/self.mutation_scale
+        b = a/pd - a
         probs = probs.copy()
-        probs[:,lexes] = np.random.beta(alpha, beta1, None)
+        probs[:,lexes] = np.random.beta(a, b, None)
         return probs
 
 class VectorDirichlet(Mutator):
