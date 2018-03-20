@@ -99,8 +99,9 @@ class SingleBeta(Mutator):
 
 class VectorDirichlet(Mutator):
     # Draw joint p from a dirichlet distribution with conc. vector alpha defined via probs
+    # two params: base measures - underlying probs, and scale s.  As s->inf, variance tends to zero.   
     def _mutate(self, probs):
-        return np.random.dirichlet(probs[0,:]*100000 + 1e-16, 1)
+        return np.random.dirichlet(probs[0,:]*(1000000/self.mutation_scale) + 1e-16, 1)
 
 
 # CLASS Ib           % mutators where f is not just a sum, clipped
