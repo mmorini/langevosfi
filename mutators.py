@@ -3,8 +3,6 @@ import numpy as np
 import scipy.special as spys
 import scipy.stats as scps
 from utils import probitperturb, rand_ints
-#from config import git_strings
-#git_strings.append("@(#)mutators.py: $Id$")
 
 
 class Mutator(object):
@@ -26,6 +24,7 @@ class Mutator(object):
         # Called by mutate. This method does mutation without normalization,
         #   while normalization is handled by the mutate method
         raise NotImplementedError
+
 
 class ProbitVectorGaussian(Mutator):
     # probit perturbation with N(var) to cond. prob p(lexe|meme)
@@ -185,10 +184,24 @@ class ArcsVectorClip(Mutator):
         return clip(0.5 * abs(np.sin(np.arcsin(2*probs-1) + self.mutation_scale) + 1))
 
 
+class ProbabilityMover(Mutator):
+    # Select two lexes for a given meme m, i and j, and move U(0, mutation_scale)*p(i,m) 
+    # probability from p(i,m) to p(j,m) 
+    def mutate(self, probs):
+        from_lexes = rand_ints(probs.shape[1], probs.shape[0])
+        to_lexes   = rand_ints(probs.shape[1]-1, probs.shape[0])
+        to_lexes  += (to_lexes>=from_lexes).astype('int')
+        probs = probs.copy()
+        mp = probs[:,from_lexes] * self.mutation_scale
+        mp *= np.random.random(mp.shape)
+        probs[:,from_lexes] -= mp
+        probs[:,to_lexes]   += mp
+        return probs
+
 
 VALID_MUTATOR_CLASSES = [ProbitVectorGaussian, ProbitVectorUniform, AdditiveVectorUniform,
                          ProbitSingleGaussian, ProbitSingleUniform, AdditiveSingleUniform,
                          NoMutation, SingleBeta, VectorDirichlet, SingleGamma, VectorLogMultivariateGamma, AdditiveSingleClipExppGaussian,
                          AdditiveVectorClipExppGaussian, AdditiveSingleAbsExppGaussian,
                          AdditiveVectorAbsExppGaussian, AdditiveSingleExppUniform, AdditiveVectorExppUniform,
-                         ArcsSingleClip, ArcsVectorClip]
+                         ArcsSingleClip, ArcsVectorClip, ProbabilityMover]
