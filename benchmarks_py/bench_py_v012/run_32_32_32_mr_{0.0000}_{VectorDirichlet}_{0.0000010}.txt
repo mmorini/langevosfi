@@ -1,3 +1,0 @@
-# GitHub version: commit 53e9, run at 2018-04-04T16:07:21.989902 UTC
-# num_memes=32, num_lexes=32, mutator_class=VectorDirichlet, report_every=100000, mutation_scale=0.0, report_level=3, num_steps=10000000, temperature=1e-06, num_agents=32
-Step AcceptanceRate Comprehension GrammarVar AgentGrammarDrift MeanGrammarDrift Time
