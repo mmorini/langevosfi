@@ -1,3 +1,3 @@
 #Synoptic dataset
 
-Final *comprehension* values after 10M iterations.
+Final *comprehension* and *grammardrift* values after 10M iterations.
