@@ -10,6 +10,8 @@ class Mutator(object):
     def __init__(self, mutation_scale):
         if mutation_scale is None:
             raise Exception('Must specify mutation_scale')
+        if mutation_scale < 0:
+            raise Exception('mutation_scale should be >= 0')
         self.mutation_scale = mutation_scale
     
     def mutate(self, probs):
@@ -187,6 +189,11 @@ class ArcsVectorClip(Mutator):
 class ProbabilityMover(Mutator):
     # Select two lexes for a given meme m, i and j, and move U(0, mutation_scale)*p(i,m) 
     # probability from p(i,m) to p(j,m) 
+    def __init__(self, *kargs, **kwargs):
+        super(ProbabilityMover, self).__init__(*kargs, **kwargs)
+        if self.mutation_scale > 1.0:
+            raise Exception('mutation_scale should be <= 1.0')
+
     def mutate(self, probs):
         from_lexes = rand_ints(probs.shape[1], probs.shape[0])
         to_lexes   = rand_ints(probs.shape[1]-1, probs.shape[0])

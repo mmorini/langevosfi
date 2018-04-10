@@ -1,6 +1,7 @@
 from __future__ import print_function
 import numpy as np
 import model
+import logging
 
 def _call_run(**pargs):
 	args = dict(num_agents=5, num_memes=5,
@@ -46,3 +47,12 @@ def test_run_simulation_comprehension_stats():
 	assert(len(stats)==1)
 	assert(np.isclose(stats[0]['Comprehension'], 0.1))
 	assert(np.isclose(stats[0]['GrammarVar'], 0.))
+
+def check_mutator(cls):
+	_call_run(num_agents=10, num_memes=5, num_lexes=5, mutator_class=cls)
+
+def test_mutations():
+	# Square grammars
+	from mutators import VALID_MUTATOR_CLASSES
+	for cls in VALID_MUTATOR_CLASSES:
+		yield check_mutator, cls
