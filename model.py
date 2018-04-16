@@ -79,8 +79,8 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         The final grammar for every agent. Should have num_agent list entries
     """
 
-    # Cache 10000000 random numbers at a time
-    rnd_cache_steps = 10000000
+    # How many random numbers to pre-cache at a time
+    rnd_cache_steps = min(1000000, num_steps)
 
     # Log GitHub versions and arguments
     if logfile is not None:
