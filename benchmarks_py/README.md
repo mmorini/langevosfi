@@ -1,5 +1,9 @@
 # Live notebooks on already-done simulations. 
 
+* Comprehension / Grammar drift trade-off
+
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mmorini/langevosfi/python?filepath=benchmarks_py%2FHeatmapsPlot.ipynb) Set v013, 32<sup>3</sup> world, 100M-iterations; all mutators.
+
 * First three sets (demo explorations on Mutation Scale, ProbitvectorGaussian only).
 
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/mmorini/langevosfi/python?filepath=benchmarks_py%2Fbenchplots.ipynb) `benchplots.ipynb` Set v001, 16<sup>3</sup> world, [0.0-2.0 by .1]
