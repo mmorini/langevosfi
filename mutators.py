@@ -10,9 +10,12 @@ class Mutator(object):
     def __init__(self, mutation_scale):
         if mutation_scale is None:
             raise Exception('Must specify mutation_scale')
-        if mutation_scale < 0:
-            raise Exception('mutation_scale should be >= 0')
         self.mutation_scale = mutation_scale
+        self.check_mutation_scale()
+
+    def check_mutation_scale(self):
+        if self.mutation_scale < 0:
+            raise Exception('mutation_scale should be >= 0')
     
     def mutate(self, probs):
         # probs is a [_ X num_lexes] numpy array of probabilities to perturb
@@ -88,6 +91,10 @@ def clip_interval(x):
 # CLASS Ia           % mutators where f is not just a sum, non clipped
 
 class SingleBeta(Mutator):
+    def check_mutation_scale(self):
+        if self.mutation_scale <= 0:
+            raise Exception('mutation_scale should be > 0')
+
     # Draw new probability from beta distribution. Set variance to g/1e5 and solve for alpha and beta.
     def _mutate(self, probs):
         lexes = rand_ints(probs.shape[1], probs.shape[0])
@@ -99,6 +106,9 @@ class SingleBeta(Mutator):
         return probs
 
 class VectorDirichlet(Mutator):
+    def check_mutation_scale(self):
+        if self.mutation_scale <= 0:
+            raise Exception('mutation_scale should be > 0')
     # Draw joint p from a dirichlet distribution with conc. vector alpha defined via probs
     # two params: base measures - underlying probs, and scale s.  As s->inf, variance tends to zero.   
     def _mutate(self, probs):
@@ -187,13 +197,11 @@ class ArcsVectorClip(Mutator):
 
 
 class ProbabilityMover(Mutator):
+    def check_mutation_scale(self):
+        if self.mutation_scale < 0 or self.mutation_scale > 1.0:
+            raise Exception('mutation_scale should be >= 0 and <= 1.0')
     # Select two lexes for a given meme m, i and j, and move U(0, mutation_scale)*p(i,m) 
     # probability from p(i,m) to p(j,m) 
-    def __init__(self, *kargs, **kwargs):
-        super(ProbabilityMover, self).__init__(*kargs, **kwargs)
-        if self.mutation_scale > 1.0:
-            raise Exception('mutation_scale should be <= 1.0')
-
     def mutate(self, probs):
         from_lexes = rand_ints(probs.shape[1], probs.shape[0])
         to_lexes   = rand_ints(probs.shape[1]-1, probs.shape[0])
