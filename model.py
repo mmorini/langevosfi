@@ -79,20 +79,25 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         The final grammar for every agent. Should have num_agent list entries
     """
 
+    # Cache 10000000 random numbers at a time
+    rnd_cache_steps = 10000000
+
     # Log GitHub versions and arguments
     if logfile is not None:
         print("# Logging to %s" % logfile)
-    args = OrderedDict(
-        num_agents = num_agents,
-        num_memes  = num_memes,
-        num_lexes  = num_lexes,
-        num_steps  = num_steps,
-        mutator_class  = mutator_class.__name__,
-        mutation_scale = mutation_scale,
-        temperature = temperature,
-        report_every = report_every,
-        report_level = report_level,
-    )
+    args = OrderedDict()
+    args['num_agents']      = num_agents
+    args['num_memes']       = num_memes
+    args['num_lexes']       = num_lexes
+    args['num_steps']       = num_steps
+    args['mutator_class']   = mutator_class.__name__
+    args['mutation_scale']  = mutation_scale
+    args['temperature']     = temperature
+    args['report_every']    = report_every
+    args['report_level']    = report_level
+    args['rnd_cache_steps'] = rnd_cache_steps
+    args['report_every']    = report_every
+
     argstring = ", ".join(['%s=%s'%(k, str(v)) for k, v in args.items()])
     log("# GitHub version: %s, run at %s UTC" % (get_git_id(), datetime.utcnow().isoformat()), logfile)
     log("# %s" % argstring, logfile)
@@ -100,14 +105,6 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     start_time = time.time()
 
     stats_data = []  # Save stats in here and return from function
-
-    # Cache random numbers, so we don't have to call this every time (faster)
-    speakers    = rand_ints(num_agents, num_steps)
-    listeners   = rand_ints(num_agents-1, num_steps)
-    # Use a trick to avoid having the listener ever be equal to the speaker
-    listeners  += (listeners>=speakers).astype('int')
-    mutatememes = np.random.choice(num_memes, size=num_steps, p=meme_probs)
-    acceptanceprobs = np.random.random(num_steps)
 
     acceptedsteps = 0   # num. steps accepted in the last report_every interval
     old_grammars_tensor = None  # Saved grammars from last reporting interval
@@ -128,6 +125,23 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     mutation_op = mutator_class(mutation_scale=mutation_scale)
 
     for step in range(num_steps):
+
+        rnd_cache_ix = step % rnd_cache_steps
+        if rnd_cache_ix == 0:
+            # Build new random number cache, so we don't have to call random
+            # number generator every time (faster)
+
+            acceptanceprobs = np.random.random(rnd_cache_steps)
+            mutatememes = np.random.choice(num_memes, size=rnd_cache_steps, p=meme_probs)
+
+            speakers    = rand_ints(num_agents, rnd_cache_steps)
+            listeners   = rand_ints(num_agents-1, rnd_cache_steps)
+            # Trick to avoid having the listener ever be equal to the speaker
+            listeners  += (listeners>=speakers).astype('int')
+
+            # TODO: Modify Mutators so that we can precache their random numbers also
+
+
         if step % report_every == (report_every-1):  # Print logs
 
             # TODO: Possibly remove to increase performance. However, this
@@ -149,12 +163,12 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             old_grammars_tensor = grammars_tensor
 
 
-        speaker  = speakers[step]
-        listener = listeners[step]
+        speaker  = speakers[rnd_cache_ix]
+        listener = listeners[rnd_cache_ix]
 
         assert(speaker != listener)  # TODO possibly remove
 
-        current_meme = mutatememes[step]  # Meme to mutate/communicate
+        current_meme = mutatememes[rnd_cache_ix]  # Meme to mutate/communicate
 
         # Note that mutation_op.mutate requires a 2d numpy array, having
         # shape [anything x num_lexes]. Here we pass in a [1 x num_lexes] array
@@ -180,7 +194,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         if change_in_comprehension >= 0:
             accept_move = True
         elif temperature > 0:
-            accept_move = acceptanceprobs[step] <= np.exp(change_in_comprehension/temperature)
+            accept_move = acceptanceprobs[rnd_cache_ix] <= np.exp(change_in_comprehension/temperature)
         else:
             accept_move = False
 
