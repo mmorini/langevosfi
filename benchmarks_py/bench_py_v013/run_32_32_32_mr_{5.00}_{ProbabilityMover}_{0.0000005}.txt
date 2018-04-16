@@ -1,3 +1,0 @@
-# GitHub version: NO_GIT_REPO_FOUND, run at 2018-04-14T18:20:58.311309 UTC
-# report_every=1000000, mutation_scale=5.0, num_lexes=32, temperature=5e-07, num_steps=100000000, num_memes=32, mutator_class=ProbabilityMover, report_level=3, num_agents=32
-Step AcceptanceRate Comprehension GrammarVar AgentGrammarDrift MeanGrammarDrift Time
