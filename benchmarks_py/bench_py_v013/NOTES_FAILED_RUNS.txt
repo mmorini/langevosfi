@@ -1,0 +1,26 @@
+zero-mutscale 2 mutators
+
++
+
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0000001}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0000010}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0000100}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0001000}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0000001}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0000010}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0000100}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0001000}.txt
+
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.00000001}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.00000002}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.00000005}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0000001}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0000002}.txt
+      3 run_32_32_32_mr_{2.00}_{ProbabilityMover}_{0.0000005}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.00000001}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.00000002}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.00000005}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0000001}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0000002}.txt
+      3 run_32_32_32_mr_{5.00}_{ProbabilityMover}_{0.0000005}.txt
+
