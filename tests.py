@@ -13,7 +13,7 @@ def _call_run(**pargs):
 	grammars = model.init_grammars(num_agents=args['num_agents'],
 		num_lexes=args['num_lexes'], num_memes=args['num_memes'],
 		meme_probs=args['meme_probs'])
-	model.run_simulation(grammars=grammars, **args)
+	return model.run_simulation(grammars=grammars, **args)
 
 def test_run_simulation():
 	# Square grammars
@@ -30,6 +30,11 @@ def test_run_simulation_report_levels():
 	_call_run(report_level=1)
 	_call_run(report_level=2)
 	_call_run(report_level=3)
+
+def test_termination_condition():
+	r = _call_run(report_level=2, num_steps=1000, report_every=100, 
+		          terminate_cutoff=1.0, terminate_intervals=2)
+	assert(len(r[0]) == 3)
 
 def test_run_simulation_comprehension_stats():
 	grammars = [np.eye(10)/10.,]*10

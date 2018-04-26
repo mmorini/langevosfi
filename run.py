@@ -21,6 +21,8 @@ parser.add_argument("--init_meme_prob", type=str, choices=['UNIFORM','RANDOM'],
 parser.add_argument("--mutator_class", type=str, choices=mutatorclassnames, help="Mutation operator", default=mutatorclassnames[0])
 parser.add_argument("--mutation_scale" , type=float, help="Mutation scale", default=0.1)
 parser.add_argument("--temperature", type=float, help="Temperature for acceptance step", default=0)
+parser.add_argument("--terminate_cutoff", type=float, help="Early termination threshold for drift", default=None)
+parser.add_argument("--terminate_intervals", type=int, help="Number of intervals before early termination", default=100000)
 parser.add_argument("--report_every", type=int, help="How often to log stats", default=100000)
 parser.add_argument("--report_level", type=int, help="Level of detail to include in reports", default=3)
 parser.add_argument("--logfile", type=str, help="Output file to log to")
@@ -48,6 +50,8 @@ model.run_simulation(grammars,
                      mutator_class = getattr(mutators, args.mutator_class),
                      mutation_scale = args.mutation_scale,
                      temperature = args.temperature,
+                     terminate_cutoff = args.terminate_cutoff,
+                     terminate_intervals = args.terminate_intervals,
                      report_every = args.report_every,
                      report_level = args.report_level,
                      logfile=args.logfile)
