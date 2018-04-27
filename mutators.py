@@ -187,13 +187,13 @@ class ArcsSingleClip(Mutator):
     def _mutate(self,probs):
         lexes = rand_ints(probs.shape[1], probs.shape[0])
         probs = probs.copy()
-        probs[:,lexes] = 0.5 * (np.sin(np.arcsin(2*probs[:,lexes]-1) + self.mutation_scale) + 1)
+        probs[:,lexes] = 0.5 * (np.sin(np.arcsin(2*probs[:,lexes]-1) + (self.mutation_scale * np.random.rand(probs.shape[0]))) + 1)
         return clip(probs)
 
 class ArcsVectorClip(Mutator):
     # Tanmoy's suggested mutation operator: vector
     def _mutate(self, probs):
-        return clip(0.5 * abs(np.sin(np.arcsin(2*probs-1) + self.mutation_scale) + 1))
+        return clip(0.5 * abs(np.sin(np.arcsin(2*probs-1) + (self.mutation_scale * np.random.random(probs.shape))) + 1))
 
 
 class ProbabilityMover(Mutator):
