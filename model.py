@@ -39,8 +39,7 @@ def init_grammars(meme_probs, num_agents, num_memes, num_lexes):
 # ****************** Main simulation function *********************************
 def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_steps,
                    mutator_class=ProbitVectorGaussian, mutation_scale=None, temperature=0,
-                   terminate_intervals=None, terminate_cutoff=None,
-                   report_every=10000, report_level=2, logfile=None):
+                   early_terminator=None, report_every=10000, report_level=2, logfile=None):
     """
     Runs language simulation.
 
@@ -65,12 +64,9 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
         operator class default is used
     temperature : float
         Temperature (used to decide acceptance)
-    terminate_cutoff : float (default None)
-        If not None, and if terminate_report_intervals is not None, then if 
-          AgentGrammarDrift/(num_lexes*num_memes*num_agents) < terminate_cutoff
-        for terminate_report_intervals reporting intervals, then terminate the run
-    terminate_intervals : int (default None)
-        See description for terminate_cutoff
+    early_terminator : object (default None)
+        An instance of terminators.EarlyTerminator, which specifies how to 
+        TODO.
     report_every : int
         Compute and print stats every report_every iterations of the simulation
     report_level : int 
@@ -103,8 +99,9 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     args['report_every']    = report_every
     args['report_level']    = report_level
     args['rnd_cache_steps'] = rnd_cache_steps
-    args['terminate_cutoff']    = terminate_cutoff
-    args['terminate_intervals'] = terminate_intervals
+    args['early_terminator'] = None
+    if early_terminator is not None:
+        args['early_terminator'] = repr(early_terminator)
 
 
     argstring = ", ".join(['%s=%s'%(k, str(v)) for k, v in args.items()])
@@ -115,9 +112,9 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
 
     stats_data = []  # Save stats in here and return from function
 
-    acceptedsteps = 0   # num. steps accepted in the last report_every interval
-    old_grammars_tensor = None  # Saved grammars from last reporting interval
-    nodrift_intervals = 0      # How many of the recent reporting intervals
+    acceptedsteps       = None   # num. steps accepted in the last report_every interval
+    old_grammars_tensor = None   # Saved grammars from last reporting interval
+    nodrift_intervals   = 0      # How many of the recent reporting intervals
                     # had their drift below the terminate_cutoff threshold
 
 
@@ -154,7 +151,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             # TODO: Modify Mutators so that we can precache their random numbers also
 
 
-        if step % report_every == (report_every-1):  # Print logs
+        if step % report_every == 0: # Print logs
 
             # TODO: Possibly remove to increase performance. However, this
             # function should already be relatively fast
@@ -164,7 +161,8 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             # Calculate various stats for current grammar population and add to stats dict
             stats = OrderedDict()
             stats['Step'] = step
-            stats['AcceptanceRate'] = acceptedsteps/float(report_every)
+            if acceptedsteps is not None:
+                stats['AcceptanceRate'] = acceptedsteps/float(report_every)
             stats.update( get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level) )
             stats['Time'] = int(time.time() - start_time)
 
@@ -174,19 +172,10 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             acceptedsteps = 0
             old_grammars_tensor = grammars_tensor
 
-            if terminate_intervals is not None:
-                if 'AgentGrammarDrift' not in stats:
-                    raise Exception('Must compute AgentGrammarDrift to have early termination conditions')
-                    
-                drift = stats['AgentGrammarDrift']/(num_agents*num_memes*num_lexes)
-                if drift < terminate_cutoff:
-                    nodrift_threshold_intervals += 1
-                else:
-                    nodrift_threshold_intervals = 0
-
-                if nodrift_threshold_intervals >= terminate_intervals:
-                    print("# Early termination triggered")
-                    break
+            if early_terminator is not None and \
+               early_terminator.terminateCondition(stats_data, grammars):
+                print("# Early termination triggered")
+                break
 
 
         speaker  = speakers[rnd_cache_ix]

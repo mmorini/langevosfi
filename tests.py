@@ -2,6 +2,7 @@ from __future__ import print_function
 import numpy as np
 import model
 import logging
+import terminators
 
 def _call_run(**pargs):
 	args = dict(num_agents=5, num_memes=5,
@@ -32,9 +33,11 @@ def test_run_simulation_report_levels():
 	_call_run(report_level=3)
 
 def test_termination_condition():
-	r = _call_run(report_level=2, num_steps=1000, report_every=100, 
-		          terminate_cutoff=1.0, terminate_intervals=2)
-	assert(len(r[0]) == 3)
+	from terminators import ComprehensionPlateauTerminator
+	et = ComprehensionPlateauTerminator(min_comprehension_mult=2, plateau_percentage=0.9, plateau_time=3)
+	r = _call_run(report_level=2, num_steps=20000, report_every=1000, 
+		          early_terminator=et)
+	assert(len(r[0]) <= 10)
 
 def test_run_simulation_comprehension_stats():
 	grammars = [np.eye(10)/10.,]*10
