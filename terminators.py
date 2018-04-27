@@ -12,9 +12,8 @@ class ComprehensionPlateauTerminator(EarlyTerminator):
 
 	1) [current comprehension] >= 
 	      min_comprehension_mult * [comprehension at very first reporting interval]
-	2) [current interval] >= plateau_time *
-	      ([first reporting interval at which comprehension was >=
-	        plateau_percentage * [current comprehension])
+	2) [current step] >= plateau_time *
+	      ([first step for which comprehension was >= plateau_percentage * [current comprehension])
 	"""
 	def __init__(self, min_comprehension_mult, plateau_percentage, plateau_time):
 		assert(min_comprehension_mult is not None)
