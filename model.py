@@ -1,6 +1,6 @@
 # Includes the core code to implement the language evolution model
-
 from __future__ import print_function
+from six.moves import range
 import time
 import numpy as np
 from datetime import datetime
