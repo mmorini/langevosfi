@@ -83,7 +83,8 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
     """
 
     # How many random numbers to pre-cache at a time
-    rnd_cache_steps = min(1000000, num_steps)
+    max_cache_steps = int(10000000/max(num_memes, num_agents))
+    rnd_cache_steps = min(max_cache_steps, num_steps)
 
     # Log GitHub versions and arguments
     if logfile is not None:
