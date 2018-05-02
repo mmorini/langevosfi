@@ -4,6 +4,14 @@ import scipy.special as spys
 import scipy.stats as scps
 from utils import probitperturb, rand_ints
 
+def clip(x):
+    # rectifying nonlinearity
+    return np.maximum(x,0)
+
+def clip_interval(x):
+    # clips to interval [0,1]
+    return np.minimum(np.maximum(x,0),1)
+
 
 class Mutator(object):
     # Base class for mutation operators
@@ -72,20 +80,21 @@ class AdditiveSingleUniform(Mutator):
         return probs
 
 
+class AdditiveSingleGaussianClip(Mutator):
+    # additive perturbation with uniform(0, var) to single lexe p(lexe|meme) for each meme
+    def _mutate(self, probs):
+        lexes = rand_ints(probs.shape[1], probs.shape[0])
+        probs = probs.copy()
+        probs[:,lexes] += self.mutation_scale * np.random.randn(probs.shape[0])
+        return clip_interval(probs)
+
+
 class NoMutation(Mutator):
     def _mutate(self, probs):
         return probs
 
 
 # New mutaton operators, split by class (DW/AK)
-
-def clip(x):
-    # rectifying nonlinearity
-    return np.maximum(x,0)
-
-def clip_interval(x):
-    # clips to interval [0,1]
-    return np.minimum(np.maximum(x,0),1)
 
 
 # CLASS Ia           % mutators where f is not just a sum, non clipped
@@ -219,4 +228,4 @@ VALID_MUTATOR_CLASSES = [ProbitVectorGaussian, ProbitVectorUniform, AdditiveVect
                          NoMutation, SingleBeta, VectorDirichlet, SingleGamma, VectorLogMultivariateGamma, AdditiveSingleClipExppGaussian,
                          AdditiveVectorClipExppGaussian, AdditiveSingleAbsExppGaussian,
                          AdditiveVectorAbsExppGaussian, AdditiveSingleExppUniform, AdditiveVectorExppUniform,
-                         ArcsSingleClip, ArcsVectorClip, ProbabilityMover]
+                         ArcsSingleClip, ArcsVectorClip, ProbabilityMover, AdditiveSingleGaussianClip]

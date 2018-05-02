@@ -107,7 +107,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
 
     argstring = ", ".join(['%s=%s'%(k, str(v)) for k, v in args.items()])
     log("# GitHub version: %s, run at %s UTC" % (get_git_id(), datetime.utcnow().isoformat()), logfile)
-    log("# %s" % argstring, logfile)
+    log("# CFGSTR=2.0, %s" % argstring, logfile)
 
     start_time = time.time()
 
@@ -218,4 +218,5 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             acceptedsteps += 1
             grammars[speaker][current_meme,:] = new_probs
 
+    print("# FINISHED")
     return stats_data, grammars
