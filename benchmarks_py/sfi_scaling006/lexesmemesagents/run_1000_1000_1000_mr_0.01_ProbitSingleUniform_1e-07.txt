@@ -2,3 +2,8 @@
 # CFGSTR=2.0, num_agents=1000, num_memes=1000, num_lexes=1000, num_steps=500000000, mutator_class=ProbitSingleUniform, mutation_scale=0.01, temperature=1e-07, report_every=100000, report_level=3, rnd_cache_steps=10000, early_terminator=ComprehensionPlateauTerminator(min_comprehension_mult=5.0,plateau_percentage=0.99,plateau_time=5.0)
 Step AcceptanceRate Comprehension GrammarVar AgentGrammarDrift MeanGrammarDrift Time
 0 - 0.00100 0.01825 nan nan 44500s
+100000 0.99992 0.00100 0.01825 0.00001 0.00000 82089s
+200000 0.99992 0.00100 0.01825 0.00001 0.00000 112113s
+300000 0.99995 0.00100 0.01825 0.00001 0.00000 137196s
+400000 0.99994 0.00100 0.01825 0.00001 0.00000 160128s
+500000 0.99995 0.00100 0.01825 0.00001 0.00000 182594s

@@ -13,15 +13,25 @@ def load_data_dir(DIR):
             with open(ffname) as f:
                 for l in f.readlines():
                     if l[0]=='#' and 'num_memes' in l:
-                        try:
-                            d = dict(e.split('=', 1) for e in l[1:].strip().split(', '))
-                            d['filename'] = fname
-                            df = pd.read_csv(ffname, comment='#', sep=' ', na_values='-')
-                            if not len(df):
-                                raise
-                            data.append((d,df))
-                        except:
-                            error_files.append(ffname)
+                        doRead = True
+                        break
+            if doRead:
+                try:
+                    d = dict(e.split('=', 1) for e in l[1:].strip().split(', '))
+                    d['filename'] = fname
+                    d['full_filename'] = ffname
+                    df = pd.read_csv(ffname, comment='#', sep=' ', na_values='-')
+                    if not len(df):
+                        raise
+
+                    if df.Step.value_counts().sort_values().iloc[-1] > 1:
+                        raise Exception
+                    if df.Step.dtype == '|O':
+                        raise Exception
+
+                    data.append((d,df))
+                except:
+                    error_files.append(ffname)
     return data, error_files
 
 
