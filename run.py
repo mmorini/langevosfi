@@ -4,6 +4,7 @@ from __future__ import print_function
 import argparse
 import numpy as np
 import time
+import os
 
 import mutators
 import terminators
@@ -36,6 +37,7 @@ parser.add_argument("--terminator_opts", action=StoreDictKeypair, default={}, me
 parser.add_argument("--report_every", type=int, help="How often to log stats", default=100000)
 parser.add_argument("--report_level", type=int, help="Level of detail to include in reports", default=3)
 parser.add_argument("--logfile", type=str, help="Output file to log to")
+parser.add_argument("--mkdir", action='store_true', default=False, help="Create logfile directory if it doesn't exist")
 
 args = parser.parse_args()
 
@@ -59,6 +61,16 @@ if args.terminator_class is not None:
     print("Could not initialize terminator class %s, please check your terminator_opts" 
            % args.terminator_class)
     raise
+
+if args.logfile:
+  logdir = os.path.dirname(args.logfile)
+  if not os.path.exists(logdir):
+    if args.mkdir:
+      print("# Making directory %s" % logdir)
+      os.makedirs(logdir)
+    else:
+      raise Exception("Directory %s doesn't exist" % logdir)
+
 model.run_simulation(grammars,
                      meme_probs = meme_probs,
                      num_agents = args.num_agents,
