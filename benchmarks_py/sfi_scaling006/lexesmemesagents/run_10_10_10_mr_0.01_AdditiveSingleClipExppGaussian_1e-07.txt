@@ -1,0 +1,13 @@
+# GitHub version: commit 6fb5, run at 2018-05-07T22:07:17.685463 UTC
+# CFGSTR=2.0, num_agents=10, num_memes=10, num_lexes=10, num_steps=500000000, mutator_class=AdditiveSingleClipExppGaussian, mutation_scale=0.01, temperature=1e-07, report_every=100000, report_level=3, rnd_cache_steps=1000000, early_terminator=ComprehensionPlateauTerminator(min_comprehension_mult=5.0,plateau_percentage=0.99,plateau_time=5.0)
+Step AcceptanceRate Comprehension GrammarVar AgentGrammarDrift MeanGrammarDrift Time
+0 - 0.10256 0.16838 nan nan 0s
+100000 0.58342 0.86556 0.06437 0.88764 0.27485 14s
+200000 0.55181 0.99704 0.00246 0.13887 0.03921 28s
+300000 0.55052 0.99993 0.00007 0.00350 0.00080 43s
+400000 0.54952 1.00000 0.00000 0.00009 0.00002 59s
+500000 0.55030 1.00000 0.00000 0.00000 0.00000 74s
+600000 0.55016 1.00000 0.00000 0.00000 0.00000 88s
+700000 0.55481 1.00000 0.00000 0.00000 0.00000 102s
+800000 0.54859 1.00000 0.00000 0.00000 0.00000 116s
+900000 0.54966 1.00000 0.00000 0.00000 0.00000 130s
