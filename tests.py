@@ -37,7 +37,7 @@ def test_termination_condition():
 	et = ComprehensionPlateauTerminator(min_comprehension_mult=2, plateau_percentage=0.9, plateau_time=3)
 	r = _call_run(report_level=2, num_steps=20000, report_every=1000, 
 		          early_terminator=et)
-	assert(len(r[0]) <= 10)
+	assert(len(r[0]) <= 30)
 
 def test_run_simulation_comprehension_stats():
 	grammars = [np.eye(10)/10.,]*10
