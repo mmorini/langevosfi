@@ -17,9 +17,10 @@ signal(SIGPIPE,SIG_DFL)
 CODEDIR = '~/langevosfi/'
 DATADIR = '~/ldata/'
 
+RUNTYPES = ['mutator_heatmaps', 'scaling']
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("runtype", choices=RUNTYPES, help='Which parameter values to loop over')
 parser.add_argument("outputdir", type=str, help='Output directory (within %s)'%DATADIR, default=1)
-parser.add_argument("--mode", type=int, help='Mode', default=1)
 parser.add_argument('--queue', type=str, help='Which queue', default=None)
 parser.add_argument('--force', action='store_true', help='Force creation of directories/overwritting', default=False)
 parser.add_argument('--verbose', type=int, help='Verbosity level', default=1)
@@ -80,7 +81,7 @@ def printcmd(queueobj, **kwargs):
     print("echo OMP_NUM_THREADS=1 python run.py --num_agents {num_agents} --num_memes {num_memes} --num_lexes {num_lexes} --report_every={report_every} --num_steps={num_steps} --mutator_class={mutator_class} --mutation_scale={mutation_scale} --temperature={temperature} {extraopts} --logfile {logfile} --mkdir | qsub -q {queue} -N {nm} -o /dev/null -e /dev/null -d {CODEDIR}".format(nm=nm, logfile=full_nm, queue=queue, CODEDIR=CODEDIR, **opts))
 
 FULL_OUTPUT_DIR = DATADIR + OUTPUTDIR 
-if args.mode == 1:
+if args.runtype == 'mutator_heatmaps':
   VALID_MUTATOR_CLASSES = get_mutator_classes()
   queueobj = QueueAllocator(force_queue=args.queue, total_count=5*5*len(VALID_MUTATOR_CLASSES))
   for m in VALID_MUTATOR_CLASSES:
@@ -89,7 +90,7 @@ if args.mode == 1:
         printcmd(queueobj, mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=10, num_memes=100, num_lexes=100, full_output_dir=FULL_OUTPUT_DIR,
                  num_steps=10000000)
 
-elif args.mode == 2 or args.mode ==3:
+elif args.runtype == 'scaling':
   queueobj = QueueAllocator(force_queue=args.queue)
   defaultopts['mutation_scale'] = 0.01
   defaultopts['temperature'] = 1e-7
@@ -108,4 +109,6 @@ elif args.mode == 2 or args.mode ==3:
     for N in Nvals:
       printcmd(queueobj, mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, full_output_dir=FULL_OUTPUT_DIR+'lexesmemesagents/')
 
+else:
+  raise Exception('Unknown runtype %s'%args.runtype)
 
