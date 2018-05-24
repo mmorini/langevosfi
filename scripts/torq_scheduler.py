@@ -29,9 +29,6 @@ args = parser.parse_args()
 print("./cluster_rsync.sh") 
 
 defaultopts = {
-                #'num_agents': 100,
-                #'num_memes' : 100,
-                #'num_lexes' : 100,
                 'num_agents': 30,
                 'num_memes' : 30,
                 'num_lexes' : 30,
@@ -41,6 +38,7 @@ defaultopts = {
 }
 
 class QueueAllocator(object):
+  # This class is used to spread out jobs evenly between the different queues
   def __init__(self, total_count=None, force_queue=None):
     self.counter = 0
     self.force_queue = force_queue
@@ -66,12 +64,6 @@ def printcmd(queueobj, **kwargs):
   opts.update(kwargs)
 
   outputdir = opts['outputdir']
-  #if not os.path.exists(outputdir):
-  #  if not args.force:
-  #    raise Exception("Ouput directory (%s) doesn't exist"%outputdir)
-  #  else:
-  #    print("# Making directory %s" % outputdir)
-  #    os.makedirs(outputdir)
 
   nm = "run_{num_agents}_{num_memes}_{num_lexes}_mr_{mutation_scale}_{mutator_class}_{temperature}.txt".format(**opts)
   full_nm = outputdir + nm
@@ -89,23 +81,15 @@ if args.mode == 1:
   queueobj = QueueAllocator(force_queue=args.queue, total_count=5*5*len(VALID_MUTATOR_CLASSES))
   BASE_OUTPUT = DATADIR + 'sfi_v005/'
   for m in VALID_MUTATOR_CLASSES:
-    #for ms in 10.**np.arange(-4,3):
-    #  for t in 10.**np.arange(-8, 0):
     for ms in 10.**np.arange(-3,2):
       for t in 10.**np.arange(-8, -3):
-        # printcmd(args, mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=100, num_memes=10, num_lexes=10, outputdir=BASE_OUTPUT)
         printcmd(queueobj, mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=10, num_memes=100, num_lexes=100, outputdir=BASE_OUTPUT,
                  num_steps=10000000)
 
 elif args.mode == 2 or args.mode ==3:
   queueobj = QueueAllocator(force_queue=args.queue)
-  # defaultopts['mutation_scale'] = 0.1
   defaultopts['mutation_scale'] = 0.01
   defaultopts['temperature'] = 1e-7
-  #if args.mode == 2:
-  #  defaultopts['temperature'] = 1e-6
-  #elif args.mode == 3:
-  #  defaultopts['temperature'] = 1e-5
 
   BASE_OUTPUT = DATADIR + 'sfi_scaling006/'
   Nvals1 = list(map(int, 10.**np.linspace(1,3,7,endpoint=True)))
