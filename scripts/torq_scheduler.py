@@ -3,6 +3,7 @@ from __future__ import print_function
 import numpy as np
 import os, sys
 import argparse
+from collections import OrderedDict
 
 def get_mutator_classes():
   parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -10,36 +11,17 @@ def get_mutator_classes():
   from mutators import VALID_MUTATOR_CLASSES
   return VALID_MUTATOR_CLASSES
 
-# Followig prevents errors being throw when output is piped and cut off
-from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE,SIG_DFL) 
-                
-CODEDIR = '~/langevosfi/'
-DATADIR = '~/ldata/'
-
-RUNTYPES = ['mutator_heatmaps', 'scaling']
-parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("runtype", choices=RUNTYPES, help='Which parameter values to loop over')
-parser.add_argument("outputdir", type=str, help='Output directory (within %s)'%DATADIR, default=1)
-parser.add_argument('--queue', type=str, help='Which queue', default=None)
-parser.add_argument('--force', action='store_true', help='Force creation of directories/overwritting', default=False)
-parser.add_argument('--verbose', type=int, help='Verbosity level', default=1)
-args = parser.parse_args()
-
-OUTPUTDIR = args.outputdir
-if OUTPUTDIR[-1] != os.path.sep:
-  OUTPUTDIR += os.path.sep
-
-print("./cluster_rsync.sh") 
-
-defaultopts = {
-                'num_agents': 30,
-                'num_memes' : 30,
-                'num_lexes' : 30,
-                'num_steps' : 500000000,
-                'report_every': 100000,
-                'extraopts': '--terminator_class ComprehensionPlateauTerminator --terminator_opts min_comprehension_mult=5,plateau_percentage=0.99,plateau_time=5',
-}
+def get_opts_dict(**kwargs):
+  defaultopts = OrderedDict()
+  defaultopts['num_agents'] = 30
+  defaultopts['num_memes']  = 30
+  defaultopts['num_lexes']  = 30
+  defaultopts['num_steps']  = 500000000
+  defaultopts['report_every'] = 100000
+  defaultopts['terminator_class'] = 'ComprehensionPlateauTerminator'
+  defaultopts['terminator_opts'] = 'min_comprehension_mult=5,plateau_percentage=0.99,plateau_time=5'
+  defaultopts.update(**kwargs)
+  return defaultopts
 
 class QueueAllocator(object):
   # This class is used to spread out jobs evenly between the different queues
@@ -63,14 +45,9 @@ class QueueAllocator(object):
     else:
       return 'batch'
 
-def printcmd(queueobj, **kwargs):
-  opts = defaultopts.copy()
-  opts.update(kwargs)
-
-  fulloutputdir = opts['full_output_dir']
-
-  nm = "run_{num_agents}_{num_memes}_{num_lexes}_mr_{mutation_scale}_{mutator_class}_{temperature}.txt".format(**opts)
-  full_nm = fulloutputdir + nm
+def printcmd(queueobj, runopts, full_output_dir):
+  nm = "run_{num_agents}_{num_memes}_{num_lexes}_mr_{mutation_scale}_{mutator_class}_{temperature}.txt".format(**runopts)
+  full_nm = full_output_dir + nm
   exists = False
   if os.path.exists(full_nm):
     if args.verbose >= 1:
@@ -78,22 +55,51 @@ def printcmd(queueobj, **kwargs):
     exists = True
   if not exists or args.force:
     queue = queueobj.get_queue()
-    print("echo OMP_NUM_THREADS=1 python run.py --num_agents {num_agents} --num_memes {num_memes} --num_lexes {num_lexes} --report_every={report_every} --num_steps={num_steps} --mutator_class={mutator_class} --mutation_scale={mutation_scale} --temperature={temperature} {extraopts} --logfile {logfile} --mkdir | qsub -q {queue} -N {nm} -o /dev/null -e /dev/null -d {CODEDIR}".format(nm=nm, logfile=full_nm, queue=queue, CODEDIR=CODEDIR, **opts))
+    runcmdopts = " ".join("--{k}={v}".format(k=k,v=v) for k,v in runopts.items())
+    print("echo OMP_NUM_THREADS=1 python run.py {runcmdopts} --logfile {logfile} --mkdir | qsub -q {queue} -N {nm} -o /dev/null -e /dev/null -d {CODEDIR}".format(nm=nm, logfile=full_nm, queue=queue, CODEDIR=CODEDIR, runcmdopts=runcmdopts))
 
+# Followig prevents errors being throw when output is piped and cut off
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL) 
+                
+CODEDIR = '~/langevosfi/'
+DATADIR = '~/ldata/'
+
+RUNTYPES = ['demo','mutator_heatmaps', 'scaling']
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("runtype", choices=RUNTYPES, help='Which parameter values to loop over')
+parser.add_argument("outputdir", type=str, help='Output directory (within %s)'%DATADIR, default=1)
+parser.add_argument('--queue', type=str, help='Which queue', default=None)
+parser.add_argument('--force', action='store_true', help='Force creation of directories/overwritting', default=False)
+parser.add_argument('--verbose', type=int, help='Verbosity level', default=1)
+args = parser.parse_args()
+
+OUTPUTDIR = args.outputdir
+if OUTPUTDIR[-1] != os.path.sep:
+  OUTPUTDIR += os.path.sep
 FULL_OUTPUT_DIR = DATADIR + OUTPUTDIR 
-if args.runtype == 'mutator_heatmaps':
-  VALID_MUTATOR_CLASSES = get_mutator_classes()
+VALID_MUTATOR_CLASSES = get_mutator_classes()
+
+print("./cluster_rsync.sh") 
+
+if args.runtype == 'demo':
+  queueobj = QueueAllocator(force_queue=args.queue)
+  for m in VALID_MUTATOR_CLASSES:
+        printcmd(queueobj, get_opts_dict(mutator_class=m.__name__, temperature=1e-5, mutation_scale=0.1, num_agents=10, num_memes=100, num_lexes=100, num_steps=1000000), full_output_dir=FULL_OUTPUT_DIR)
+
+
+elif args.runtype == 'mutator_heatmaps':
   queueobj = QueueAllocator(force_queue=args.queue, total_count=5*5*len(VALID_MUTATOR_CLASSES))
   for m in VALID_MUTATOR_CLASSES:
     for ms in 10.**np.arange(-3,2):
       for t in 10.**np.arange(-8, -3):
-        printcmd(queueobj, mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=10, num_memes=100, num_lexes=100, full_output_dir=FULL_OUTPUT_DIR,
-                 num_steps=10000000)
+        printcmd(queueobj, get_opts_dict(mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=10, num_memes=100, num_lexes=100, num_steps=10000000), full_output_dir=FULL_OUTPUT_DIR)
 
 elif args.runtype == 'scaling':
   queueobj = QueueAllocator(force_queue=args.queue)
-  defaultopts['mutation_scale'] = 0.01
-  defaultopts['temperature'] = 1e-7
+  baseopts = {}
+  baseopts['mutation_scale'] = 0.01
+  baseopts['temperature'] = 1e-7
 
   Nvals1 = list(map(int, 10.**np.linspace(1,3,7,endpoint=True)))
   Nvals2 = list(map(int, 10.**np.linspace(1,2,7,endpoint=True)))
@@ -101,13 +107,13 @@ elif args.runtype == 'scaling':
  
   for m in ['ProbabilityMover', 'ProbitSingleUniform','AdditiveSingleGaussianClip', 'ArcsSingleClip', 'AdditiveSingleClipExppGaussian']:
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_lexes=N, full_output_dir=FULL_OUTPUT_DIR+'lexes/')
+      printcmd(queueobj, get_opts_dict(mutator_class=m, num_lexes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'lexes/')
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_memes=N, full_output_dir=FULL_OUTPUT_DIR+'memes/')
+      printcmd(queueobj, get_opts_dict(mutator_class=m, num_memes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'memes/')
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_agents=N, full_output_dir=FULL_OUTPUT_DIR+'agents/')
+      printcmd(queueobj, get_opts_dict(mutator_class=m, num_agents=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'agents/')
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, full_output_dir=FULL_OUTPUT_DIR+'lexesmemesagents/')
+      printcmd(queueobj, get_opts_dict(mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'lexesmemesagents/')
 
 else:
   raise Exception('Unknown runtype %s'%args.runtype)
