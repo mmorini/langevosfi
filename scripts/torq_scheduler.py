@@ -14,17 +14,20 @@ def get_mutator_classes():
 from signal import signal, SIGPIPE, SIG_DFL
 signal(SIGPIPE,SIG_DFL) 
                 
-CODEDIR = '/home/artemy/langevosfi/'
-DATADIR = '/home/artemy/ldata/'
-DATAHOST = 'habanero'
+CODEDIR = '~/langevosfi/'
+DATADIR = '~/ldata/'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("outputdir", type=str, help='Output directory (within %s)'%DATADIR, default=1)
 parser.add_argument("--mode", type=int, help='Mode', default=1)
 parser.add_argument('--queue', type=str, help='Which queue', default=None)
 parser.add_argument('--force', action='store_true', help='Force creation of directories/overwritting', default=False)
 parser.add_argument('--verbose', type=int, help='Verbosity level', default=1)
 args = parser.parse_args()
 
+OUTPUTDIR = args.outputdir
+if OUTPUTDIR[-1] != os.path.sep:
+  OUTPUTDIR += os.path.sep
 
 print("./cluster_rsync.sh") 
 
@@ -63,10 +66,10 @@ def printcmd(queueobj, **kwargs):
   opts = defaultopts.copy()
   opts.update(kwargs)
 
-  outputdir = opts['outputdir']
+  fulloutputdir = opts['full_output_dir']
 
   nm = "run_{num_agents}_{num_memes}_{num_lexes}_mr_{mutation_scale}_{mutator_class}_{temperature}.txt".format(**opts)
-  full_nm = outputdir + nm
+  full_nm = fulloutputdir + nm
   exists = False
   if os.path.exists(full_nm):
     if args.verbose >= 1:
@@ -74,16 +77,16 @@ def printcmd(queueobj, **kwargs):
     exists = True
   if not exists or args.force:
     queue = queueobj.get_queue()
-    print("echo OMP_NUM_THREADS=1 python run.py --num_agents {num_agents} --num_memes {num_memes} --num_lexes {num_lexes} --report_every={report_every} --num_steps={num_steps} --mutator_class={mutator_class} --mutation_scale={mutation_scale} --temperature={temperature} {extraopts} --logfile {logfile} --mkdir | qsub -q {queue} -N {nm} -o /dev/null -e /dev/null -d {CODEDIR}".format(nm=nm, logfile=full_nm, queue=queue, CODEDIR=CODEDIR, outputhost=DATAHOST, **opts))
+    print("echo OMP_NUM_THREADS=1 python run.py --num_agents {num_agents} --num_memes {num_memes} --num_lexes {num_lexes} --report_every={report_every} --num_steps={num_steps} --mutator_class={mutator_class} --mutation_scale={mutation_scale} --temperature={temperature} {extraopts} --logfile {logfile} --mkdir | qsub -q {queue} -N {nm} -o /dev/null -e /dev/null -d {CODEDIR}".format(nm=nm, logfile=full_nm, queue=queue, CODEDIR=CODEDIR, **opts))
 
+FULL_OUTPUT_DIR = DATADIR + OUTPUTDIR 
 if args.mode == 1:
   VALID_MUTATOR_CLASSES = get_mutator_classes()
   queueobj = QueueAllocator(force_queue=args.queue, total_count=5*5*len(VALID_MUTATOR_CLASSES))
-  BASE_OUTPUT = DATADIR + 'sfi_v005/'
   for m in VALID_MUTATOR_CLASSES:
     for ms in 10.**np.arange(-3,2):
       for t in 10.**np.arange(-8, -3):
-        printcmd(queueobj, mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=10, num_memes=100, num_lexes=100, outputdir=BASE_OUTPUT,
+        printcmd(queueobj, mutator_class=m.__name__, mutation_scale=ms, temperature=t, num_agents=10, num_memes=100, num_lexes=100, full_output_dir=FULL_OUTPUT_DIR,
                  num_steps=10000000)
 
 elif args.mode == 2 or args.mode ==3:
@@ -91,19 +94,18 @@ elif args.mode == 2 or args.mode ==3:
   defaultopts['mutation_scale'] = 0.01
   defaultopts['temperature'] = 1e-7
 
-  BASE_OUTPUT = DATADIR + 'sfi_scaling006/'
   Nvals1 = list(map(int, 10.**np.linspace(1,3,7,endpoint=True)))
   Nvals2 = list(map(int, 10.**np.linspace(1,2,7,endpoint=True)))
   Nvals = sorted(list(set(Nvals1 + Nvals2)))
  
   for m in ['ProbabilityMover', 'ProbitSingleUniform','AdditiveSingleGaussianClip', 'ArcsSingleClip', 'AdditiveSingleClipExppGaussian']:
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_lexes=N, outputdir=BASE_OUTPUT+'lexes/')
+      printcmd(queueobj, mutator_class=m, num_lexes=N, full_output_dir=FULL_OUTPUT_DIR+'lexes/')
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_memes=N, outputdir=BASE_OUTPUT+'memes/')
+      printcmd(queueobj, mutator_class=m, num_memes=N, full_output_dir=FULL_OUTPUT_DIR+'memes/')
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_agents=N, outputdir=BASE_OUTPUT+'agents/')
+      printcmd(queueobj, mutator_class=m, num_agents=N, full_output_dir=FULL_OUTPUT_DIR+'agents/')
     for N in Nvals:
-      printcmd(queueobj, mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, outputdir=BASE_OUTPUT+'lexesmemesagents/')
+      printcmd(queueobj, mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, full_output_dir=FULL_OUTPUT_DIR+'lexesmemesagents/')
 
 
