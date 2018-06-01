@@ -38,7 +38,7 @@ parser.add_argument("--report_every", type=int, help="How often to log stats", d
 parser.add_argument("--report_level", type=int, help="Level of detail to include in reports", default=3)
 parser.add_argument("--logfile", type=str, help="Output file to log to")
 parser.add_argument("--mkdir", action='store_true', default=False, help="Create logfile directory if it doesn't exist")
-
+parser.add_argument("--overwrite", action='store_true', default=False, help="Overwrite logfile if it exists")
 args = parser.parse_args()
 
 # Generate probability of memes (this will be fixed)
@@ -70,6 +70,10 @@ if args.logfile:
       os.makedirs(logdir)
     else:
       raise Exception("Directory %s doesn't exist" % logdir)
+
+  if os.path.exists(args.logfile):
+    if not args.overwrite:
+      raise Exception("Logfile %s already exists" % args.logfile)
 
 model.run_simulation(grammars,
                      meme_probs = meme_probs,
