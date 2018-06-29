@@ -1,0 +1,9 @@
+# GitHub version: commit 77b4, run at 2018-06-07T01:47:52.231757 UTC
+# CFGSTR=2.0, num_agents=10, num_memes=10, num_lexes=10, num_steps=20000000, mutator_class=AdditiveSingleClipExppGaussian, mutation_scale=0.1, temperature=1e-05, report_every=100000, report_level=3, rnd_cache_steps=1000000, early_terminator=ComprehensionPlateauTerminator(min_comprehension_mult=5.0,plateau_percentage=0.99,plateau_time=5.0)
+Entropy of meme distribution is: 2.673962
+Step AcceptanceRate Comprehension GrammarVar AgentGrammarDrift MeanGrammarDrift Time
+0 - 0.18692 0.24745 nan nan 0s
+100000 0.56817 0.97730 0.13261 1.29724 0.40060 15s
+200000 0.55630 0.98551 0.11917 0.20205 0.03306 29s
+300000 0.55637 0.98032 0.15755 0.26394 0.04513 44s
+400000 0.55561 0.97996 0.11644 0.19250 0.00974 59s
