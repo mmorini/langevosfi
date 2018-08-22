@@ -120,7 +120,8 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
 
 
     report_columns = ['Step', 'AcceptanceRate', 'Comprehension', 'GrammarVar',
-                      'AgentGrammarDrift', 'MeanGrammarDrift', 'Time']
+                      'AgentGrammarDrift', 'MeanGrammarDrift',  
+                      'AgentH(L|M)', 'MeanH(L|M)', 'Time']
     log(" ".join(report_columns), logfile)
 
     # Step is iteration number of the simulation
@@ -167,7 +168,7 @@ def run_simulation(grammars, meme_probs, num_agents, num_memes, num_lexes, num_s
             stats.update( get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level) )
             stats['Time'] = int(time.time() - start_time)
 
-            log(" ".join([format_stat_val(k, stats.get(k,'-')) for k in report_columns]), logfile)
+            log(" ".join([format_stat_val(k, stats.get(k,'nan')) for k in report_columns]), logfile)
 
             stats_data.append(stats)
             acceptedsteps = 0

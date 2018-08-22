@@ -2,8 +2,10 @@
 
 from __future__ import print_function
 import numpy as np
+from scipy.special import entr
 from collections import OrderedDict
 
+LN_TWO = np.log(2.0)
 
 # Functions for measuring comprehension (i.e., 1-probability of error) between
 # two grammars. Each grammar is an [num_memes X num_lexes] numpy array
@@ -38,6 +40,8 @@ def get_comprehension_matrix(grammars):
         comprehension_matrix[:,i] += get_comprehension_multiple_speakers(grammars, grammars[i])
     return comprehension_matrix
 
+def cond_entropy(meme_probs, mean_grammar_cond):
+    return meme_probs.dot(entr(mean_grammar_cond).sum(axis=1)) / LN_TWO
 
 # Information theoretic statistics - calculated at the current timepoint and between
 # the current and previous timepoints
@@ -45,6 +49,7 @@ def get_comprehension_matrix(grammars):
 def information_moment_ordern(ps, n):
     # calculate nth moment of information for distribution ps.  Entropy is first moment of information
     return np.sum((p*((-np.log2(p))**n)) for p in ps if not np.isclose(p, 0))
+
 
 def nth_moment_information_population(ps, n):
     # Accept as input a mean (population) grammar. Calculate the nth moment of information of the
@@ -75,12 +80,27 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level=3):
     # old_grammars_tensor is same, but for populating during last reporting interval
 
     stats = OrderedDict()
-    grammars =[grammars_tensor[:,:,i] for i in range(grammars_tensor.shape[2])]
+    num_agents = grammars_tensor.shape[2]
+    grammars =[grammars_tensor[:,:,i] for i in range(num_agents)]
     stats['Comprehension'] = get_comprehension_matrix(grammars).mean()
 
     if report_level >= 2:
         mean_grammar = grammars_tensor.mean(axis=2)
         stats['GrammarVar'] = np.linalg.norm(grammars_tensor-mean_grammar[:,:,None])
+
+        # entropy of each meme for current timepoint p(l | M = mi)
+        agent_cond_entropy = 0.0
+        for agent_grammar in grammars:
+            # row normalised population grammars
+            agent_meme_probs    = agent_grammar.sum(axis=1)
+            agent_grammar_cond  = agent_grammar / agent_meme_probs[:,np.newaxis]
+            agent_cond_entropy += cond_entropy(agent_meme_probs, agent_grammar_cond)
+        stats['Agent H(L|M)'] = agent_cond_entropy / float(num_agents)
+
+        # row normalised population grammars
+        meme_probs           = mean_grammar.sum(axis=1)
+        mean_grammar_cond    = mean_grammar / meme_probs[:,np.newaxis]
+        stats['Mean H(L|M)'] = cond_entropy(meme_probs, mean_grammar_cond)
 
         if old_grammars_tensor is not None:
             mean_old_grammar = old_grammars_tensor.mean(axis=2)
@@ -89,22 +109,15 @@ def get_grammars_stats(grammars_tensor, old_grammars_tensor, report_level=3):
             stats['MeanGrammarDrift'] = \
               np.linalg.norm(mean_grammar - mean_old_grammar)
 
-            if report_level >= 3:
-                # row normalised population grammars
-                mean_grammar /= mean_grammar.sum(axis=1)[:,np.newaxis]
-                mean_old_grammar /= mean_old_grammar.sum(axis=1)[:,np.newaxis]
+    if report_level >= 3:
+        stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar_cond,2)
+        stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar_cond,3)
 
-                # entropy of each meme for current timepoint p(l | M = mi)
-                stats['Entropy'] = nth_moment_information_population(mean_grammar,1)
-                stats['2nd_moment_information'] = nth_moment_information_population(mean_grammar,2)
-                stats['3rd_moment_information'] = nth_moment_information_population(mean_grammar,3)
+        if old_grammars_tensor is not None:
+            mean_old_grammar_cond= mean_old_grammar / mean_old_grammar.sum(axis=1)[:,np.newaxis]
+            stats['KL_divergence'] = relative_information_pq(mean_grammar_cond, mean_old_grammar_cond)
+            stats['JS_divergence'] = js_divergence(mean_grammar_cond, mean_old_grammar_cond)
 
-                stats['KL_divergence'] = relative_information_pq(mean_grammar, mean_old_grammar)
-                stats['JS_divergence'] = js_divergence(mean_grammar, mean_old_grammar)
-
-        else:
-            stats['AgentGrammarDrift'] = np.nan
-            stats['MeanGrammarDrift'] = np.nan
 
     return stats
 
