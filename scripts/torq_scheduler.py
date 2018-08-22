@@ -16,8 +16,9 @@ def get_opts_dict(**kwargs):
   defaultopts['num_agents'] = 30
   defaultopts['num_memes']  = 30
   defaultopts['num_lexes']  = 30
-  defaultopts['num_steps']  = 500000000
+  defaultopts['num_steps']  = 50000000000
   defaultopts['report_every'] = 100000
+  defaultopts['init_meme_prob'] = 'UNIFORM'
   defaultopts['terminator_class'] = 'ComprehensionPlateauTerminator'
   defaultopts['terminator_opts'] = 'min_comprehension_mult=5,plateau_percentage=0.99,plateau_time=5'
   defaultopts.update(**kwargs)
@@ -46,7 +47,7 @@ class QueueAllocator(object):
       return 'batch'
 
 def printcmd(queueobj, runopts, full_output_dir):
-  nm = "run_{num_agents}_{num_memes}_{num_lexes}_mr_{mutation_scale}_{mutator_class}_{temperature}.txt".format(**runopts)
+  nm = "run_{num_agents}_{num_memes}_{num_lexes}_mr_{mutation_scale}_{mutator_class}_{init_meme_prob}_{temperature}.txt".format(**runopts)
   full_nm = full_output_dir + nm
   exists = False
   if os.path.exists(full_nm):
@@ -69,6 +70,7 @@ RUNTYPES = ['demo','mutator_heatmaps', 'scaling']
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("runtype", choices=RUNTYPES, help='Which parameter values to loop over')
 parser.add_argument("outputdir", type=str, help='Output directory (within %s)'%DATADIR, default=1)
+parser.add_argument("--runsubtype", type=str, default='all', help='Runtype choice')
 parser.add_argument('--queue', type=str, help='Which queue', default=None)
 parser.add_argument('--force', action='store_true', help='Force creation of directories/overwritting', default=False)
 parser.add_argument('--verbose', type=int, help='Verbosity level', default=1)
@@ -81,6 +83,8 @@ FULL_OUTPUT_DIR = DATADIR + OUTPUTDIR
 VALID_MUTATOR_CLASSES = get_mutator_classes()
 
 print("./cluster_rsync.sh") 
+
+USE_MUTATORS = ['ProbabilityMover', 'ProbitSingleUniform','AdditiveSingleGaussianClip', 'ArcsSingleClip', 'AdditiveSingleClipExppGaussian']
 
 if args.runtype == 'demo':
   queueobj = QueueAllocator(force_queue=args.queue)
@@ -104,16 +108,22 @@ elif args.runtype == 'scaling':
   Nvals1 = list(map(int, 10.**np.linspace(1,3,7,endpoint=True)))
   Nvals2 = list(map(int, 10.**np.linspace(1,2,7,endpoint=True)))
   Nvals = sorted(list(set(Nvals1 + Nvals2)))
- 
-  for m in ['ProbabilityMover', 'ProbitSingleUniform','AdditiveSingleGaussianClip', 'ArcsSingleClip', 'AdditiveSingleClipExppGaussian']:
-    for N in Nvals:
-      printcmd(queueobj, get_opts_dict(mutator_class=m, num_lexes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'lexes/')
-    for N in Nvals:
-      printcmd(queueobj, get_opts_dict(mutator_class=m, num_memes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'memes/')
-    for N in Nvals:
-      printcmd(queueobj, get_opts_dict(mutator_class=m, num_agents=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'agents/')
-    for N in Nvals:
-      printcmd(queueobj, get_opts_dict(mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'lexesmemesagents/')
+
+  for init_meme_prob in ['UNIFORM','RANDOM']:
+    baseopts['init_meme_prob'] = init_meme_prob
+    for m in USE_MUTATORS:
+      if args.runsubtype in ['all', 'lexes']:
+	for N in Nvals:
+	  printcmd(queueobj, get_opts_dict(mutator_class=m, num_lexes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'lexes/')
+      if args.runsubtype in ['all', 'memes']:
+	for N in Nvals:
+	  printcmd(queueobj, get_opts_dict(mutator_class=m, num_memes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'memes/')
+      if args.runsubtype in ['all', 'agents']:
+	for N in Nvals:
+	  printcmd(queueobj, get_opts_dict(mutator_class=m, num_agents=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'agents/')
+      if args.runsubtype in ['all', 'lexesmemesagents']:
+	for N in Nvals:
+	 printcmd(queueobj, get_opts_dict(mutator_class=m, num_agents=N, num_lexes=N, num_memes=N, **baseopts), full_output_dir=FULL_OUTPUT_DIR+'lexesmemesagents/')
 
 else:
   raise Exception('Unknown runtype %s'%args.runtype)

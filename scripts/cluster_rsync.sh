@@ -1,4 +1,5 @@
-cd ../..
+#!/bin/bash
+cd `dirname "$0"`/../..
 
 # Move code out to other servers
 rsync -avz --delete langevosfi serrano:
